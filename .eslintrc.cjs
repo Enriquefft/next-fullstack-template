@@ -132,6 +132,8 @@ const parserOptions = {
   project: true,
 };
 
+const defaultRules = Object.assign(jsRules, tsRules, jsdocRules);
+
 /** @type {import("eslint").Linter.Config} */
 const config = {
   ignorePatterns: [
@@ -148,25 +150,14 @@ const config = {
     "plugin:jsdoc/recommended-typescript-error",
     "plugin:@typescript-eslint/all",
     "prettier",
+    "plugin:drizzle/all",
     "plugin:jsx-a11y/strict",
   ],
-  rules: jsRules,
+  rules: defaultRules,
   overrides: [
     {
-      files: ["*.cjs", "*.js"],
-      rules: jsdocRules,
-      extends: ["plugin:@typescript-eslint/disable-type-checked"],
-      parserOptions,
-    },
-    {
-      extends: ["plugin:@typescript-eslint/all", "prettier"],
-      files: ["*.ts", "*.tsx"],
-      rules: tsRules,
-      parserOptions,
-    },
-    {
       files: ["*.[jt]sx"],
-      rules: Object.assign(reactRules, jsdocRules),
+      rules: Object.assign(defaultRules, reactRules),
     },
   ],
   globals: {

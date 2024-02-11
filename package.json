@@ -20,10 +20,14 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@planetscale/database": "^1.16.0",
+    "@t3-oss/env-nextjs": "^0.9.2",
+    "drizzle-orm": "^0.29.3",
+    "lucide-react": "^0.316.0",
+    "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.0",
-    "lucide-react": "^0.316.0"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.6.0",
@@ -34,9 +38,11 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "autoprefixer": "^10.4.17",
+    "drizzle-kit": "^0.20.14",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-drizzle": "^0.2.3",
     "eslint-plugin-jsdoc": "^48.0.4",
     "lefthook": "^1.6.1",
     "postcss": "^8",
