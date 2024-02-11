@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { Config } from "tailwindcss";
 
 const config: Config = {
