@@ -1,0 +1,46 @@
+{
+  "name": "next-fullstack-template",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Enriquefft/Tipsmer-web"
+  },
+  "bugs": {
+    "url": "https://github.com/Enriquefft/Tipsmer-web/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE.public",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.1.0",
+    "lucide-react": "^0.316.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
+    "@types/eslint": "^8.56.2",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsdoc": "^48.0.4",
+    "lefthook": "^1.6.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,26 @@
+commit-msg:
+  scripts:
+    "commitlint.sh":
+      runner: bash
+
+pre-push:
+  parallel: true
+  commands:
+    build:
+      run: bun run build
+    test:
+      priority: 2
+      run: bun test
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint {staged_files} --fix
+    formatting:
+      glob: "*.{js,jsx,ts,tsx,md,mdx,html,css,scss,json,yml}"
+      run: bunx prettier {staged_files} --write
+    types:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx tsc --noEmit
