@@ -6,6 +6,8 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
+import { createInsertSchema } from "drizzle-zod";
+
 import { env } from "@/env.mjs";
 
 export const createTable = mysqlTableCreator(
@@ -28,3 +30,4 @@ export const posts = createTable(
     nameIndex: index("name_idx").on(example.name),
   }),
 );
+export const insertPostSchema = createInsertSchema(posts);
