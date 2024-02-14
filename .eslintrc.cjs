@@ -29,7 +29,7 @@ const reactRules = {
   "react/jsx-no-bind": "off",
 
   "react/jsx-no-literals": "off",
-  "react/jsx-max-depth": ["warn", { max: 4 }],
+  "react/jsx-max-depth": ["warn", { max: 5 }],
 
   "react/require-default-props": "off",
 };

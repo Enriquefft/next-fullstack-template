@@ -10,7 +10,7 @@
     ".next/types/**/*.ts",
     "**/*.cjs",
     "**/*.mjs",
-    ".eslintrc.cjs",
+    ".eslintrc.cjs"
   ],
 
   "exclude": ["node_modules"],
@@ -18,13 +18,13 @@
   "compilerOptions": {
     "plugins": [
       {
-        "name": "next",
-      },
+        "name": "next"
+      }
     ],
 
     // Specify a set of entries that re-map imports to additional lookup locations.
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
 
     ///////////////////////////////////////
@@ -35,7 +35,7 @@
     "incremental": true,
 
     // Enable constraints that allow a TypeScript project to be used with project references.
-    "composite": true,
+    "composite": false,
 
     // Specify the path to .tsbuildinfo incremental compilation file.
     // "tsBuildInfoFile": "./.tsbuildinfo",
@@ -132,7 +132,7 @@
     ///////////////////////////////////////
 
     // Generate .d.ts files from TypeScript and JavaScript files in your project.
-    "declaration": true,
+    "declaration": false,
 
     // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
     // "emitDeclarationOnly": true,                      /* Only output d.ts files and not JavaScript files. */
@@ -179,7 +179,8 @@
     // Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility.
     "esModuleInterop": true,
 
-    // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
+    // Disable resolving symlinks to their realpath. This correlates to the same flag in node.
+    "preserveSymlinks": true,
 
     // Ensure that casing is correct in imports.
     "forceConsistentCasingInFileNames": true,
@@ -221,6 +222,6 @@
 
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     // Skip type checking all .d.ts files.
-    "skipLibCheck": true,
-  },
+    "skipLibCheck": true
+  }
 }
