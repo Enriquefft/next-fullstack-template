@@ -1,18 +1,21 @@
 import NextAuth, { type NextAuthConfig } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import Google from "next-auth/providers/google";
 
 import { env } from "@/env.mjs";
 
 export const authConfig = {
+  pages: {
+    signIn: "/auth/login",
+  },
   callbacks: {
     authorized({ auth }) {
       return auth?.user !== undefined;
     },
   },
   providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    Google({
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
     }),
   ],
 } as const satisfies NextAuthConfig;
