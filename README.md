@@ -10,14 +10,6 @@ cd next-fullstack-template
 bun install
 ```
 
-Then, run the development server:
-
-```bash
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
 #### Contributing
 
 To contribute, install the pre-commit ([lefthook](https://github.com/evilmartians/lefthook)) hooks:
@@ -25,3 +17,11 @@ To contribute, install the pre-commit ([lefthook](https://github.com/evilmartian
 ```bash
 bunx lefthook install
 ```
+
+Then, run the development server:
+
+```bash
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
