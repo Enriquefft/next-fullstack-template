@@ -49,7 +49,7 @@ const jsRules = {
     "error",
     {
       min: 3,
-      exceptions: ["_", "__", "id", "db"],
+      exceptions: ["_", "__", "id", "db", "cn", "sm", "lg"],
     },
   ],
   "sort-imports": "off",

@@ -1,4 +1,4 @@
-import { inter } from "@/ui/fonts";
+import { inter } from "@/styles/fonts";
 import { AtSignIcon, KeyRoundIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "./button";
 
