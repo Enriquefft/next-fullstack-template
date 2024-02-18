@@ -150,6 +150,7 @@ const config = {
     "plugin:jsdoc/recommended-typescript-error",
     "plugin:@typescript-eslint/all",
     "prettier",
+    "plugin:tailwindcss/recommended",
     "plugin:drizzle/all",
     "plugin:jsx-a11y/strict",
   ],

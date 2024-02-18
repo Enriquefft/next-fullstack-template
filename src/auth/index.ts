@@ -1,7 +1,7 @@
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
-// Import { env } from "@/env.mjs";
+import { env } from "@/env.mjs";
 
 export const authConfig = {
   pages: {
@@ -14,10 +14,8 @@ export const authConfig = {
   },
   providers: [
     Google({
-      /*
-       * ClientId: env.AUTH_GOOGLE_ID,
-       * clientSecret: env.AUTH_GOOGLE_SECRET,
-       */
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
     }),
   ],
 } as const satisfies NextAuthConfig;
