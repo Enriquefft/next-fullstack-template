@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
+    DRIZZLE_DATABASE_URL: z.string().url(),
 
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
@@ -15,7 +15,7 @@ export const env = createEnv({
   },
   runtimeEnv: {
     NEXT_PUBLIC_PROJECT_NAME: process.env.NEXT_PUBLIC_PROJECT_NAME,
-    DATABASE_URL: process.env.DATABASE_URL,
+    DRIZZLE_DATABASE_URL: process.env.DRIZZLE_DATABASE_URL,
 
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
