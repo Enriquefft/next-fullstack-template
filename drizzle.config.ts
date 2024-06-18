@@ -1,12 +1,11 @@
-import type { Config } from "drizzle-kit";
-
+import { defineConfig } from "drizzle-kit";
 import { env } from "@/env.mjs";
 
-export default {
-  schema: "./src/server/db/schema.ts",
-  driver: "mysql2",
+export default defineConfig({
+  schema: "./src/db/schema/*",
+  dialect: "postgresql",
   dbCredentials: {
-    uri: env.DRIZZLE_DATABASE_URL,
+    url: env.DRIZZLE_DATABASE_URL,
   },
-  tablesFilter: ["BulkGPT_*"],
-} satisfies Config;
+  tablesFilter: [`${env.NEXT_PUBLIC_PROJECT_NAME}_*`],
+});
