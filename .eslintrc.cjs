@@ -141,6 +141,7 @@ const config = {
     "next-env.d.ts",
     "**/schema.gen*",
     "experimental",
+    "src/components/ui/*",
   ],
   parserOptions,
   extends: [
