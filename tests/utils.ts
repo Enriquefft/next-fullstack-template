@@ -1,4 +1,4 @@
-import { expect } from "bun:test";
+import { expect } from "@jest/globals";
 
 /**
  * Asserts that a value is not nul:.
