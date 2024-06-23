@@ -1,2 +1,3 @@
 [test]
 coverage = true
+preload = "./tests/happydom.ts"

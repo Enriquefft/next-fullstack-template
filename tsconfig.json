@@ -10,7 +10,8 @@
     ".next/types/**/*.ts",
     "**/*.cjs",
     "**/*.mjs",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "happydom.ts"
   ],
 
   "exclude": ["node_modules"],
@@ -54,7 +55,7 @@
     ///////////////////////////////////////
 
     // Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "target": "esNext",
+    "target": "ESNext",
 
     // Specify a set of bundled library declaration files that describe the target runtime environment.
     "lib": ["ESNext", "dom", "dom.iterable"],
@@ -98,7 +99,11 @@
     // "typeRoots": ["./node_modules/@types"],
 
     // Specify type package names to be included without being referenced in a source file.
-    // "types": [],
+    "types": [
+      "@testing-library/jest-dom",
+      "@testing-library/react",
+      "bun-types"
+    ],
 
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
@@ -195,23 +200,47 @@
     // Enable error reporting for expressions and declarations with an implied 'any' type.
     "noImplicitAny": true,
 
-    // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
-    // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
-    // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
-    // "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
-    // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
-    // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
-    // "alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
-    // "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
-    // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
+    // When type checking, take into account 'null' and 'undefined'.
+    "strictNullChecks": true,
+
+    // When assigning functions, check to ensure parameters and the return values are subtype-compatible.
+    "strictFunctionTypes": true,
+
+    // Check that the arguments for 'bind', 'call', and 'apply' methods match the original function.
+    "strictBindCallApply": true,
+
+    // Check for class properties that are declared but not set in the constructor.
+    "strictPropertyInitialization": true,
+
+    // Enable error reporting when 'this' is given the type 'any'.
+    "noImplicitThis": true,
+
+    "useUnknownInCatchVariables": true /* Default catch clause variables as 'unknown' instead of 'any'. */,
+
+    // Ensure 'use strict' is always emitted.
+    "alwaysStrict": true,
+
+    // Enable error reporting when local variables aren't read.
+    "noUnusedLocals": true,
+
+    // Raise an error when a function parameter isn't read.
+    "noUnusedParameters": true,
+
     // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
     // "noImplicitReturns": true,                        /* Enable error reporting for codepaths that do not explicitly return in a function. */
-    // "noFallthroughCasesInSwitch": true,               /* Enable error reporting for fallthrough cases in switch statements. */
+
+    // Enable error reporting for fallthrough cases in switch statements.
+    "noFallthroughCasesInSwitch": true,
+
     // Add 'undefined' to a type when accessed using an index.
     "noUncheckedIndexedAccess": true,
+
     // Ensure overriding members in derived classes are marked with an override modifier.
     "noImplicitOverride": true,
-    // "noPropertyAccessFromIndexSignature": true,       /* Enforces using indexed accessors for keys declared using an indexed type. */
+
+    // Enforces using indexed accessors for keys declared using an indexed type.
+    "noPropertyAccessFromIndexSignature": true,
+
     // "allowUnusedLabels": true,                        /* Disable error reporting for unused labels. */
     // Disable error reporting for unreachable code.
     "allowUnreachableCode": false,
