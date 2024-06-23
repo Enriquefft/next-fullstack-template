@@ -1,4 +1,4 @@
-import {expect} from "bun:test"
+import { expect } from "bun:test";
 
 /**
  * Asserts that a value is not nul:.
