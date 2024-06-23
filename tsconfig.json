@@ -99,11 +99,7 @@
     // "typeRoots": ["./node_modules/@types"],
 
     // Specify type package names to be included without being referenced in a source file.
-    "types": [
-      "@testing-library/jest-dom",
-      "@testing-library/react",
-      "bun-types"
-    ],
+    // "types": [],
 
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
