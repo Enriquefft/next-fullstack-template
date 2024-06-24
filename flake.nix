@@ -2,15 +2,15 @@
   description = "A basic flakelight templ to be used with nix-direnv";
 
   inputs = {
-
-    flakelight.url = "github:nix-community/flakelight";
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
-
+    flakelight.url = "github:nix-community/flakelight";
   };
 
-  outputs = { flakelight, ... }:
-    flakelight ./. ({ inputs, ... }: {
-      inherit inputs;
+  outputs = { flakelight, nixpkgs, ... }:
+    flakelight ./. {
+
+      inputs.nixpkgs = nixpkgs;
+
       devShell.packages = pkgs:
         with pkgs; [
 
@@ -25,6 +25,6 @@
           awscli2
 
         ];
-    });
+    };
 
 }
