@@ -1,18 +1,7 @@
 import { sql } from "drizzle-orm";
-import {
-  serial,
-  index,
-  pgTableCreator,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { serial, index, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-
-import { env } from "@/env.mjs";
-
-export const createTable = pgTableCreator(
-  (name) => `${env.NEXT_PUBLIC_PROJECT_NAME}_${name}`,
-);
+import { createTable } from ".";
 
 export const posts = createTable(
   "post",
@@ -31,3 +20,6 @@ export const posts = createTable(
   }),
 );
 export const insertPostSchema = createInsertSchema(posts);
+
+export type InsertPost = typeof posts.$inferInsert;
+export type SelectPost = typeof posts.$inferSelect;
