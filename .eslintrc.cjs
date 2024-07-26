@@ -3,6 +3,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 /** @type {import('eslint').Linter.Config['rules']}*/
+const drizzleRules = {
+  "drizzle/enforce-delete-with-where": [
+    "error",
+    {
+      // Here you can specify the models you are using
+      drizzleObjectName: ["db"],
+    },
+  ],
+};
+
+/** @type {import('eslint').Linter.Config['rules']}*/
 const jsdocRules = {
   "jsdoc/check-param-names": [
     "error",
@@ -132,7 +143,7 @@ const parserOptions = {
   project: true,
 };
 
-const defaultRules = Object.assign(jsRules, tsRules, jsdocRules);
+const defaultRules = Object.assign(jsRules, tsRules, jsdocRules, drizzleRules);
 
 /** @type {import("eslint").Linter.Config} */
 const config = {
