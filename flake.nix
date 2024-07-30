@@ -1,5 +1,5 @@
 {
-  description = "A basic flakelight templ to be used with nix-direnv";
+  description = "generic Flake for Next api's.";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-unstable";
@@ -20,9 +20,7 @@
           coreutils
 
           lefthook
-          pre-commit
-
-          awscli2
+          commitlint-rs
 
         ];
     };
