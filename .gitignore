@@ -1,3 +1,6 @@
+# nix direnv
+/.direnv
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -42,6 +45,3 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# nix direnv
-/.direnv
