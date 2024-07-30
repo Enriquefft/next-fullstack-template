@@ -7,5 +7,5 @@ export default defineConfig({
   dbCredentials: {
     url: env.DRIZZLE_DATABASE_URL,
   },
-  tablesFilter: [`${env.NEXT_PUBLIC_PROJECT_NAME}_*`],
+  schemaFilter: env.NEXT_PUBLIC_PROJECT_NAME,
 });

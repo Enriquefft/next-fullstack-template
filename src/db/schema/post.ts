@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
 import { serial, index, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { createTable } from ".";
+import { schema } from ".";
 
-export const posts = createTable(
+export const posts = schema.table(
   "post",
   {
     id: serial("id").primaryKey(),
