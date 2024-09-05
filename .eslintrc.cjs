@@ -168,6 +168,7 @@ const config = {
     "plugin:tailwindcss/recommended",
     "plugin:drizzle/all",
     "plugin:jsx-a11y/strict",
+    "plugin:security/recommended-legacy",
   ],
   rules: defaultRules,
   overrides: [
