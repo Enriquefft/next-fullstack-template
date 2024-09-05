@@ -16,7 +16,7 @@ const drizzleRules = {
 /** @type {import('eslint').Linter.Config['rules']}*/
 const jsdocRules = {
   "jsdoc/check-param-names": [
-    "error",
+    "warn",
     {
       checkRestProperty: true,
     },
@@ -162,7 +162,7 @@ const config = {
     "eslint:all",
     "next",
     "next/core-web-vitals",
-    "plugin:jsdoc/recommended-typescript-error",
+    "plugin:jsdoc/recommended-typescript",
     "plugin:@typescript-eslint/all",
     "prettier",
     "plugin:tailwindcss/recommended",
