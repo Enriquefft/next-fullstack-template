@@ -120,6 +120,7 @@
     ///////////////////////////////////////
     ///////// JavaScript support //////////
     ///////////////////////////////////////
+
     // Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files.
     "allowJs": true,
 
@@ -237,7 +238,9 @@
     // Enforces using indexed accessors for keys declared using an indexed type.
     "noPropertyAccessFromIndexSignature": true,
 
-    // "allowUnusedLabels": true,                        /* Disable error reporting for unused labels. */
+    // Disable error reporting for unused labels.
+    // "allowUnusedLabels": true,
+
     // Disable error reporting for unreachable code.
     "allowUnreachableCode": false,
 
@@ -245,7 +248,9 @@
     //////////// Completeness //////////
     ///////////////////////////////////////
 
-    // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
+    // Skip type checking .d.ts files that are included with TypeScript.
+    // "skipDefaultLibCheck": true,
+
     // Skip type checking all .d.ts files.
     "skipLibCheck": true
   }
