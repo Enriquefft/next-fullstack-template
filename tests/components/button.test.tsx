@@ -1,5 +1,5 @@
 import { expect, test } from "@jest/globals";
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 import { render, screen } from "@testing-library/react";
 

@@ -1,6 +1,6 @@
 import { inter } from "@/styles/fonts";
 import { AtSignIcon, KeyRoundIcon, ArrowRightIcon } from "lucide-react";
-import { Button } from "./button";
+import { Button } from "@/components/ui/button";
 
 /**
  * @returns Login form button component
