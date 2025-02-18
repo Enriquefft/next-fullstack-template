@@ -15,12 +15,9 @@ pre-push:
 pre-commit:
   parallel: true
   commands:
-    # lint:
-    #   glob: "*.{js,ts,jsx,tsx}"
-    #   run: bunx eslint {staged_files} --fix
-    formatting:
-      glob: "*.{js,jsx,ts,tsx,md,mdx,html,css,scss,json,yml}"
-      run: bunx prettier {staged_files} --write
+    lint:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: biome >/dev/null 2>&1 && biome check --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
     types:
       glob: "*.{js,ts,jsx,tsx}"
       run: bunx tsc --noEmit

@@ -11,20 +11,20 @@ import { cn } from "@/lib/utils";
  * @returns The root layout component
  */
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.className,
-        )}
-      >
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<body
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					fontSans.className,
+				)}
+			>
+				{children}
+			</body>
+		</html>
+	);
 }

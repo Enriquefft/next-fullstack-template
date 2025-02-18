@@ -1,62 +1,63 @@
 {
-  "name": "next-fullstack-template",
-  "type": "module",
-  "version": "0.1.0",
-  "description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Enriquefft/next-fullstack-template"
-  },
-  "bugs": {
-    "url": "https://github.com/Enriquefft/next-fullstack-template/issues"
-  },
-  "license": "SEE LICENSE IN LICENSE.public",
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "TODO",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^0.9.5",
-    "@radix-ui/react-dialog": "^1.1.6",
-    "@radix-ui/react-slot": "^1.1.2",
-    "@t3-oss/env-nextjs": "^0.11.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "drizzle-orm": "^0.32.2",
-    "drizzle-zod": "^0.5.1",
-    "lucide-react": "^0.424.0",
-    "next": "15.1.7",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@happy-dom/global-registrator": "^14.12.3",
-    "@tailwindcss/postcss": "^4.0.7",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^22.13.4",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
-    "drizzle-kit": "^0.23.2",
-    "jest": "^29.7.0",
-    "pg": "^8.13.3",
-    "postcss": "^8.5.2",
-    "tailwindcss": "^4.0.7",
-    "typescript": "^5.7.3"
-  },
-  "overrides": {
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4"
-  }
+	"name": "next-fullstack-template",
+	"type": "module",
+	"version": "0.1.0",
+	"description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Enriquefft/next-fullstack-template"
+	},
+	"bugs": {
+		"url": "https://github.com/Enriquefft/next-fullstack-template/issues"
+	},
+	"license": "SEE LICENSE IN LICENSE.public",
+	"scripts": {
+		"dev": "next dev --turbopack",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"format": "TODO",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^0.9.5",
+		"@radix-ui/react-dialog": "^1.1.6",
+		"@radix-ui/react-slot": "^1.1.2",
+		"@t3-oss/env-nextjs": "^0.11.1",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"drizzle-orm": "^0.32.2",
+		"drizzle-zod": "^0.5.1",
+		"lucide-react": "^0.424.0",
+		"next": "15.1.7",
+		"react": "19.0.0",
+		"react-dom": "19.0.0",
+		"tailwind-merge": "^2.6.0",
+		"tailwindcss-animate": "^1.0.7",
+		"zod": "^3.24.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@happy-dom/global-registrator": "^14.12.3",
+		"@tailwindcss/postcss": "^4.0.7",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.2.0",
+		"@testing-library/user-event": "^14.6.1",
+		"@types/node": "^22.13.4",
+		"@types/react": "19.0.10",
+		"@types/react-dom": "19.0.4",
+		"drizzle-kit": "^0.23.2",
+		"jest": "^29.7.0",
+		"pg": "^8.13.3",
+		"postcss": "^8.5.2",
+		"tailwindcss": "^4.0.7",
+		"typescript": "^5.7.3"
+	},
+	"overrides": {
+		"@types/react": "19.0.10",
+		"@types/react-dom": "19.0.4"
+	}
 }

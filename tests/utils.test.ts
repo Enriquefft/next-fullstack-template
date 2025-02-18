@@ -5,5 +5,5 @@ import { expect } from "@jest/globals";
  * @param value - Any value.
  */
 export function assertNotNull<T>(value: T): asserts value is NonNullable<T> {
-  expect(value).not.toBeNull();
+	expect(value).not.toBeNull();
 }
