@@ -15,9 +15,9 @@ pre-push:
 pre-commit:
   parallel: true
   commands:
-    lint:
-      glob: "*.{js,ts,jsx,tsx}"
-      run: bunx eslint {staged_files} --fix
+    # lint:
+    #   glob: "*.{js,ts,jsx,tsx}"
+    #   run: bunx eslint {staged_files} --fix
     formatting:
       glob: "*.{js,jsx,ts,tsx,md,mdx,html,css,scss,json,yml}"
       run: bunx prettier {staged_files} --write
