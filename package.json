@@ -13,7 +13,7 @@
 	},
 	"license": "SEE LICENSE IN LICENSE.public",
 	"scripts": {
-		"dev": "next dev --turbopack",
+		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
@@ -26,6 +26,7 @@
 		"@radix-ui/react-dialog": "^1.1.6",
 		"@radix-ui/react-slot": "^1.1.2",
 		"@t3-oss/env-nextjs": "^0.12.0",
+		"better-auth": "^1.1.18",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.39.3",

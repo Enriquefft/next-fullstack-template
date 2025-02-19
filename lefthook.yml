@@ -17,7 +17,7 @@ pre-commit:
   commands:
     lint:
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
-      run: biome >/dev/null 2>&1 && biome check --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      run: biome >/dev/null 2>&1 && biome check --fix --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     types:
       glob: "*.{js,ts,jsx,tsx}"
       run: bunx tsc --noEmit

@@ -21,6 +21,7 @@
 
           lefthook
           commitlint-rs
+                    biome
 
         ];
     };
