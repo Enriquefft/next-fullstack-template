@@ -13,7 +13,10 @@ export const env = createEnv({
 		DRIZZLE_DATABASE_URL: z.string().url(),
 		// biome-ignore lint/style/useNamingConvention: <explanation>
 		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-		BETTER_AUTH_URL: z.string().default(url).refine((value) => value !== "")
+		BETTER_AUTH_URL: z
+			.string()
+			.default(url)
+			.refine((value) => value !== ""),
 	},
 	client: {
 		// biome-ignore lint/style/useNamingConvention: <explanation>
