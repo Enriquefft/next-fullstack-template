@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { index, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { schema } from ".";
+import { schema } from "./schema";
 
 export const posts = schema.table(
 	"post",
@@ -14,10 +14,10 @@ export const posts = schema.table(
 			.notNull(),
 		updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
 	},
-	(example) => ({
-		createdByIdIdx: index("createdById_idx").on(example.createdById),
-		nameIndex: index("name_idx").on(example.name),
-	}),
+	(example) => [
+		index("createdById_idx").on(example.createdById),
+		index("name_idx").on(example.name),
+    ],
 );
 export const insertPostSchema = createInsertSchema(posts);
 
