@@ -17,7 +17,7 @@ export const posts = schema.table(
 	(example) => [
 		index("createdById_idx").on(example.createdById),
 		index("name_idx").on(example.name),
-    ],
+	],
 );
 export const insertPostSchema = createInsertSchema(posts);
 
