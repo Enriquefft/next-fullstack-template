@@ -90,13 +90,17 @@
 @layer base {
 	/* Color Variables */
 	:root {
+		/* Base Colors */
 		--color-white: 0 0% 100%;
-		--color-black: 0 0% 3.9%;
-		--color-gray-light: 0 0% 96.1%;
+		/* Update black to a softer dark for body text */
+		--color-black: 210 10% 25%;
+		/* Use a soft light blue for backgrounds */
+		--color-gray-light: 210 50% 95%;
 		--color-gray-medium: 0 0% 89.8%;
 		--color-gray-dark: 0 0% 45.1%;
-		--color-primary: 0 0% 9%;
-		--color-primary-foreground: 0 0% 98%;
+		/* Primary: Deep Vibrant Blue for trust & professionalism */
+		--color-primary: 220 90% 30%;
+		--color-primary-foreground: 0 0% 100%;
 		--color-destructive: 0 84.2% 60.2%;
 		--color-destructive-dark: 0 62.8% 30.6%;
 		--color-radius: 0.5rem;
@@ -112,14 +116,18 @@
 		--dark-color-gray-light: 0 0% 14.9%;
 		--dark-color-gray-medium: 0 0% 14.9%;
 		--dark-color-gray-dark: 0 0% 63.9%;
-		--dark-color-primary: 0 0% 98%;
-		--dark-color-primary-foreground: 0 0% 9%;
+		--dark-color-primary: 220 90% 30%;
+		--dark-color-primary-foreground: 0 0% 100%;
 
 		--dark-color-chart-1: 220 70% 50%;
 		--dark-color-chart-2: 160 60% 45%;
 		--dark-color-chart-3: 30 80% 55%;
 		--dark-color-chart-4: 280 65% 60%;
 		--dark-color-chart-5: 340 75% 55%;
+
+		/* Accent: Vibrant Turquoise for CTAs/links */
+		--accent: 174 70% 40%;
+		--accent-foreground: 0 0% 100%;
 	}
 
 	/* Light Theme */
@@ -136,10 +144,10 @@
 		--radius: var(--color-radius);
 
 		/* Backgrounds */
-		--background: var(--white);
-		--foreground: var(--black);
-		--card-background: var(--white);
-		--popover-background: var(--white);
+		--background: hsl(210, 50%, 98%); /* Very light blue background */
+		--foreground: var(--black); /* Softer dark text */
+		--card-background: hsl(210, 50%, 98%);
+		--popover-background: hsl(210, 50%, 98%);
 
 		/* Foregrounds */
 		--card-foreground: var(--black);
@@ -152,9 +160,9 @@
 
 		/* Buttons */
 		--primary: var(--primary-color);
-		--secondary: var(--gray-light);
+		--secondary: hsl(210, 50%, 95%); /* Soft light blue for secondary buttons */
 		--muted: var(--gray-light);
-		--accent: var(--gray-light);
+		--accent: hsl(174, 70%, 40%); /* Vibrant turquoise accent */
 		--destructive: var(--destructive-color);
 
 		/* Borders and Inputs */
@@ -178,8 +186,9 @@
 		--gray-light: var(--dark-color-gray-light);
 		--gray-medium: var(--dark-color-gray-medium);
 		--gray-dark: var(--dark-color-gray-dark);
-		--primary-color: var(--dark-color-primary);
-		--primary-foreground-color: var(--dark-color-primary-foreground);
+		/* Use the same primary color in dark mode for brand consistency */
+		--primary-color: var(--color-primary);
+		--primary-foreground-color: var(--color-primary-foreground);
 		--destructive-color: var(--color-destructive-dark);
 
 		/* Backgrounds */
@@ -201,7 +210,7 @@
 		--primary: var(--primary-color);
 		--secondary: var(--gray-light);
 		--muted: var(--gray-light);
-		--accent: var(--gray-light);
+		--accent: hsl(174, 70%, 40%);
 		--destructive: var(--destructive-color);
 
 		/* Borders and Inputs */
