@@ -58,7 +58,7 @@
 				"noVoid": "error",
 				"noWith": "error",
 				"useArrowFunction": "error",
-				"useLiteralKeys": "error",
+				"useLiteralKeys": "info",
 				"useOptionalChain": "error",
 				"useRegexLiterals": "error"
 			},

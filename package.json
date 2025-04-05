@@ -17,7 +17,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"format": "TODO",
+		"format": "biome format --fix",
+		"auth:gen": "bunx @better-auth/cli@latest generate",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio"
 	},

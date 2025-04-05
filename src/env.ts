@@ -17,6 +17,10 @@ export const env = createEnv({
 			.string()
 			.default(url)
 			.refine((value) => value !== ""),
+		// biome-ignore lint/style/useNamingConvention: <explanation>
+		GOOGLE_CLIENT_ID: z.string(),
+		// biome-ignore lint/style/useNamingConvention: <explanation>
+		GOOGLE_CLIENT_SECRET: z.string(),
 	},
 	client: {
 		// biome-ignore lint/style/useNamingConvention: <explanation>
@@ -32,6 +36,10 @@ export const env = createEnv({
 		// biome-ignore lint/style/useNamingConvention: <explanation>
 		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
 		BETTER_AUTH_URL: process.env["BETTER_AUTH_URL"],
+		// biome-ignore lint/style/useNamingConvention: <explanation>
+		GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"],
+		// biome-ignore lint/style/useNamingConvention: <explanation>
+		GOOGLE_CLIENT_SECRET: process.env["GOOGLE_CLIENT_SECRET"],
 	},
 	emptyStringAsUndefined: false,
 });
