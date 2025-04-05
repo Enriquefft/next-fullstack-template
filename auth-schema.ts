@@ -1,7 +1,7 @@
-import { text, timestamp, boolean, varchar } from "drizzle-orm/pg-core";
 import { schema } from "@/db/schema/schema";
-import { z } from "zod";
+import { boolean, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 
 const PHONE_LENGTH = 9;
 const DNI_LENGTH = 8;
