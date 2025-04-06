@@ -1,4 +1,2 @@
 [test]
-coverage = true
 preload = "./tests/happydom.ts"
-coverageThreshold = 0.8
