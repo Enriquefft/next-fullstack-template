@@ -12,8 +12,8 @@ const url = getBaseUrl();
 export const env = createEnv({
 	client: {
 		NEXT_PUBLIC_APP_URL: z.string().optional(),
-		NEXT_PUBLIC_PROJECT_NAME: z.string(),
 		NEXT_PUBLIC_POSTHOG_KEY: z.string(),
+		NEXT_PUBLIC_PROJECT_NAME: z.string(),
 	},
 
 	emptyStringAsUndefined: false,
@@ -24,8 +24,8 @@ export const env = createEnv({
 		GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"],
 		GOOGLE_CLIENT_SECRET: process.env["GOOGLE_CLIENT_SECRET"],
 		NEXT_PUBLIC_APP_URL: process.env["NEXT_PUBLIC_APP_URL"],
-		NEXT_PUBLIC_PROJECT_NAME: process.env["NEXT_PUBLIC_PROJECT_NAME"],
 		NEXT_PUBLIC_POSTHOG_KEY: process.env["NEXT_PUBLIC_POSTHOG_KEY"],
+		NEXT_PUBLIC_PROJECT_NAME: process.env["NEXT_PUBLIC_PROJECT_NAME"],
 	},
 	server: {
 		BETTER_AUTH_URL: z.string().default(url),
