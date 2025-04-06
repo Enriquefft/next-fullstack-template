@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/complexity/useLiteralKeys: On this file, we need to use string keys for the env object. */
 /** biome-ignore-all lint/style/useNamingConvention: <explanation> */
 
-import process from "node:process";
 import { vercel } from "@t3-oss/env-core/presets-zod";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
