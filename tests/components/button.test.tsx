@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { expect, test } from "@jest/globals";
-
 import { render, screen } from "@testing-library/react";
+import { Button } from "@/components/ui/button";
 
 test("uses jest-dom", () => {
 	render(<Button>Visible Example</Button>);

@@ -1,26 +1,6 @@
 {
-	"name": "next-fullstack-template",
-	"type": "module",
-	"version": "0.1.0",
-	"description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
-	"private": true,
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Enriquefft/next-fullstack-template"
-	},
 	"bugs": {
 		"url": "https://github.com/Enriquefft/next-fullstack-template/issues"
-	},
-	"license": "SEE LICENSE IN LICENSE.public",
-	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint",
-		"format": "biome format --fix",
-		"auth:gen": "bunx @better-auth/cli@latest generate",
-		"db:push": "drizzle-kit push",
-		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^0.10.4",
@@ -40,8 +20,9 @@
 		"tailwindcss-animate": "^1.0.7",
 		"zod": "^3.24.2"
 	},
+	"description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "^2.0.0-beta.1",
 		"@happy-dom/global-registrator": "^17.1.0",
 		"@tailwindcss/postcss": "^4.0.7",
 		"@testing-library/dom": "^10.4.0",
@@ -58,8 +39,29 @@
 		"tailwindcss": "^4.0.7",
 		"typescript": "^5.7.3"
 	},
+	"license": "SEE LICENSE IN LICENSE.public",
+	"name": "next-fullstack-template",
 	"overrides": {
 		"@types/react": "19.0.10",
 		"@types/react-dom": "19.0.4"
-	}
+	},
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Enriquefft/next-fullstack-template"
+	},
+	"scripts": {
+		"auth:gen": "bunx @better-auth/cli@latest generate",
+		"auth:secret": "bunx @better-auth/cli@latest secret",
+		"build": "next build",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"dev": "next dev",
+		"format": "biome format --fix",
+		"lint": "next lint",
+		"type": "tsc --noEmit",
+		"start": "next start"
+	},
+	"type": "module",
+	"version": "0.1.0"
 }

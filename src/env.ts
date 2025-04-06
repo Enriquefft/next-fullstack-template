@@ -1,45 +1,34 @@
+/** biome-ignore-all lint/complexity/useLiteralKeys: On this file, we need to use string keys for the env object. */
+/** biome-ignore-all lint/style/useNamingConvention: <explanation> */
+
+import process from "node:process";
 import { vercel } from "@t3-oss/env-core/presets-zod";
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+import { getBaseUrl } from "./lib/utils.ts";
 
-// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-const url = process.env["VERCEL_PROJECT_PRODUCTION_URL"] ?? "";
+const url = getBaseUrl();
 
 export const env = createEnv({
-	extends: [vercel()],
-
-	server: {
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		DRIZZLE_DATABASE_URL: z.string().url(),
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-		BETTER_AUTH_URL: z
-			.string()
-			.default(url)
-			.refine((value) => value !== ""),
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		GOOGLE_CLIENT_ID: z.string(),
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		GOOGLE_CLIENT_SECRET: z.string(),
-	},
 	client: {
-		// biome-ignore lint/style/useNamingConvention: <explanation>
+		NEXT_PUBLIC_APP_URL: z.string().optional(),
 		NEXT_PUBLIC_PROJECT_NAME: z.string(),
 	},
-	runtimeEnv: {
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-		NEXT_PUBLIC_PROJECT_NAME: process.env["NEXT_PUBLIC_PROJECT_NAME"],
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-		DRIZZLE_DATABASE_URL: process.env["DRIZZLE_DATABASE_URL"],
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-		BETTER_AUTH_URL: process.env["BETTER_AUTH_URL"],
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"],
-		// biome-ignore lint/style/useNamingConvention: <explanation>
-		GOOGLE_CLIENT_SECRET: process.env["GOOGLE_CLIENT_SECRET"],
-	},
+
 	emptyStringAsUndefined: false,
+	extends: [vercel()],
+	runtimeEnv: {
+		BETTER_AUTH_URL: process.env["BETTER_AUTH_URL"],
+		DRIZZLE_DATABASE_URL: process.env["DRIZZLE_DATABASE_URL"],
+		GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"],
+		GOOGLE_CLIENT_SECRET: process.env["GOOGLE_CLIENT_SECRET"],
+		NEXT_PUBLIC_APP_URL: process.env["NEXT_PUBLIC_APP_URL"],
+		NEXT_PUBLIC_PROJECT_NAME: process.env["NEXT_PUBLIC_PROJECT_NAME"],
+	},
+	server: {
+		BETTER_AUTH_URL: z.string().default(url),
+		DRIZZLE_DATABASE_URL: z.string().url(),
+		GOOGLE_CLIENT_ID: z.string(),
+		GOOGLE_CLIENT_SECRET: z.string(),
+	},
 });

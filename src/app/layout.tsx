@@ -1,9 +1,9 @@
 import "@/styles/globals.css";
+
 export { metadata } from "@/metadata";
 
-import { inter as fontSans } from "@/styles/fonts";
-
 import { cn } from "@/lib/utils";
+import { inter as fontSans } from "@/styles/fonts";
 
 /**
  * @param layoutPros - The root layout component props
