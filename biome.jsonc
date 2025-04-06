@@ -40,6 +40,11 @@
 		}
 	},
 	"linter": {
+		"domains": {
+			"next": "all",
+			"react": "all",
+			"test": "all"
+		},
 		"enabled": true,
 		"includes": [
 			"**",
@@ -51,11 +56,6 @@
 		],
 		"rules": {
 			"recommended": true
-		},
-		"domains": {
-			"next": "all",
-			"react": "all",
-			"test": "all"
 		}
 	},
 	"overrides": [
@@ -78,10 +78,10 @@
 			"includes": ["**"],
 			"linter": {
 				"rules": {
-					"nursery": {},
 					"correctness": {
 						// "noNodejsModules": "off"
-					}
+					},
+					"nursery": {}
 				}
 			}
 		}

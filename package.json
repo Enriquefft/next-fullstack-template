@@ -59,8 +59,8 @@
 		"dev": "next dev",
 		"format": "biome format --fix",
 		"lint": "next lint",
-		"type": "tsc --noEmit",
-		"start": "next start"
+		"start": "next start",
+		"type": "tsc --noEmit"
 	},
 	"type": "module",
 	"version": "0.1.0"
