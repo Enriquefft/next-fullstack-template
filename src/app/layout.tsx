@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 
 export { metadata } from "@/metadata";
 
+import { PostHogProvider } from "@/components/PostHogProvider";
 import { cn } from "@/lib/utils";
 import { inter as fontSans } from "@/styles/fonts";
 
@@ -23,7 +24,7 @@ export default function RootLayout({
 					fontSans.className,
 				)}
 			>
-				{children}
+				<PostHogProvider>{children}</PostHogProvider>
 			</body>
 		</html>
 	);
