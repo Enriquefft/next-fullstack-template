@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 import { auth } from "@/auth";
-import { polarApi } from "@/lib/polar";
 import { ProductCard } from "@/components/ProductCard";
+import { polarApi } from "@/lib/polar";
 /**
  * @returns Home page component
  */

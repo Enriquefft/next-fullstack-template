@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { Product } from "@polar-sh/sdk/models/components/product.js";
+import Link from "next/link";
 import { useMemo } from "react";
 
 interface ProductCardProps {
