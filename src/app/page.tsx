@@ -1,12 +1,18 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 import { auth } from "@/auth";
+import { polarApi } from "@/lib/polar";
+import { ProductCard } from "@/components/ProductCard";
 /**
  * @returns Home page component
  */
 export default async function Home() {
 	const session = await auth.api.getSession({
 		headers: await headers(),
+	});
+
+	const { result } = await polarApi.products.list({
+		isArchived: false, // Only fetch products which are published
 	});
 
 	return (
@@ -52,6 +58,14 @@ export default async function Home() {
 					height={37}
 					priority={true}
 				/>
+			</div>
+			<div className="flex flex-col gap-y-32">
+				<h1 className="text-5xl">Products</h1>
+				<div className="grid grid-cols-4 gap-12">
+					{result.items.map((product) => (
+						<ProductCard key={product.id} product={product} />
+					))}
+				</div>
 			</div>
 
 			<div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
