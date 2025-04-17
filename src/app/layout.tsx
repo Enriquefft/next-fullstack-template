@@ -6,6 +6,8 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { cn } from "@/lib/utils";
 import { inter as fontSans } from "@/styles/fonts";
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 /**
  * @param layoutPros - The root layout component props
  * @param layoutPros.children - The layout children
@@ -24,7 +26,14 @@ export default function RootLayout({
 					fontSans.className,
 				)}
 			>
-				<PostHogProvider>{children}</PostHogProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<PostHogProvider>{children}</PostHogProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);
