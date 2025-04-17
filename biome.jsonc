@@ -73,17 +73,6 @@
 					}
 				}
 			}
-		},
-		{
-			"includes": ["**"],
-			"linter": {
-				"rules": {
-					"correctness": {
-						// "noNodejsModules": "off"
-					},
-					"nursery": {}
-				}
-			}
 		}
 	],
 	"vcs": {
