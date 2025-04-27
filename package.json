@@ -39,6 +39,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@happy-dom/global-registrator": "^17.4.4",
+		"@hookform/devtools": "^4.4.0",
 		"@tailwindcss/postcss": "^4.1.4",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
