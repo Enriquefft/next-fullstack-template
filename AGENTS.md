@@ -46,6 +46,8 @@ This is a template repository. After cloning, update all references to match you
 - Adjust environment variables in `src/env.ts` and `.env.local` (if present).
 - Replace placeholder text in `docs/brand.md` with your real brand details.
 - Review the sample components and pages under `src/app` and `src/components` and adapt as needed.
+- Lastly, update this file: `AGENTS.md`, removing every mention that this is a template repository alongside this customization checklist (after making all needed changes).
+
 
 ## AGENTS.md Inheritance
 
