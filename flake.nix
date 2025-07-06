@@ -2,8 +2,7 @@
   description = "generic Flake for Next api's.";
 
   inputs = {
-    nixpkgs.url =
-      "github:NixOS/nixpkgs/e2a6a7310f5432a733c848702ab4ea31751a10d0";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flakelight.url = "github:nix-community/flakelight";
   };
 
