@@ -35,7 +35,7 @@ export const getBaseUrl = () => {
 };
 /** biome-ignore-end lint/complexity/useLiteralKeys: On this file, we need to use string keys for the env object. */
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: The debounce function is a generic utility function that can accept any type of arguments.
 export function debounce<T extends (...args: any[]) => any>(
 	func: T,
 	wait: number,
