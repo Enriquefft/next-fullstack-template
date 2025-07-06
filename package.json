@@ -37,7 +37,7 @@
 	},
 	"description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.0.6",
 		"@happy-dom/global-registrator": "^17.6.3",
 		"@hookform/devtools": "^4.4.0",
 		"@tailwindcss/postcss": "^4.1.11",
