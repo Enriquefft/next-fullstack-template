@@ -1,37 +1,110 @@
-This is a [Next.js](https://nextjs.org/) project template bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next Fullstack Template
 
-## Why fullstack frameworks?
+A preconfigured Next.js starter built with TypeScript, Bun, Tailwind CSS and
+Drizzle ORM. It includes Better Auth, shadcn/ui, PostHog analytics and a basic
+Nix flake for development.
 
-### Why NextJs?
+## Features
 
-I chose NextJs among all the other frameworks mostly because of its popularity, which helps team onboarding.
+- Next.js 15 with the App Router
+- Bun package manager and runtime
+- Tailwind CSS with shadcn/ui components
+- Drizzle ORM for PostgreSQL
+- Authentication powered by Better Auth
+- PostHog analytics integration
+- Unit tests with Happy DOM and Testing Library
+- Biome formatting and linting
+
+
+## Technology Choices
+
+- **Bun** – Fast runtime and package manager. Install from <https://bun.sh>, then run `bun dev` to start the app and `bun test` for tests.
+- **Tailwind CSS & shadcn/ui** – Utility-first styling with prebuilt UI primitives. Global styles live in `src/styles` and components in `src/components/ui`.
+- **Drizzle ORM** – Type-safe database toolkit. Schemas are in `src/db/schema`; run `bun run db:push` for migrations and `bun run db:studio` to explore.
+- **Better Auth** – Simple authentication using Drizzle and Google OAuth. Configuration resides in `src/auth.ts`; client helpers are in `src/lib/auth-client.ts`.
+- **PostHog Analytics** – Tracks usage and page views. Initialized via `PostHogProvider` from `posthog-js`.
+- **Nix Flake** – Provides a reproducible dev shell. Run `nix develop` to enter the environment.
+- **Biome** – Formatter and linter. Execute `bun run format` or rely on Lefthook pre-commit hooks.
+- **Happy DOM with Testing Library** – Lightweight DOM testing environment defined in `tests/happydom.ts`.
 
 ## Getting Started
-
-First, clone the repo and install dependencies:
+Clone the repo and install dependencies:
 
 ```bash
-git clone git@github.com:Enriquefft/next-fullstack-template.git
+git clone https://github.com/Enriquefft/next-fullstack-template.git
 cd next-fullstack-template
 bun install
 ```
 
-#### Contributing
+Create a `.env` file from `.env.example` and fill in the environment variables.
 
-To contribute, install the pre-commit ([lefthook](https://github.com/evilmartians/lefthook)) hooks:
+Install the Git hooks (optional but recommended):
 
 ```bash
 bunx lefthook install
 ```
 
-### Database
-
-The recommended db for prototyping is [Neon](https://neon.tech/) combined with drizzle multi-project-schema.
-
-Then, run the development server:
+Run the development server:
 
 ```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit <http://localhost:3000> in your browser.
+
+## Available Scripts
+
+- `bun dev` – start the dev server
+- `bun run build` – build for production
+- `bun start` – run the production build
+- `bun test` – execute unit tests
+- `bun run format` – format code with Biome
+- `bunx tsc --noEmit` – type‑check the project
+- `bun run db:push` – run Drizzle migrations
+- `bun run db:studio` – open Drizzle Studio
+
+## Project Structure
+
+- `src/app` – Next.js routes and pages
+- `src/components` – shared React components and `ui` primitives
+- `src/db` – database schemas and utilities
+- `src/styles` – global CSS and fonts
+- `tests` – unit tests for Bun
+- `docs` – project documentation
+
+## Environment Variables
+
+The `t3-oss/env-nextjs` package provides type‑safe access to env vars. Set the
+values below in your `.env` file:
+
+```bash
+NEXT_PUBLIC_PROJECT_NAME=
+DRIZZLE_DATABASE_URL=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+BETTER_AUTH_SECRET=
+NEXT_PUBLIC_POSTHOG_KEY=
+POLAR_ACCESS_TOKEN=
+POLAR_MODE=
+# Optional
+NEXT_PUBLIC_APP_URL=
+BETTER_AUTH_URL=
+```
+
+See `.env.example` for details.
+
+## Contributing
+
+Before opening a pull request, format and type-check the code and run tests:
+
+```bash
+bun run format
+bunx tsc --noEmit
+bun test
+```
+
+Keep commits focused and include a clear message.
+
+## License
+
+This project is available under the MIT License. See `LICENSE-MIT` for details.
