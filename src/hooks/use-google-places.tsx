@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type PlacePrediction = {
 	description: string;
@@ -15,23 +15,23 @@ type UseGooglePlacesReturn = {
 	searchPlaces: (query: string) => Promise<void>;
 };
 
+let googlePlacesLoading: Promise<void> | null = null;
 export const useGooglePlaces = (apiKey: string): UseGooglePlacesReturn => {
 	// Store the full suggestions for later details retrieval.
 	const [suggestions, setSuggestions] = useState<CompleteSuggestion[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const scriptLoaded = useRef<boolean>(false);
 
 	useEffect(() => {
-		// Check if the script is already loaded.
-		if (window.google?.maps?.places || scriptLoaded.current) {
-			return;
+		if (!googlePlacesLoading) {
+			googlePlacesLoading = new Promise((resolve, reject) => {
+				if (window.google?.maps?.places) return resolve();
+				const s = document.createElement("script");
+				s.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+				s.onload = () => resolve();
+				s.onerror = reject;
+				document.head.appendChild(s);
+			});
 		}
-		scriptLoaded.current = true;
-		const script = document.createElement("script");
-		script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-		script.async = true;
-		script.defer = true;
-		document.head.appendChild(script);
 	}, [apiKey]);
 
 	const searchPlaces = async (query: string): Promise<void> => {
