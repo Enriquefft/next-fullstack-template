@@ -16,6 +16,11 @@ type UseGooglePlacesReturn = {
 };
 
 let googlePlacesLoading: Promise<void> | null = null;
+
+export const resetGooglePlacesLoading = () => {
+	googlePlacesLoading = null;
+};
+
 export const useGooglePlaces = (apiKey: string): UseGooglePlacesReturn => {
 	// Store the full suggestions for later details retrieval.
 	const [suggestions, setSuggestions] = useState<CompleteSuggestion[]>([]);
@@ -25,6 +30,7 @@ export const useGooglePlaces = (apiKey: string): UseGooglePlacesReturn => {
 		if (!googlePlacesLoading) {
 			googlePlacesLoading = new Promise((resolve, reject) => {
 				if (window.google?.maps?.places) return resolve();
+
 				const s = document.createElement("script");
 				s.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
 				s.onload = () => resolve();
