@@ -28,7 +28,9 @@ Nix flake for development.
 - **Happy DOM with Testing Library** – Lightweight DOM testing environment defined in `tests/happydom.ts`.
 
 ## Getting Started
-Clone the repo and install dependencies:
+Install **Bun** first if it isn't already available on your system. Visit
+<https://bun.sh> for installation instructions. Then clone the repo and install
+its dependencies:
 
 ```bash
 git clone https://github.com/Enriquefft/next-fullstack-template.git
@@ -53,6 +55,8 @@ bun dev
 Visit <http://localhost:3000> in your browser.
 
 ## Available Scripts
+
+The following commands rely on Bun and the packages installed with `bun install`:
 
 - `bun dev` – start the dev server
 - `bun run build` – build for production
@@ -95,7 +99,8 @@ See `.env.example` for details.
 
 ## Contributing
 
-Before opening a pull request, format and type-check the code and run tests:
+Before opening a pull request, make sure Bun and the project dependencies are
+installed with `bun install`. Then format and type-check the code and run tests:
 
 ```bash
 bun run format
