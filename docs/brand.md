@@ -133,4 +133,3 @@ Link to shared folders or internal tools where team members can access fonts, lo
 ---
 
 This template is intentionally generic so it can be customized. Replace each placeholder and example with your brand's specific information to create a comprehensive single source of truth.
-
