@@ -97,6 +97,14 @@ BETTER_AUTH_URL=
 
 See `.env.example` for details.
 
+## Metadata and Social Sharing
+
+Page metadata lives in `src/metadata.ts`. Customize the title, description and
+authors to fit your project. Set `NEXT_PUBLIC_APP_URL` or edit `metadataBase`
+so absolute URLs are generated. This ensures the `og:image` preview works on
+platforms like WhatsApp. Replace `src/app/opengraph-image.png` with your own
+social card if desired.
+
 ## Contributing
 
 Before opening a pull request, make sure Bun and the project dependencies are
