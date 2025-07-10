@@ -6,22 +6,21 @@ const description =
 	"A fullstack Next.js starter powered by Bun, Tailwind CSS and Drizzle ORM.";
 const url = getBaseUrl();
 
-const ogImages = [
-	{
-		alt: siteName,
-		height: 630,
-		type: "image/png",
-		url: new URL("/opengraph-image.png", url).toString(),
-		width: 1200,
-	},
-	{
-		alt: siteName,
-		height: 630,
-		type: "image/webp",
-		url: new URL("/opengraph-image.webp", url).toString(),
-		width: 1200,
-	},
-];
+const pngImage = {
+	alt: siteName,
+	height: 630,
+	type: "image/png",
+	url: new URL("/opengraph-image.png", url).toString(),
+	width: 1200,
+};
+
+const webpImage = {
+	alt: siteName,
+	height: 630,
+	type: "image/webp",
+	url: new URL("/opengraph-image.webp", url).toString(),
+	width: 1200,
+};
 
 export const metadata: Metadata = {
 	authors: [
@@ -40,7 +39,10 @@ export const metadata: Metadata = {
 
 	openGraph: {
 		description,
-		images: ogImages,
+		images: [
+			// webpImage is preferred for WhatsApp
+			webpImage,
+		],
 		locale: "en_US",
 		siteName,
 		title: siteName,
@@ -55,7 +57,7 @@ export const metadata: Metadata = {
 	twitter: {
 		card: "summary_large_image",
 		description,
-		images: ogImages,
+		images: [pngImage, webpImage],
 		title: siteName,
 	},
 };
