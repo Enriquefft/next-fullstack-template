@@ -6,7 +6,7 @@
       "dependencies": {
         "@hookform/resolvers": "^5.1.1",
         "@neondatabase/serverless": "^1.0.1",
-        "@polar-sh/nextjs": "^0.4.2",
+        "@polar-sh/better-auth": "^1.0.4",
         "@polar-sh/sdk": "^0.34.3",
         "@radix-ui/react-dialog": "^1.1.14",
         "@radix-ui/react-dropdown-menu": "^2.1.15",
@@ -412,9 +412,7 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.7", "", {}, "sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg=="],
 
-    "@polar-sh/adapter-utils": ["@polar-sh/adapter-utils@0.2.1", "", { "dependencies": { "@polar-sh/sdk": "^0.34.2" } }, "sha512-qcfTi6es9j4DRodYoPN1w5OHlVIjmPuTwV8CF1B09ghwI3gkI0s2wyCK0anTafcOSK5/astCTCbvUbgtRdw6yg=="],
-
-    "@polar-sh/nextjs": ["@polar-sh/nextjs@0.4.2", "", { "dependencies": { "@polar-sh/adapter-utils": "0.2.1", "@polar-sh/sdk": "^0.34.2" }, "peerDependencies": { "next": "^15.0.0 || ^15.2.0-canary.*" } }, "sha512-9xhOGr2pZ0Sbg8LPlXKn8qhSKiIC0VvYFgTnHQd7Fgogyu146KAGMTqQkSADuNmdoWctHoeNxHDLGvMDiKZYOg=="],
+    "@polar-sh/better-auth": ["@polar-sh/better-auth@1.0.4", "", { "dependencies": { "zod": "^3.24.2" }, "peerDependencies": { "@polar-sh/sdk": "^0.32.15", "better-auth": "^1.2.7" } }, "sha512-sEuZtImh+kwEHqH5adOUPeEqqwrXbiVJ91BIeKdptD+1rdoXmtQSkazlnSWPA1LAo2xXe4Df/KQOaE1ByteuHw=="],
 
     "@polar-sh/sdk": ["@polar-sh/sdk@0.34.3", "", { "dependencies": { "standardwebhooks": "^1.0.0" }, "peerDependencies": { "@modelcontextprotocol/sdk": ">=1.5.0 <1.10.0", "zod": ">= 3" }, "optionalPeers": ["@modelcontextprotocol/sdk"], "bin": { "mcp": "bin/mcp-server.js" } }, "sha512-D6887BO+ogK1idUVYJo2J5OvDKK8u+kzYNtUGfdfn2CiV24I8wgCyr/mUCMTJa1KZD2yhcUjgrxVUcufQABE6g=="],
 

@@ -1,6 +1,7 @@
+"use client";
 import type { Product } from "@polar-sh/sdk/models/components/product.js";
-import Link from "next/link";
 import { useMemo } from "react";
+import { checkout } from "@/lib/auth-client";
 
 interface ProductCardProps {
 	product: Product;
@@ -37,12 +38,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 				</ul>
 			</div>
 			<div className="flex flex-row gap-x-4 justify-between items-center">
-				<Link
+				<button
 					className="h-8 flex flex-row items-center justify-center rounded-full bg-white text-black font-medium px-4"
-					href={`/api/checkout?productId=${product.id}`}
+					onClick={() => checkout({ products: [product.id] })}
 				>
 					Buy
-				</Link>
+				</button>
 				<span className="text-neutral-500">{price}</span>
 			</div>
 		</div>
