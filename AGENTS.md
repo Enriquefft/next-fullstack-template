@@ -37,6 +37,7 @@ This repository provides a **Next.js** template configured with **TypeScript**, 
 - Use **Tailwind CSS** classes and Shadcn/UI components for UI work.
 - Components and types use **PascalCase**. Variables and functions use **camelCase**. File names use **kebab-case**.
 - Keep lines under 80 characters when practical and remove unused code.
+- Single source of truth is a must everywhere and for everything.
 
 ## Customization Checklist
 
