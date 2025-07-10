@@ -1,8 +1,8 @@
+import { checkout, polar, portal } from "@polar-sh/better-auth";
+import { Polar } from "@polar-sh/sdk";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { Polar } from "@polar-sh/sdk";
-import { polar, checkout, portal } from "@polar-sh/better-auth";
 import { db } from "@/db";
 import { env } from "./env.ts";
 
@@ -20,8 +20,8 @@ export const auth = betterAuth({
 			createCustomerOnSignUp: true,
 			use: [
 				checkout({
-					successUrl: "/confirmation",
 					authenticatedUsersOnly: true,
+					successUrl: "/confirmation",
 				}),
 				portal(),
 			],

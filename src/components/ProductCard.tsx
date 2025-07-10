@@ -2,6 +2,7 @@
 import type { Product } from "@polar-sh/sdk/models/components/product.js";
 import { useMemo } from "react";
 import { checkout } from "@/lib/auth-client";
+import { Button } from "./ui/button";
 
 interface ProductCardProps {
 	product: Product;
@@ -38,12 +39,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 				</ul>
 			</div>
 			<div className="flex flex-row gap-x-4 justify-between items-center">
-				<button
+				<Button
 					className="h-8 flex flex-row items-center justify-center rounded-full bg-white text-black font-medium px-4"
 					onClick={() => checkout({ products: [product.id] })}
 				>
 					Buy
-				</button>
+				</Button>
 				<span className="text-neutral-500">{price}</span>
 			</div>
 		</div>
