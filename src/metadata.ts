@@ -6,7 +6,8 @@ const description =
 	"A fullstack Next.js starter powered by Bun, Tailwind CSS and Drizzle ORM.";
 const url = getBaseUrl();
 
-const pngImage = {
+// @ts-ignore: unused variable
+const _ = {
 	alt: siteName,
 	height: 630,
 	type: "image/png",
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
 	twitter: {
 		card: "summary_large_image",
 		description,
-		images: [pngImage, webpImage],
+		images: [webpImage],
 		title: siteName,
 	},
 };
