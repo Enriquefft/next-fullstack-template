@@ -91,7 +91,6 @@ NEXT_PUBLIC_POSTHOG_KEY=
 POLAR_ACCESS_TOKEN=
 POLAR_MODE=
 # Optional
-NEXT_PUBLIC_APP_URL=
 BETTER_AUTH_URL=
 ```
 
@@ -100,10 +99,17 @@ See `.env.example` for details.
 ## Metadata and Social Sharing
 
 Page metadata lives in `src/metadata.ts`. Customize the title, description and
-authors to fit your project. Set `NEXT_PUBLIC_APP_URL` or edit `metadataBase`
-so absolute URLs are generated. This ensures the `og:image` preview works on
-platforms like WhatsApp. Replace `src/app/opengraph-image.png` with your own
-social card if desired.
+authors to fit your project. Edit the `metadataBase` field so absolute URLs are
+generated. This ensures the `og:image` preview works on platforms like
+WhatsApp. Replace `public/opengraph-image.png` (and the
+`opengraph-image.webp` variant) with your own social card if desired.
+
+Next.js reads `src/app/icon.png` to generate the favicon and other metadata
+icons. Swap this file for your own icon or add additional sizes following
+Next.js file conventions. The exported `metadata` object in `src/metadata.ts`
+imports these images. Update its `title`, `description`, `authors` and any other
+fields to reflect your project. Ensure `metadataBase` points to your deployed
+domain so that absolute URLs for icons and OpenGraph images resolve correctly.
 
 ## Contributing
 
