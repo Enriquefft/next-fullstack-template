@@ -5,15 +5,7 @@ const siteName = "Next Fullstack Template";
 const description =
 	"A fullstack Next.js starter powered by Bun, Tailwind CSS and Drizzle ORM.";
 const url = getBaseUrl();
-
-// @ts-ignore: unused variable
-const _ = {
-	alt: siteName,
-	height: 630,
-	type: "image/png",
-	url: new URL("/opengraph-image.png", url).toString(),
-	width: 1200,
-};
+const keywords = ["Next.js", "fullstack", "Bun", "Drizzle ORM", "template"];
 
 const webpImage = {
 	alt: siteName,
@@ -35,7 +27,7 @@ export const metadata: Metadata = {
 	icons: {
 		icon: "/icon.png",
 	},
-	keywords: ["Next.js", "fullstack", "Bun", "Drizzle ORM", "template"],
+	keywords,
 	metadataBase: new URL(url),
 
 	openGraph: {
