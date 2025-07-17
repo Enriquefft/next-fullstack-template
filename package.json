@@ -72,6 +72,8 @@
 		"auth:gen": "bunx @better-auth/cli@latest generate",
 		"auth:secret": "bunx @better-auth/cli@latest secret",
 		"build": "next build",
+		"check:deps": "knip",
+		"cleanup": "knip --fix",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
 		"dev": "next dev",
