@@ -35,6 +35,7 @@ export function ProfileForm() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
+		// This should, generally, be a call to a server action
 		console.log(values);
 	}
 
