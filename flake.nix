@@ -1,5 +1,5 @@
 {
-  description = "generic Flake for Next api's.";
+  description = "generic Flake for Nextjs.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
