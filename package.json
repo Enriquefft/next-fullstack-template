@@ -23,7 +23,7 @@
 		"drizzle-orm": "^0.44.3",
 		"drizzle-zod": "^0.8.2",
 		"lucide-react": "^0.525.0",
-		"next": "15.3.5",
+		"next": "15.4.4",
 		"next-themes": "^0.4.6",
 		"posthog-js": "^1.258.2",
 		"posthog-node": "^5.6.0",
@@ -34,7 +34,7 @@
 		"sonner": "^2.0.6",
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss-animate": "^1.0.7",
-		"zod": "^3.25.76"
+		"zod": "^4.0.10"
 	},
 	"description": "Template for Next.js fullstack applications, my preferred framework for MVP'S.",
 	"devDependencies": {
@@ -48,8 +48,8 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@types/google.maps": "^3.58.1",
 		"@types/node": "^24.1.0",
-		"@types/react": "19.0.10",
-		"@types/react-dom": "19.0.4",
+		"@types/react": "19.1.8",
+		"@types/react-dom": "19.1.6",
 		"drizzle-kit": "^0.31.4",
 		"jest": "^30.0.5",
 		"knip": "^5.62.0",
