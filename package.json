@@ -77,7 +77,7 @@
 		"format": "biome format --fix",
 		"lint": "next lint",
 		"start": "next start",
-		"type": "tsc --noEmit"
+		"type": "tsc --noEmit --pretty"
 	},
 	"type": "module",
 	"version": "0.1.0"
