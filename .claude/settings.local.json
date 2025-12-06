@@ -1,0 +1,13 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(bun outdated:*)",
+			"Bash(bun update:*)",
+			"Bash(bunx tsc:*)",
+			"Bash(bun test:*)",
+			"Bash(bun run build:*)"
+		],
+		"ask": [],
+		"deny": []
+	}
+}
