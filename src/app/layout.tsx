@@ -2,6 +2,9 @@ import "@/styles/globals.css";
 
 export { metadata } from "@/metadata";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
@@ -31,7 +34,19 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<PostHogProvider>{children}</PostHogProvider>
+					<PostHogProvider>
+						<NextSSRPlugin
+							/**
+							 * The `extractRouterConfig` will extract **only** the route configs
+							 * from the router to prevent additional information from being
+							 * leaked to the client. The data passed to the client is the same
+							 * as if you were to fetch `/api/uploadthing` directly.
+							 */
+							routerConfig={extractRouterConfig(ourFileRouter)}
+						/>
+
+						{children}
+					</PostHogProvider>
 				</ThemeProvider>
 			</body>
 		</html>

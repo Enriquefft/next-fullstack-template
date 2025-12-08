@@ -7,9 +7,6 @@ await jiti.import("./src/env.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	experimental: {
-		typedRoutes: true,
-	},
 	async rewrites() {
 		return [
 			{
@@ -29,6 +26,7 @@ const nextConfig = {
 	skipTrailingSlashRedirect: true,
 	// This is required to support PostHog trailing slash API requests
 	transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
+	typedRoutes: true,
 };
 
 export default nextConfig;

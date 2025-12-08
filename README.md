@@ -6,7 +6,7 @@ Nix flake for development.
 
 ## Features
 
-- Next.js 15 with the App Router
+- Next.js 16 with the App Router
 - Bun package manager and runtime
 - Tailwind CSS with shadcn/ui components
 - Drizzle ORM for PostgreSQL
