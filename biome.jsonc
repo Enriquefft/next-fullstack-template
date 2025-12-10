@@ -1,5 +1,5 @@
 {
-	"$schema": "https://next.biomejs.dev/schemas/2.0.0-beta/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
 	"assist": {
 		"actions": {
 			"source": {
@@ -17,7 +17,8 @@
 			"enabled": true
 		},
 		"parser": {
-			"cssModules": true
+			"cssModules": true,
+			"tailwindDirectives": true
 		}
 	},
 	"files": {
@@ -55,7 +56,19 @@
 			"!**/src/components/ui/*"
 		],
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"noInferrableTypes": "error",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"useAsConstAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error"
+			}
 		}
 	},
 	"overrides": [
@@ -69,7 +82,19 @@
 			"linter": {
 				"rules": {
 					"style": {
-						"noDefaultExport": "off"
+						"noDefaultExport": "off",
+						"useComponentExportOnlyModules": {
+							"options": {
+								"allowExportNames": [
+									"json",
+									"loader",
+									"headers",
+									"meta",
+									"links",
+									"scripts"
+								]
+							}
+						}
 					}
 				}
 			}
