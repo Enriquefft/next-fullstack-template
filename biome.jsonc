@@ -84,15 +84,9 @@
 					"style": {
 						"noDefaultExport": "off",
 						"useComponentExportOnlyModules": {
+							"level": "error",
 							"options": {
-								"allowExportNames": [
-									"json",
-									"loader",
-									"headers",
-									"meta",
-									"links",
-									"scripts"
-								]
+								"allowExportNames": ["metadata", "generateMetadata"]
 							}
 						}
 					}
