@@ -13,7 +13,7 @@ const config: KnipConfig = {
 	// Binaries to ignore during analysis
 	ignoreBinaries: [],
 	// Dependencies to ignore during analysis
-	ignoreDependencies: ["@hookform/devtools"],
+	ignoreDependencies: [],
 	paths: {
 		"@/*": ["./src/*"],
 	},

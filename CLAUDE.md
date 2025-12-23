@@ -45,6 +45,16 @@ Authentication is handled by **Better Auth** with **Polar** integration for paym
 
 Server Actions / Server Components provide better type safety, automatic request deduplication, and simpler data flow compared to API routes.
 
+### Forms
+
+Uses **TanStack Form** (`@tanstack/react-form`) with **Field** components from `src/components/ui/field.tsx`.
+
+- **Validation**: Zod schemas via `@tanstack/zod-form-adapter` and `zodValidator()`
+- **Pattern**: `useForm()` hook with `validatorAdapter`, render fields with `<form.Field>` children function
+- **Examples**: See `src/components/form-example.tsx` and `src/components/AddressAutocomplete.tsx`
+
+**IMPORTANT**: Do NOT use `react-hook-form`. Always use TanStack Form with Field components.
+
 ### Database Layer
 
 Uses **Drizzle ORM** with **Neon Serverless** driver for PostgreSQL.
