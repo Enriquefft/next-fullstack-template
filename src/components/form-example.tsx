@@ -33,13 +33,6 @@ export function ProfileForm() {
         },
     });
 
-    // 2. Define a submit handler.
-    function onSubmit(_values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        // TODO: Replace with a call to a server action
-    }
-
     return (
         <form
             onSubmit={(e) => {
