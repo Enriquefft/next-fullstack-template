@@ -92,8 +92,6 @@ const form = useForm({
 </form>
 ```
 
-See `TANSTACK_FORM_MIGRATION.md` for detailed migration guide and examples.
-
 ### Database Layer
 
 Uses **Drizzle ORM** with **Neon Serverless** driver for PostgreSQL.
