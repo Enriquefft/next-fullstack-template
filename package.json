@@ -14,7 +14,7 @@
 		"@tanstack/zod-form-adapter": "^0.42.1",
 		"@types/bun": "^1.3.5",
 		"@uploadthing/react": "^7.3.3",
-		"better-auth": "^1.4.7",
+		"better-auth": "^1.4.9",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.45.1",
