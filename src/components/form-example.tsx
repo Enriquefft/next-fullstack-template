@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ export function ProfileForm() {
 			// This should, generally, be a call to a server action
 			console.log(value);
 		},
-		validatorAdapter: zodValidator(),
 	});
 
 	return (

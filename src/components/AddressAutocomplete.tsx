@@ -1,4 +1,4 @@
-import type { ReactFormApi, DeepKeys } from "@tanstack/react-form";
+import type { DeepKeys } from "@tanstack/react-form";
 import { MapPin } from "lucide-react";
 import { useState } from "react";
 import {
@@ -19,7 +19,8 @@ import { useGooglePlaces } from "@/hooks/use-google-places";
 import { debounce } from "@/lib/utils.ts";
 
 type AddressAutocompleteProps<TFormData> = {
-	form: ReactFormApi<TFormData>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	form: any;
 	name: DeepKeys<TFormData>;
 	label?: string;
 	placeholder?: string;
@@ -43,7 +44,7 @@ export function AddressAutocomplete<TFormData>({
 
 	return (
 		<form.Field name={name}>
-			{(field) => (
+			{(field: any) => (
 				<Field data-invalid={field.state.meta.errors.length > 0}>
 					<FieldLabel data-error={field.state.meta.errors.length > 0}>
 						{label}
