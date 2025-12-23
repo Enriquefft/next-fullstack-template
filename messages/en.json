@@ -1,0 +1,26 @@
+{
+	"Confirmation": {
+		"thankYou": "Thank you! Your checkout is now being processed."
+	},
+	"HomePage": {
+		"getStarted": "Get started by editing",
+		"products": "Products",
+		"title": "Hello world!",
+		"welcome": "Welcome {name}",
+		"welcomeGuest": "Welcome Guest"
+	},
+	"Metadata": {
+		"description": "A fullstack Next.js template with authentication, database, and more.",
+		"title": "Next.js Fullstack Template"
+	},
+	"Navigation": {
+		"deploy": "Deploy",
+		"deployDescription": "Instantly deploy your Next.js site to a shareable URL with Vercel.",
+		"docs": "Docs",
+		"docsDescription": "Find in-depth information about Next.js features and API.",
+		"learn": "Learn",
+		"learnDescription": "Learn about Next.js in an interactive course with quizzes!",
+		"templates": "Templates",
+		"templatesDescription": "Explore starter templates for Next.js."
+	}
+}

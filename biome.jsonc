@@ -86,9 +86,16 @@
 						"useComponentExportOnlyModules": {
 							"level": "error",
 							"options": {
-								"allowExportNames": ["metadata", "generateMetadata"]
+								"allowExportNames": [
+									"metadata",
+									"generateMetadata",
+									"generateStaticParams"
+								]
 							}
 						}
+					},
+					"suspicious": {
+						"noShadowRestrictedNames": "off"
 					}
 				}
 			}

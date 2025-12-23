@@ -1,8 +1,8 @@
 import { PostHog } from "posthog-node";
-import { env } from "@/env";
+import { clientEnv } from "@/env/client.ts";
 
 export default function PostHogClient() {
-	const posthogClient = new PostHog(env.NEXT_PUBLIC_POSTHOG_KEY, {
+	const posthogClient = new PostHog(clientEnv.NEXT_PUBLIC_POSTHOG_KEY, {
 		flushAt: 1,
 		flushInterval: 0,
 		host: "https://us.i.posthog.com",

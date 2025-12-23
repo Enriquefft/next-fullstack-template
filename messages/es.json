@@ -1,0 +1,26 @@
+{
+	"Confirmation": {
+		"thankYou": "¡Gracias! Tu compra está siendo procesada."
+	},
+	"HomePage": {
+		"getStarted": "Comienza editando",
+		"products": "Productos",
+		"title": "¡Hola mundo!",
+		"welcome": "Bienvenido {name}",
+		"welcomeGuest": "Bienvenido Invitado"
+	},
+	"Metadata": {
+		"description": "Una plantilla fullstack de Next.js con autenticación, base de datos y más.",
+		"title": "Plantilla Fullstack Next.js"
+	},
+	"Navigation": {
+		"deploy": "Desplegar",
+		"deployDescription": "Despliega instantáneamente tu sitio Next.js a una URL compartible con Vercel.",
+		"docs": "Documentación",
+		"docsDescription": "Encuentra información detallada sobre las características y API de Next.js.",
+		"learn": "Aprende",
+		"learnDescription": "Aprende sobre Next.js en un curso interactivo con cuestionarios.",
+		"templates": "Plantillas",
+		"templatesDescription": "Explora plantillas de inicio para Next.js."
+	}
+}

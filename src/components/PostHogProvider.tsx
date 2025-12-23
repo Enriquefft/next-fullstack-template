@@ -4,11 +4,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 import { Suspense, useEffect } from "react";
-import { env } from "@/env";
+import { clientEnv } from "@/env/client.ts";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
-		posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+		posthog.init(clientEnv.NEXT_PUBLIC_POSTHOG_KEY, {
 			api_host: "/ingest",
 			capture_pageleave: true,
 			capture_pageview: false, // We capture pageviews manually

@@ -1,4 +1,4 @@
 import { pgSchema } from "drizzle-orm/pg-core";
-import { env } from "@/env.ts";
+import { clientEnv } from "@/env/client.ts";
 
-export const schema = pgSchema(env.NEXT_PUBLIC_PROJECT_NAME);
+export const schema = pgSchema(clientEnv.NEXT_PUBLIC_PROJECT_NAME);

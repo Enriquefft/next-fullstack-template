@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "@/db";
-import { env } from "./env.ts";
+import { serverEnv } from "./env/server.ts";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -14,8 +14,8 @@ export const auth = betterAuth({
 		nextCookies(),
 		polar({
 			client: new Polar({
-				accessToken: env.POLAR_ACCESS_TOKEN,
-				server: env.POLAR_MODE,
+				accessToken: serverEnv.POLAR_ACCESS_TOKEN,
+				server: serverEnv.POLAR_MODE,
 			}),
 			createCustomerOnSignUp: true,
 			use: [
@@ -29,8 +29,8 @@ export const auth = betterAuth({
 	],
 	socialProviders: {
 		google: {
-			clientId: env.GOOGLE_CLIENT_ID,
-			clientSecret: env.GOOGLE_CLIENT_SECRET,
+			clientId: serverEnv.GOOGLE_CLIENT_ID,
+			clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
 		},
 	},
 	user: {
