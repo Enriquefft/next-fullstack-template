@@ -1,4 +1,4 @@
-import type { ReactFormApi } from "@tanstack/react-form";
+import type { ReactFormApi, DeepKeys } from "@tanstack/react-form";
 import { MapPin } from "lucide-react";
 import { useState } from "react";
 import {
@@ -20,7 +20,7 @@ import { debounce } from "@/lib/utils.ts";
 
 type AddressAutocompleteProps<TFormData> = {
 	form: ReactFormApi<TFormData>;
-	name: keyof TFormData & string;
+	name: DeepKeys<TFormData>;
 	label?: string;
 	placeholder?: string;
 	apiKey: string;
