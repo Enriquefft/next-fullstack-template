@@ -47,50 +47,13 @@ Server Actions / Server Components provide better type safety, automatic request
 
 ### Forms
 
-This project uses **TanStack Form** with the shadcn/ui **Field** component for form management and validation.
+Uses **TanStack Form** (`@tanstack/react-form`) with **Field** components from `src/components/ui/field.tsx`.
 
-- **Form library**: `@tanstack/react-form` - Modern form state management
-- **Validation**: `@tanstack/zod-form-adapter` - Zod schema validation adapter
-- **UI components**: `src/components/ui/field.tsx` - Field, FieldLabel, FieldControl, FieldDescription, FieldError
-- **Example form**: `src/components/form-example.tsx` - Shows basic usage pattern
-- **Example autocomplete**: `src/components/AddressAutocomplete.tsx` - Reusable form field component
+- **Validation**: Zod schemas via `@tanstack/zod-form-adapter` and `zodValidator()`
+- **Pattern**: `useForm()` hook with `validatorAdapter`, render fields with `<form.Field>` children function
+- **Examples**: See `src/components/form-example.tsx` and `src/components/AddressAutocomplete.tsx`
 
-**IMPORTANT**: Do NOT use `react-hook-form`. The old Form component has been deprecated. Always use TanStack Form with the Field component.
-
-**Basic form pattern**:
-```tsx
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
-import { Field, FieldControl, FieldError, FieldLabel } from "@/components/ui/field";
-
-const form = useForm({
-  defaultValues: { username: "" },
-  onSubmit: async ({ value }) => {
-    // Call server action here
-  },
-  validatorAdapter: zodValidator(),
-});
-
-<form onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
-  <form.Field name="username" validators={{ onChange: schema.shape.username }}>
-    {(field) => (
-      <Field data-invalid={field.state.meta.errors.length > 0}>
-        <FieldLabel>Username</FieldLabel>
-        <FieldControl>
-          <Input
-            value={field.state.value}
-            onBlur={field.handleBlur}
-            onChange={(e) => field.handleChange(e.target.value)}
-          />
-        </FieldControl>
-        {field.state.meta.errors.length > 0 && (
-          <FieldError>{field.state.meta.errors.join(", ")}</FieldError>
-        )}
-      </Field>
-    )}
-  </form.Field>
-</form>
-```
+**IMPORTANT**: Do NOT use `react-hook-form`. Always use TanStack Form with Field components.
 
 ### Database Layer
 
