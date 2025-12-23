@@ -1,6 +1,6 @@
+import type { ReactFormApi } from "@tanstack/react-form";
 import { MapPin } from "lucide-react";
 import { useState } from "react";
-import type { Control, FieldValues, Path } from "react-hook-form";
 import {
 	Command,
 	CommandEmpty,
@@ -10,30 +10,29 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import {
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+	Field,
+	FieldControl,
+	FieldError,
+	FieldLabel,
+} from "@/components/ui/field";
 import { useGooglePlaces } from "@/hooks/use-google-places";
 import { debounce } from "@/lib/utils.ts";
 
-type AddressAutocompleteProps<T extends FieldValues> = {
-	control: Control<T>;
-	name: Path<T>;
+type AddressAutocompleteProps<TFormData> = {
+	form: ReactFormApi<TFormData>;
+	name: keyof TFormData & string;
 	label?: string;
 	placeholder?: string;
 	apiKey: string;
 };
 
-export function AddressAutocomplete<T extends FieldValues>({
-	control,
+export function AddressAutocomplete<TFormData>({
+	form,
 	name,
 	label = "Address",
 	placeholder = "Enter an address",
 	apiKey,
-}: AddressAutocompleteProps<T>) {
+}: AddressAutocompleteProps<TFormData>) {
 	const { placePredictions, isLoading, searchPlaces } = useGooglePlaces(apiKey);
 	const [open, setOpen] = useState(false);
 
@@ -43,19 +42,19 @@ export function AddressAutocomplete<T extends FieldValues>({
 	}, 300);
 
 	return (
-		<FormField
-			control={control}
-			name={name}
-			render={({ field }) => (
-				<FormItem className="flex flex-col">
-					<FormLabel>{label}</FormLabel>
-					<FormControl>
+		<form.Field name={name}>
+			{(field) => (
+				<Field data-invalid={field.state.meta.errors.length > 0}>
+					<FieldLabel data-error={field.state.meta.errors.length > 0}>
+						{label}
+					</FieldLabel>
+					<FieldControl>
 						<Command className="overflow-visible bg-transparent w-full">
 							<CommandInput
 								placeholder={placeholder}
-								value={field.value}
+								value={String(field.state.value ?? "")}
 								onValueChange={(value) => {
-									field.onChange(value);
+									field.handleChange(value as TFormData[keyof TFormData]);
 									if (value.trim().length > 0) {
 										debouncedSearch(value);
 										setOpen(true);
@@ -63,15 +62,20 @@ export function AddressAutocomplete<T extends FieldValues>({
 										setOpen(false);
 									}
 								}}
-								onFocus={() => field.value.trim().length > 0 && setOpen(true)}
-								onBlur={() => setTimeout(() => setOpen(false), 200)}
+								onFocus={() =>
+									String(field.state.value ?? "").trim().length > 0 &&
+									setOpen(true)
+								}
+								onBlur={() => {
+									field.handleBlur();
+									setTimeout(() => setOpen(false), 200);
+								}}
 								className="border rounded-md px-3 py-2 w-full"
+								aria-invalid={field.state.meta.errors.length > 0}
 							/>
 							{open && (
 								<CommandList className="bg-white border rounded-md shadow-md max-h-60 overflow-auto">
-									{isLoading ? (
-										<p className="p-2">Loading addresses...</p>
-									) : null}
+									{isLoading ? <p className="p-2">Loading addresses...</p> : null}
 									<CommandEmpty>No addresses found</CommandEmpty>
 									<CommandGroup>
 										{placePredictions.map((place) => (
@@ -79,7 +83,7 @@ export function AddressAutocomplete<T extends FieldValues>({
 												key={place.place_id}
 												value={place.description}
 												onSelect={(value) => {
-													field.onChange(value);
+													field.handleChange(value as TFormData[keyof TFormData]);
 													setOpen(false);
 												}}
 												className="flex items-start gap-2 py-2"
@@ -92,10 +96,12 @@ export function AddressAutocomplete<T extends FieldValues>({
 								</CommandList>
 							)}
 						</Command>
-					</FormControl>
-					<FormMessage />
-				</FormItem>
+					</FieldControl>
+					{field.state.meta.errors.length > 0 ? (
+						<FieldError>{field.state.meta.errors.join(", ")}</FieldError>
+					) : null}
+				</Field>
 			)}
-		/>
+		</form.Field>
 	);
 }

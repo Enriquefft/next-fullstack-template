@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * @deprecated This Form component is based on react-hook-form and is no longer actively maintained.
+ * Please use the Field component (@/components/ui/field) with TanStack Form instead.
+ * See the form-example.tsx for migration examples.
+ *
+ * Note: This file will be removed in a future version.
+ */
+
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";

@@ -1,19 +1,17 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
+import { zodValidator } from "@tanstack/zod-form-adapter";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+	Field,
+	FieldControl,
+	FieldDescription,
+	FieldError,
+	FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 // This must, usually, be obtained from the db with drizzle-zod
@@ -24,42 +22,56 @@ const formSchema = z.object({
 });
 
 export function ProfileForm() {
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm({
 		defaultValues: {
 			username: "",
 		},
-		resolver: zodResolver(formSchema),
+		onSubmit: async ({ value }) => {
+			// Do something with the form values.
+			// ✅ This will be type-safe and validated.
+			// This should, generally, be a call to a server action
+			console.log(value);
+		},
+		validatorAdapter: zodValidator(),
 	});
 
-	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		// This should, generally, be a call to a server action
-		console.log(values);
-	}
-
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<FormField
-					control={form.control}
-					name="username"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Username</FormLabel>
-							<FormControl>
-								<Input placeholder="shadcn" {...field} />
-							</FormControl>
-							<FormDescription>
-								This is your public display name.
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<Button type="submit">Submit</Button>
-			</form>
-		</Form>
+		<form
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
+			}}
+			className="space-y-8"
+		>
+			<form.Field
+				name="username"
+				validators={{
+					onChange: formSchema.shape.username,
+				}}
+			>
+				{(field) => (
+					<Field data-invalid={field.state.meta.errors.length > 0}>
+						<FieldLabel data-error={field.state.meta.errors.length > 0}>
+							Username
+						</FieldLabel>
+						<FieldControl>
+							<Input
+								placeholder="shadcn"
+								value={field.state.value}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.value)}
+								aria-invalid={field.state.meta.errors.length > 0}
+							/>
+						</FieldControl>
+						<FieldDescription>This is your public display name.</FieldDescription>
+						{field.state.meta.errors.length > 0 ? (
+							<FieldError>{field.state.meta.errors.join(", ")}</FieldError>
+						) : null}
+					</Field>
+				)}
+			</form.Field>
+			<Button type="submit">Submit</Button>
+		</form>
 	);
 }
