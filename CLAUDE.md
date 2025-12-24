@@ -2,9 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**For new projects**: Run `/implement-prd` to customize this template based on your requirements. See "PRD-Based Development Workflow" below.
+
 **Additional context-specific rules** are in `.claude/rules/` and load automatically based on file paths.
 
-**Product requirements and user flows** are documented in `.claude/prd/` for feature specifications and implementation planning. See "PRD-Based Development Workflow" below.
+**Product requirements and user flows** are documented in `.claude/prd/` for feature specifications and implementation planning.
 
 ## Development Commands
 
@@ -16,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun lint` – Lint and format code with Biome
 - `bun test` – Run unit tests with Happy DOM
 - `bun run test:e2e` – Run end-to-end tests with Playwright
-- `bunx tsc --noEmit` – Type-check without emitting files
+- `bun type` – Type-check without emitting files
 - `bun run db:push` – Push Drizzle schema changes to database
 
 **Testing Overview:**
@@ -70,12 +72,9 @@ DATABASE_URL_PROD='postgresql://...'
 
 Authentication is handled by **Better Auth** with **Polar** integration for payment/subscription features.
 
-- **Server config**: `src/auth.ts` exports the `auth` object using Drizzle adapter with PostgreSQL
-- **Client helpers**: `src/lib/auth-client.ts` exports `signIn`, `signUp`, `useSession`, `checkout`, `customer`
-- **API route**: `src/app/api/auth/[...all]/route.ts` handles all auth endpoints
-- **Database schema**: Auth tables (user, session, account, verification) are in `src/db/schema/auth.ts`
-- **OAuth provider**: Google OAuth configured via `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
-- **Polar integration**: Enables checkout and customer portal; uses `POLAR_ACCESS_TOKEN` and `POLAR_MODE` (sandbox/production)
+- Uses Drizzle adapter with PostgreSQL for session storage
+- Google OAuth configured via `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
+- Polar integration for checkout and customer portal (configured via `POLAR_ACCESS_TOKEN` and `POLAR_MODE`)
 
 ### Next.js Patterns
 
@@ -149,6 +148,201 @@ Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[clien
 - `src/lib/posthog.ts` – Server-side PostHog client
 - `src/components/PostHogProvider.tsx` – Client-side provider wrapper
 
+### SEO & GEO (Generative Engine Optimization)
+
+This template includes comprehensive SEO infrastructure optimized for both traditional search engines and AI search engines (ChatGPT, Perplexity, Claude, Gemini).
+
+**Core Components:**
+
+- **`src/metadata.ts`** – Site configuration (name, description, keywords, author, theme color, OG image)
+- **`src/lib/seo/metadata.ts`** – Locale-aware metadata utilities
+- **`src/lib/seo/sitemap-utils.ts`** – Sitemap generation helpers
+- **`src/app/robots.ts`** – Dynamic robots.txt (environment-aware)
+- **`src/app/sitemap.ts`** – Multi-locale sitemap generator
+
+**Features Included:**
+
+1. **Locale-Aware Metadata**
+   - Automatic canonical URLs for all pages
+   - Hreflang links for all supported locales + x-default
+   - Locale-specific OpenGraph tags (og:locale)
+   - Viewport and theme-color meta tags
+   - Twitter card support
+
+2. **Robots.txt**
+   - Environment-aware: blocks crawlers in development/staging, allows in production
+   - Override via `NEXT_PUBLIC_ROBOTS_ALLOW` env var
+   - Excludes `/api/`, `/admin/`, `/_next/`, `/private/`, `*.json`
+
+3. **Sitemap.xml**
+   - Automatic locale variants for all routes
+   - Configurable changeFrequency and priority per route
+   - Utilities for dynamic routes (blog posts, products, etc.)
+
+**Using SEO Utilities:**
+
+```typescript
+// In any page.tsx file
+import { generatePageMetadata } from "@/lib/seo/metadata";
+
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  return generatePageMetadata({
+    locale,
+    path: "/about", // Current page path
+    namespace: "AboutPage", // Translation namespace in messages/{locale}.json
+    keywords: ["about", "company"], // Additional keywords
+  });
+}
+```
+
+**Adding Routes to Sitemap:**
+
+Edit `src/app/sitemap.ts` and add routes to the `staticRoutes` array:
+
+```typescript
+const staticRoutes = [
+  { path: "/", changeFrequency: "daily", priority: 1.0 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.8 },
+  // Add more routes here
+];
+```
+
+For dynamic routes (e.g., blog posts):
+
+```typescript
+import { db } from "@/db";
+import { posts } from "@/db/schema";
+import { generateDynamicEntries } from "@/lib/seo/sitemap-utils";
+
+const blogPosts = await db.select().from(posts);
+const blogEntries = generateDynamicEntries(
+  blogPosts,
+  (post) => `/blog/${post.slug}`,
+  {
+    changeFrequency: 'weekly',
+    priority: 0.7,
+    lastModifiedGetter: (post) => post.updatedAt,
+  }
+);
+```
+
+**Customizing for New Projects:**
+
+When running `/implement-prd`, update `src/metadata.ts` with project-specific values:
+
+- `name` – Your product name
+- `description` – SEO description (155 chars max recommended)
+- `keywords` – Relevant keywords array
+- `author` – Your name and URL
+- `themeColor` – Brand color (hex)
+- `ogImage` – Path to 1200x630px OpenGraph image
+
+Also update `messages/{locale}.json` files with localized metadata under the `Metadata` namespace.
+
+**JSON-LD Structured Data (GEO Optimization):**
+
+The template includes a comprehensive JSON-LD schema system for AI search engines. All pages automatically include Organization and WebSite schemas. Add page-specific schemas as needed:
+
+```typescript
+// Example: Article/Blog page
+import { SchemaScript } from "@/components/seo/schema-script";
+import { generateArticleSchema, createPerson } from "@/lib/seo/schema";
+
+export default function BlogPost() {
+  const articleSchema = generateArticleSchema({
+    type: "BlogPosting",
+    headline: "10 Tips for Better SEO",
+    description: "Learn how to optimize your content",
+    image: "https://example.com/article.jpg",
+    datePublished: "2024-01-15",
+    author: createPerson("John Doe", { url: "https://example.com/author/john" }),
+    publisher: {
+      name: "My Blog",
+      logo: { "@type": "ImageObject", url: "https://example.com/logo.png" },
+    },
+    keywords: ["SEO", "optimization"],
+  });
+
+  return (
+    <>
+      <SchemaScript schema={articleSchema} />
+      {/* Page content */}
+    </>
+  );
+}
+```
+
+Available schema types:
+- `generateOrganizationSchema()` – Company/organization info (auto-added to all pages)
+- `generateWebSiteSchema()` – Website info with optional search action (auto-added)
+- `generateWebPageSchema()` – Individual page metadata
+- `generateArticleSchema()` – Blog posts, news articles (CRITICAL for GEO)
+- `generateFAQSchema()` – FAQ pages (ChatGPT loves these!)
+- `generateProductSchema()` – E-commerce products
+- `generateBreadcrumbSchema()` – Breadcrumb navigation
+
+See `src/lib/seo/schema/` for all available schemas and detailed usage examples.
+
+### Performance Optimization
+
+This template is optimized for fast development and production builds.
+
+**Turbopack (Development)**
+
+The development server uses **Turbopack** for 5-25x faster builds compared to Webpack:
+
+- Enabled in `package.json`: `"dev": "... next dev --turbopack"`
+- Instant server startup (~1s)
+- Fast Hot Module Replacement (HMR)
+- Incremental compilation
+
+**Image Optimization**
+
+Automatic image optimization is configured in `next.config.ts`:
+
+- **Modern Formats**: AVIF and WebP (automatic fallback to original format)
+- **Responsive Images**: Automatic srcset generation for different device sizes
+- **Device Sizes**: `[640, 750, 828, 1080, 1200, 1920, 2048, 3840]`
+- **Image Sizes**: `[16, 32, 48, 64, 96, 128, 256, 384]`
+- **Cache TTL**: 7 days for optimized images
+
+**Best Practices for Images:**
+
+```tsx
+import Image from "next/image";
+
+// Always specify width and height for static images
+<Image
+  src="/hero.jpg"
+  alt="Hero image"
+  width={1200}
+  height={630}
+  priority // Use for above-the-fold images
+/>
+
+// For responsive images, use fill with object-fit
+<div className="relative w-full h-64">
+  <Image
+    src="/background.jpg"
+    alt="Background"
+    fill
+    className="object-cover"
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+  />
+</div>
+
+// External images require domain configuration
+// Add to next.config.ts: images.remotePatterns
+```
+
+**Production Builds:**
+
+- Uses Turbopack for faster compilation (~14s for this template)
+- Automatic code splitting and tree shaking
+- Bundle size optimization
+- Static page generation (SSG) where possible
+
 ## Code Style Guidelines
 
 These rules are enforced by Biome (see `biome.jsonc`):
@@ -184,6 +378,8 @@ Implements flow from .claude/prd/01-flows/auth/signup-flows.md:12
 
 - **Strict mode**: TypeScript is configured with all strict checks enabled
 - **No implicit any**: All types must be explicit
+- **No `@ts-ignore`**: Never use `@ts-ignore` comments. Fix type errors properly instead of suppressing them
+- **No `as` casting**: Avoid type assertions with `as`. Use proper type guards, validation, or refactor to eliminate the need for casting
 - **Path aliases**: Use `@/` prefix for imports from `src/` (e.g., `@/db`, `@/lib/utils`)
 - **File extensions**: Import statements should include `.ts`/`.tsx` extensions (e.g., `from "./schema.ts"`)
 - **Better Auth types**: Run `bun run auth:gen` after modifying auth configuration
@@ -202,22 +398,29 @@ Implements flow from .claude/prd/01-flows/auth/signup-flows.md:12
    const { data: session } = useSession();
    ```
 
-4. **Utility imports**:
+3. **Utility imports**:
    ```ts
    import { cn } from "@/lib/utils";
    ```
 
-5. **Server Actions**:
+4. **Server Actions with proper validation**:
    ```ts
    "use server";
 
    import { db } from "@/db";
    import { revalidatePath } from "next/cache";
+   import { z } from "zod";
+
+   const createPostSchema = z.object({
+     title: z.string().min(1),
+   });
 
    export async function createPost(formData: FormData) {
-     const title = formData.get("title") as string;
+     const parsed = createPostSchema.parse({
+       title: formData.get("title"),
+     });
 
-     await db.insert(posts).values({ title });
+     await db.insert(posts).values(parsed);
 
      revalidatePath("/posts");
    }
@@ -260,15 +463,3 @@ Run `/next-step` repeatedly to implement features one at a time:
 - Validates with `bun test` and `bun run test:e2e`
 
 For detailed guidance, see `.claude/rules/prd-implementation.md` (auto-loads when working in `src/` or `.claude/prd/`).
-
-## Template Customization
-
-This is a template repository. When adapting for a new project:
-
-1. Update `package.json` name and repository URLs
-2. Modify `src/metadata.ts` with project-specific metadata
-3. Replace OpenGraph images in `public/` directory
-4. Update `NEXT_PUBLIC_PROJECT_NAME` in `.env` (affects database schema namespace)
-5. Customize `docs/brand.md` if using brand guidelines
-6. Populate `.claude/prd/` with your Product Requirements Document (see "PRD-Based Development Workflow" above)
-7. Delete template-specific content from README.md and this file

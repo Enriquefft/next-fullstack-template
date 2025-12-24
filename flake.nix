@@ -24,6 +24,11 @@
           commitlint-rs
 
         ];
+
+      devShell.env = pkgs: {
+        # Skip Playwright host requirements check on NixOS
+        PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+      };
     };
 
 }

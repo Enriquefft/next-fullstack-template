@@ -1,0 +1,55 @@
+version: 2
+updates:
+  # GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+  # npm (Bun) updates
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      # Group all non-major updates
+      patch-updates:
+        update-types:
+          - "patch"
+          - "minor"
+      # Group major updates by ecosystem
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      nextjs-ecosystem:
+        patterns:
+          - "next"
+          - "next-*"
+      drizzle-ecosystem:
+        patterns:
+          - "drizzle-*"
+          - "@neondatabase/*"
+      testing-ecosystem:
+        patterns:
+          - "@playwright/*"
+          - "playwright"
+          - "@testing-library/*"
+          - "@happy-dom/*"
+    ignore:
+      # Ignore major updates for stable dependencies (manual review)
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]

@@ -17,7 +17,7 @@ Read these files in order:
 
 ### Step 2: Generate TodoWrite Tasks from Checklist
 
-Based on the PRD's "Template Customization Notes" section, create TodoWrite tasks for these 12 categories:
+Based on the PRD's "Template Customization Notes" section, create TodoWrite tasks for these 13 categories:
 
 #### 1. Project Identity
 - Update `package.json` → name, description, repository, author
@@ -92,6 +92,26 @@ Based on the PRD's "Template Customization Notes" section, create TodoWrite task
 #### 12. Git & CI/CD
 - Verify `.gitignore` for project-specific files
 - Note: Don't create initial commit yet (do after implementation complete)
+
+#### 13. SEO & GEO Configuration
+**Check PRD**: Project name, description, brand colors, and keywords from `00-overview.md`
+
+- Update `src/metadata.ts` → siteConfig with:
+  - `name`: Project/product name from PRD
+  - `description`: SEO description (155 characters max recommended)
+  - `keywords`: Project-specific keywords array
+  - `author`: Author name and URL
+  - `themeColor`: Brand primary color (hex)
+  - `ogImage`: Path to custom OpenGraph image (create 1200x630px image if provided)
+- Update message files (`messages/en.json`, `messages/es.json`, etc.) → `Metadata` namespace:
+  - `title`: Localized project name
+  - `description`: Localized SEO description
+- Verify `src/lib/seo/metadata.ts` has correct locale mappings (add locales if needed)
+- **Important**: The SEO system is locale-aware and will automatically generate:
+  - Canonical URLs for each page
+  - Hreflang links for all supported locales
+  - Locale-specific OpenGraph tags
+  - Viewport and theme-color meta tags
 
 ### Step 3: Ask User Questions
 

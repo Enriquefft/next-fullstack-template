@@ -1,0 +1,14 @@
+# Default owners for all files
+# Replace with your GitHub username or team
+* @hybridz
+
+# Database schemas require extra scrutiny
+/src/db/schema/ @hybridz
+
+# Infrastructure changes
+/.github/ @hybridz
+/vercel.json @hybridz
+
+# Security-sensitive files
+/src/env/ @hybridz
+/src/lib/auth-client.ts @hybridz
