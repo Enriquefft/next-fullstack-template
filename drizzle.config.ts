@@ -1,13 +1,14 @@
 import { defineConfig } from "drizzle-kit";
-import { env } from "./src/env.ts";
+import { clientEnv } from "@/env/client";
+import { dbEnv } from "./src/env/db";
 
 export default defineConfig({
 	dbCredentials: {
-		url: env.DRIZZLE_DATABASE_URL,
+		url: dbEnv.DRIZZLE_DATABASE_URL,
 	},
 	dialect: "postgresql",
 	schema: "./src/db/schema/*",
-	schemaFilter: env.NEXT_PUBLIC_PROJECT_NAME,
+	schemaFilter: clientEnv.NEXT_PUBLIC_PROJECT_NAME,
 	strict: true,
 	verbose: true,
 });

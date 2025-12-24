@@ -6,13 +6,14 @@
     flakelight.url = "github:nix-community/flakelight";
   };
 
-  outputs = { flakelight, nixpkgs, ... }:
+  outputs =
+    { flakelight, nixpkgs, ... }:
     flakelight ./. {
 
       inputs.nixpkgs = nixpkgs;
 
-      devShell.packages = pkgs:
-        with pkgs; [
+      devShell.packages =
+        pkgs: with pkgs; [
 
           bun
           nodejs
@@ -21,7 +22,6 @@
 
           lefthook
           commitlint-rs
-          biome
 
         ];
     };

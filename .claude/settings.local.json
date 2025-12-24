@@ -10,7 +10,11 @@
 			"WebFetch(domain:next-intl.dev)",
 			"Bash(tree:*)",
 			"Bash(bun add:*)",
-			"Bash(cat:*)"
+			"Bash(cat:*)",
+			"Bash(bunx playwright install:*)",
+			"Bash(bun run test:e2e:*)",
+			"Bash(trash-put:*)",
+			"Bash(bun lint:*)"
 		],
 		"ask": [],
 		"deny": []

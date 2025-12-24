@@ -10,13 +10,17 @@ function Field({
 	className,
 	...props
 }: React.ComponentProps<"div"> & { "data-invalid"?: boolean }) {
-	return <div data-slot="field" className={cn("grid gap-2", className)} {...props} />;
+	return (
+		<div data-slot="field" className={cn("grid gap-2", className)} {...props} />
+	);
 }
 
 function FieldLabel({
 	className,
 	...props
-}: React.ComponentProps<typeof LabelPrimitive.Root> & { "data-error"?: boolean }) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+	"data-error"?: boolean;
+}) {
 	return (
 		<Label
 			data-slot="field-label"
@@ -30,10 +34,7 @@ function FieldControl({ ...props }: React.ComponentProps<typeof Slot>) {
 	return <Slot data-slot="field-control" {...props} />;
 }
 
-function FieldDescription({
-	className,
-	...props
-}: React.ComponentProps<"p">) {
+function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
 	return (
 		<p
 			data-slot="field-description"
