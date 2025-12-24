@@ -69,7 +69,8 @@
       "Bash(gh secret list:*)",
       "Bash(test:*)",
       "Bash(./scripts/codebase_ops.sh:*)",
-      "Bash(./scripts/setup-env.sh:*)"
+      "Bash(./scripts/setup-env.sh:*)",
+      "Bash(node scripts/debug-db-url.js:*)"
     ],
     "deny": [],
     "ask": []

@@ -241,61 +241,150 @@ EOF
 # =============================================================================
 
 check_dependencies() {
-	log "INFO" "Checking dependencies..."
+	echo ""
+	log_clean "🔍" "Pre-flight checks..."
+	echo ""
 
-	local missing=()
+	local has_errors=false
+	local warnings=()
 
-	# Platform check
-	local platform
-	platform=$(uname -s)
-	if [[ "$platform" != "Linux" ]]; then
-		log "WARN" "Platform: $platform (script designed for Linux)"
+	# 1. Git repository check
+	if command -v git &>/dev/null; then
+		local git_version
+		git_version=$(git --version | grep -oP '\d+\.\d+\.\d+' | head -1)
+
+		if git rev-parse --git-dir &>/dev/null 2>&1; then
+			log_clean "  ✓" "Git repository (v$git_version)"
+		else
+			log_clean "  ❌" "Not in a git repository"
+			has_errors=true
+		fi
+	else
+		log_clean "  ❌" "Git not found"
+		has_errors=true
 	fi
 
-	if ! command -v claude &>/dev/null; then
-		missing+=("claude (Claude Code CLI)")
-	fi
+	# 2. Claude CLI check
+	if command -v claude &>/dev/null; then
+		local claude_version
+		claude_version=$(claude --version 2>&1 | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "unknown")
 
-	if ! command -v jq &>/dev/null; then
-		missing+=("jq (JSON processor)")
-	fi
-
-	if ! command -v $PACKAGE_MANAGER &>/dev/null; then
-		missing+=("$PACKAGE_MANAGER (package manager)")
-	fi
-
-	if ! command -v git &>/dev/null; then
-		missing+=("git")
-	fi
-
-	if [[ "$INTERACTIVE" == true ]] && ! command -v tmux &>/dev/null; then
-		missing+=("tmux (required for --interactive mode)")
-	fi
-
-	if [[ ${#missing[@]} -gt 0 ]]; then
-		# Show specific error guidance based on what's missing
-		for dep in "${missing[@]}"; do
-			if [[ "$dep" == *"claude"* ]]; then
-				show_error_guidance "claude_not_found"
-				exit 1
-			elif [[ "$dep" == *"jq"* ]]; then
-				show_error_guidance "jq_not_found"
-				exit 1
-			elif [[ "$dep" == *"tmux"* ]]; then
-				show_error_guidance "tmux_not_found"
-				exit 1
-			fi
-		done
-
-		# Generic missing dependencies error
-		log "ERROR" "Missing required dependencies:"
-		for dep in "${missing[@]}"; do
-			log "ERROR" "  - $dep"
-		done
+		# Check if authenticated
+		if claude auth status &>/dev/null 2>&1; then
+			log_clean "  ✓" "Claude CLI (v$claude_version, authenticated)"
+		else
+			log_clean "  ⚠️ " "Claude CLI (v$claude_version, NOT authenticated)"
+			warnings+=("Run: claude auth login")
+			has_errors=true
+		fi
+	else
+		log_clean "  ❌" "Claude CLI not found"
+		show_error_guidance "claude_not_found"
 		exit 1
 	fi
 
-	log "INFO" "All required dependencies found"
+	# 3. jq check
+	if command -v jq &>/dev/null; then
+		local jq_version
+		jq_version=$(jq --version 2>&1 | grep -oP '\d+\.\d+' | head -1)
+		log_clean "  ✓" "jq (v$jq_version)"
+	else
+		log_clean "  ❌" "jq not found"
+		show_error_guidance "jq_not_found"
+		exit 1
+	fi
+
+	# 4. Package manager check
+	if command -v "$PACKAGE_MANAGER" &>/dev/null; then
+		local pm_version
+		case "$PACKAGE_MANAGER" in
+			bun)
+				pm_version=$(bun --version 2>&1)
+				;;
+			pnpm)
+				pm_version=$(pnpm --version 2>&1)
+				;;
+			yarn)
+				pm_version=$(yarn --version 2>&1)
+				;;
+			npm)
+				pm_version=$(npm --version 2>&1)
+				;;
+			*)
+				pm_version="unknown"
+				;;
+		esac
+		log_clean "  ✓" "$PACKAGE_MANAGER (v$pm_version)"
+	else
+		log_clean "  ❌" "$PACKAGE_MANAGER not found"
+		has_errors=true
+	fi
+
+	# 5. tmux check (only if interactive mode)
+	if [[ "$INTERACTIVE" == true ]]; then
+		if command -v tmux &>/dev/null; then
+			local tmux_version
+			tmux_version=$(tmux -V | grep -oP '\d+\.\d+' | head -1)
+			log_clean "  ✓" "tmux (v$tmux_version) [for --interactive mode]"
+		else
+			log_clean "  ❌" "tmux not found (required for --interactive mode)"
+			show_error_guidance "tmux_not_found"
+			exit 1
+		fi
+	fi
+
+	# 6. notify-send check (optional)
+	if command -v notify-send &>/dev/null; then
+		log_clean "  ✓" "notify-send (desktop notifications enabled)"
+	else
+		log_clean "  ⚠️ " "notify-send not found (notifications disabled)"
+	fi
+
+	# 7. Disk space check for worktrees
+	local worktree_dir="/tmp/worktrees"
+	local available_space
+	if available_space=$(df -BG /tmp 2>/dev/null | awk 'NR==2 {print $4}' | sed 's/G//'); then
+		if [[ "$available_space" -lt 1 ]]; then
+			log_clean "  ⚠️ " "Low disk space in /tmp (${available_space}GB available)"
+			warnings+=("Consider freeing up space")
+		else
+			log_clean "  ✓" "Disk space (/tmp: ${available_space}GB available)"
+		fi
+	fi
+
+	# 8. Git working directory check
+	if git rev-parse --git-dir &>/dev/null 2>&1; then
+		if ! git diff-index --quiet HEAD -- 2>/dev/null || ! git diff --quiet 2>/dev/null; then
+			if [[ "${ALLOW_DIRTY:-false}" == false ]]; then
+				log_clean "  ⚠️ " "Uncommitted changes detected"
+				warnings+=("Commit changes or use --allow-dirty")
+			else
+				log_clean "  ✓" "Working directory (dirty, --allow-dirty enabled)"
+			fi
+		else
+			log_clean "  ✓" "Working directory (clean)"
+		fi
+	fi
+
+	echo ""
+
+	# Show warnings if any
+	if [[ ${#warnings[@]} -gt 0 ]]; then
+		log_clean "💡" "Recommendations:"
+		for warning in "${warnings[@]}"; do
+			echo "     → $warning"
+		done
+		echo ""
+	fi
+
+	# Final verdict
+	if [[ "$has_errors" == true ]]; then
+		log_clean "❌" "Pre-flight checks failed"
+		exit 1
+	else
+		log_clean "🚀" "All systems go!"
+		echo ""
+	fi
 }
 
 # =============================================================================

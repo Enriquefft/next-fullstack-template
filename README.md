@@ -53,25 +53,27 @@ Vercel handles all deployments automatically when connected to your GitHub repos
 
 ### Environment Setup
 
+**Prerequisites**: Before setting up CI/CD, ensure you've completed the [Getting Started](#getting-started) steps, especially creating Neon database branches.
+
 #### Quick Setup
 
 Two helper scripts are provided for faster setup:
 
 ```bash
 # 1. Set GitHub secrets (interactive prompts - secure)
-./setup-github-secrets.sh
+./scripts/setup-github-secrets.sh
 
-# 2. Configure branch protection rules
-./setup-branch-protection.sh
+# 2. Set Vercel environment variables
+./scripts/setup-vercel-env.sh
 ```
 
 **Security Note**: The secrets script uses interactive prompts - values won't appear in your terminal or shell history. Never commit `.env` files or hardcode secrets in scripts.
 
 #### Required GitHub Secrets
 
-Add these secrets in **Settings → Secrets and variables → Actions** (or use `./setup-github-secrets.sh`):
+Add these secrets in **Settings → Secrets and variables → Actions** (or use `./scripts/setup-github-secrets.sh`):
 
-**Database** (copy from your `.env`):
+**Database** (these should already exist in your `.env` from [Getting Started](#getting-started)):
 - `DATABASE_URL_TEST` - Test database connection string
 - `DATABASE_URL_STAGING` - Staging database connection string
 - `DATABASE_URL_PROD` - Production database connection string
@@ -165,31 +167,103 @@ For detailed CI/CD documentation, see the comprehensive plan at `.claude/plans/v
 - **Playwright** – End-to-end testing framework. Configuration in `playwright.config.ts`. Tests in `tests/e2e/`.
 
 ## Getting Started
-Install **Bun** first if it isn't already available on your system. Visit
-<https://bun.sh> for installation instructions. Then clone the repo and install
-its dependencies:
+
+### Prerequisites
+
+1. **Install Bun**: Visit <https://bun.sh> for installation instructions
+2. **GitHub CLI** (optional): For automated setup scripts - <https://cli.github.com>
+3. **Neon Account**: For PostgreSQL databases - <https://console.neon.tech>
+
+### Setup Steps (in order!)
+
+**1. Clone and Install**
 
 ```bash
-git clone https://github.com/Enriquefft/next-fullstack-template.git
-cd next-fullstack-template
+git clone https://github.com/Enriquefft/next-fullstack-template.git my-project
+cd my-project
 bun install
 ```
 
-Create a `.env` file from `.env.example` and fill in the environment variables.
+**2. Run Post-Template Setup** (configures repository settings)
 
-Install the Git hooks (optional but recommended):
+```bash
+./scripts/setup-new-repo.sh
+```
+
+This disables GitHub's default CodeQL (we use a custom workflow) and is only needed once.
+
+**3. Create Neon Database Branches** ⚠️ **REQUIRED BEFORE NEXT STEPS!**
+
+Go to <https://console.neon.tech> and create **4 database branches**:
+- `dev` - Local development
+- `test` - E2E tests and CI
+- `staging` - Staging environment (optional)
+- `prod` - Production
+
+Copy the connection string for each branch. You'll need these in step 4.
+
+**Why 4 databases?** Each environment needs isolated data. Tests shouldn't touch dev data, and dev shouldn't touch production data.
+
+**4. Configure Local Environment**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add (minimum required to run locally):
+
+```bash
+NEXT_PUBLIC_PROJECT_NAME='my-project'
+
+# Database URLs from Neon (step 3)
+DATABASE_URL_DEV='postgresql://...'    # From dev branch
+DATABASE_URL_TEST='postgresql://...'   # From test branch
+DATABASE_URL_STAGING='postgresql://...' # From staging branch
+DATABASE_URL_PROD='postgresql://...'   # From prod branch
+
+# Generate auth secret (run: bun run auth:secret)
+BETTER_AUTH_SECRET='...'
+
+# Optional: Add Google OAuth, PostHog, etc. later
+```
+
+**5. Generate Auth Secret**
+
+```bash
+bun run auth:secret
+```
+
+Copy the output to `BETTER_AUTH_SECRET` in your `.env` file.
+
+**6. Install Git Hooks** (optional but recommended)
 
 ```bash
 bunx lefthook install
 ```
 
-Run the development server:
+**7. Start Development**
 
 ```bash
 bun dev
 ```
 
 Visit <http://localhost:3000> in your browser.
+
+### Optional: CI/CD Setup
+
+After local development works, set up automated deployments:
+
+**GitHub Secrets** (for CI/CD workflows):
+```bash
+./scripts/setup-github-secrets.sh
+```
+
+**Vercel Environment Variables** (for deployments):
+```bash
+./scripts/setup-vercel-env.sh
+```
+
+See the [CI/CD Pipeline](#cicd-pipeline) section below for details.
 
 ## Development Workflow
 

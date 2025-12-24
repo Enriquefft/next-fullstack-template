@@ -38,13 +38,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `fix` (default) - Automated bug fixing from test/type/build failures
 - `improve` - Codebase improvement using static analysis
 
-**🆕 Improved Developer Experience (DX):**
+**🆕 Developer Experience (Phase 1 & 2):**
 - **Preview by Default** - Shows what will be fixed before doing anything (safe to explore!)
 - **Interactive Selection** - Choose exactly which issues to fix
-- **Incremental Mode** - Fix only files changed in your PR (`--since main`)
+- **Incremental Mode** - Fix only files changed in your PR (`--since main` = 90% faster)
 - **Desktop Notifications** - Get notified when fixes complete
 - **Clean Output** - No more log spam, just clear status updates
 - **Time Estimates** - Know how long each fix will take
+- **🆕 Undo/Rollback** - Instant rollback with `./scripts/codebase_ops.sh undo`
+- **🆕 Confidence Levels** - `--safe` flag for zero-risk automated fixes
+- **🆕 Diff-First** - `--show-diff` to review changes per group before applying
+- **🆕 Smart Errors** - Every error has actionable next steps
+- **🆕 Pre-flight Checks** - Validates environment before starting (versions, auth, disk space)
 
 **Common Workflows:**
 ```bash
@@ -63,9 +68,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Example: "Select: 1,3,5" or "safe" for automated fixes only
 
 # 🧹 QUICK CLEANUP: Fix only safe/automated issues
-./scripts/codebase_ops.sh
-# When prompted, type: safe
-# Fixes formatting, imports, simple type errors
+./scripts/codebase_ops.sh --safe
+# Zero-risk: only formatting, imports, simple fixes
+
+# 🔍 DETAILED REVIEW: See exactly what changes before applying
+./scripts/codebase_ops.sh --show-diff
+# Shows files + issues per group, approve each one
+
+# 🔄 MADE A MISTAKE: Undo last operation
+./scripts/codebase_ops.sh undo
+# Instant rollback to before-state
+
+# 📋 VIEW HISTORY: See recent operations
+./scripts/codebase_ops.sh history
+# List last 10 operations with status
 
 # 🚀 POWER USER: Fix everything automatically
 ./scripts/codebase_ops.sh --all --execute --auto
@@ -77,23 +93,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 
 **How It Works:**
-1. 🔍 Runs diagnostics (test, type, build, E2E, lint) in parallel
-2. 🤖 Uses Claude Opus to analyze and group issues by module/dependencies
-3. 📋 Shows preview with time estimates and complexity markers
-4. ❓ Prompts you to select which groups to fix (interactive)
-5. 🔧 Creates isolated git worktrees for parallel fixing
-6. 🎯 Launches Claude Code CLI instances to fix selected groups
-7. ✅ Merges changes back to main in dependency order
-8. 🔔 Sends desktop notification when complete
+1. 🔍 **Pre-flight checks** - Validates environment (git, Claude auth, disk space, versions)
+2. 🏃 **Runs diagnostics** - Test/type/build/lint in parallel (filtered by `--since` if used)
+3. 🤖 **AI analysis** - Claude Opus groups issues by module/dependencies
+4. 📋 **Shows preview** - Time estimates, complexity markers, file counts
+5. ❓ **Interactive selection** - Choose which groups to fix (or use `--safe`/`--show-diff`)
+6. 💾 **Saves operation state** - Creates git tags for undo/rollback
+7. 🔧 **Creates worktrees** - Isolated git worktrees for parallel fixing
+8. 🎯 **Parallel fixing** - Claude Code CLI instances fix selected groups
+9. ✅ **Merges changes** - Merges back to main in dependency order
+10. 🔔 **Notification** - Desktop alert when complete
 
 **Key Options:**
-- `--since <ref>` - Only analyze files changed since git ref (main, HEAD~1, etc.)
+- `--since <ref>` - Only analyze files changed since git ref (main, HEAD~1, etc.) [90% faster]
+- `--safe` - Only apply safe/simple fixes (formatting, imports, etc.) [zero-risk]
+- `--confidence <level>` - Filter by confidence: safe, medium, low
+- `--show-diff` - Show files/issues per group and prompt to approve each one
 - `--execute` - Apply fixes without confirmation (preview still shown)
 - `--dry-run` - Just show what would be fixed (no prompt, no changes)
 - `--mode <mode>` - Select mode: fix or improve
 - `--all` - Process ALL issues (default: simple/safe only)
 - `--continue` - Resume from previous interactive session
 - `--no-notifications` - Disable desktop notifications
+
+**Safety Features (Phase 2):**
+- `history` - List last 10 operations with status
+- `undo` - Rollback last operation to before-state
+- `rollback <number>` - Rollback to specific operation by index
 
 **Advanced Options:**
 - `--interactive` - Launch Claude in tmux for Q&A [DEFAULT]
