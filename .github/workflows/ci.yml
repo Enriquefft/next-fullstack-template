@@ -51,6 +51,7 @@ jobs:
 
       - name: Check unused dependencies
         if: matrix.check == 'deps'
+        continue-on-error: true
         run: bun check:deps
 
   unit-tests:

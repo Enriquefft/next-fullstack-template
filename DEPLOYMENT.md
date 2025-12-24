@@ -44,7 +44,17 @@ git push origin main           # Auto-deploys to production (if Git connected)
 # Choose: 1. Both (values entered once, used for both platforms)
 #         2. Vercel only
 #         3. GitHub Actions only
+
+# Optional: Include Vercel development environment (for 'vercel dev' command)
+./scripts/setup-env.sh --include-vercel-dev
+# Note: Not needed for 'bun dev' - only use if you need to test with 'vercel dev'
 ```
+
+**Options:**
+- `--include-vercel-dev` - Also configure Vercel's development environment (for `vercel dev`)
+  - ⚠️ **Not needed for normal development** - `bun dev` uses local `.env` file
+  - Only use if you need to test Vercel-specific features locally with `vercel dev`
+- `-h, --help` - Show help message
 
 ---
 

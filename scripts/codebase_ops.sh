@@ -126,6 +126,7 @@ SINCE_REF=""          # New: Only analyze files changed since ref
 FILE_FILTER=""        # New: Only analyze specific files/directories
 CONFIDENCE_LEVEL=""   # New: Filter by confidence level (safe/medium/low)
 SAFE_ONLY=false       # New: Alias for --confidence safe
+SHOW_DIFF=false       # New: Show group details and prompt per group
 
 # Phase timing
 declare -A PHASE_START_TIMES=()
@@ -163,6 +164,7 @@ KEY OPTIONS:
   --since <ref>       Only analyze files changed since git ref (main, HEAD~1, etc.)
   --safe              Only apply safe/simple fixes (same as --confidence safe)
   --confidence <lvl>  Filter by confidence: safe, medium, low (default: all)
+  --show-diff         Show files/issues per group and prompt to approve each one
   --execute           Apply fixes without confirmation (preview still shown)
   --dry-run           Only run analysis, don't prompt or fix anything
   --mode <mode>       Select mode: fix or improve
@@ -193,6 +195,9 @@ EXAMPLES:
 
   # Fix safe + medium complexity issues
   $(basename "$0") --confidence medium
+
+  # Review each group in detail before fixing
+  $(basename "$0") --show-diff
 
   # Fix formatting issues quickly
   $(basename "$0") --dry-run
@@ -286,6 +291,14 @@ run_diagnostics() {
 	log "INFO" "=========================================="
 	log "INFO" "PHASE 1: DIAGNOSTIC ANALYSIS"
 	log "INFO" "=========================================="
+
+	# Apply incremental mode filtering (--since)
+	if [[ -n "$SINCE_REF" ]]; then
+		if ! build_filtered_commands "$SINCE_REF"; then
+			log_clean "ℹ️ " "No files changed since '$SINCE_REF'"
+			exit 0
+		fi
+	fi
 
 	# Check for cached diagnostic result
 	local cache_key
@@ -557,6 +570,7 @@ main() {
 			--safe) SAFE_ONLY=true; CONFIDENCE_LEVEL="safe"; shift ;;
 			--confidence) CONFIDENCE_LEVEL="$2"; shift 2 ;;
 			--confidence=*) CONFIDENCE_LEVEL="${1#*=}"; shift ;;
+			--show-diff) SHOW_DIFF=true; shift ;;
 			--no-notifications) ENABLE_NOTIFICATIONS=false; shift ;;
 			--interactive|-i) INTERACTIVE=true; AUTO_FIX=false; shift ;;
 			--auto) AUTO_FIX=true; AUTO_MERGE=true; INTERACTIVE=false; EXECUTE_MODE=true; shift ;;
@@ -741,6 +755,49 @@ main() {
 				log_clean "✓" "Will fix $final_count group(s)"
 				echo ""
 			fi
+		fi
+
+		# Phase 1.6: Per-Group Approval with Diff Preview (--show-diff)
+		if [[ "$SHOW_DIFF" == true ]]; then
+			log_clean "🔍" "Showing detailed preview for each group..."
+			echo ""
+
+			# Get current group count
+			local groups_count
+			groups_count=$(jq -r '.summary.groups_count' "$GROUPS_FILE")
+
+			# Track approved group indices
+			local approved_indices=()
+
+			# Loop through each group
+			for ((i=0; i<groups_count; i++)); do
+				local group_name
+				group_name=$(jq -r ".groups[$i].name" "$GROUPS_FILE")
+
+				# Show preview
+				show_group_preview "$GROUPS_FILE" "$i"
+
+				# Prompt for approval
+				if prompt_group_approval "$group_name"; then
+					approved_indices+=("$i")
+					log_clean "✓" "Group '$group_name' approved"
+				fi
+				echo ""
+			done
+
+			# Check if any groups were approved
+			if [[ ${#approved_indices[@]} -eq 0 ]]; then
+				log_clean "⏭️ " "No groups approved. Exiting."
+				exit 0
+			fi
+
+			# Filter to only approved groups
+			log_clean "🔍" "Filtering to ${#approved_indices[@]} approved group(s)..."
+			GROUPS_FILE=$(filter_selected_groups "$GROUPS_FILE" "${approved_indices[*]}")
+			BUG_GROUPS_FILE="$GROUPS_FILE"
+
+			log_clean "✓" "Will proceed with ${#approved_indices[@]} group(s)"
+			echo ""
 		fi
 
 		# Save operation start state (for undo/rollback)

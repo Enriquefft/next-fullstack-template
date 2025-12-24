@@ -48,7 +48,8 @@ export default defineConfig({
         command: "bun run dev",
         env: {
             // Inject test database URL for the Next.js dev server
-            DRIZZLE_DATABASE_URL: process.env["DATABASE_URL_TEST"] || "",
+            DATABASE_URL_TEST: process.env["DATABASE_URL_TEST"] || "",
+            NODE_ENV: "test",
             // Pass PORT to Next.js to ensure consistent port usage
             PORT: PORT.toString(),
         },

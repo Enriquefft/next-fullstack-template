@@ -68,7 +68,8 @@
       "Bash(vercel env ls:*)",
       "Bash(gh secret list:*)",
       "Bash(test:*)",
-      "Bash(./scripts/codebase_ops.sh:*)"
+      "Bash(./scripts/codebase_ops.sh:*)",
+      "Bash(./scripts/setup-env.sh:*)"
     ],
     "deny": [],
     "ask": []

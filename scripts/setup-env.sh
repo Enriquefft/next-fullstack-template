@@ -9,9 +9,38 @@
 # - No secrets appear in process list or terminal output
 #
 # Configure environment variables for:
-#   • Vercel (production, preview, development)
+#   • Vercel (production, preview)
 #   • GitHub Actions (secrets)
 #
+# Options:
+#   --include-vercel-dev   Also configure Vercel development environment
+#                         (for 'vercel dev' command - rarely needed)
+#
+
+# Parse command-line flags
+INCLUDE_VERCEL_DEV=0
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--include-vercel-dev)
+			INCLUDE_VERCEL_DEV=1
+			shift
+			;;
+		-h|--help)
+			echo "Usage: $0 [OPTIONS]"
+			echo ""
+			echo "Options:"
+			echo "  --include-vercel-dev   Include Vercel development environment"
+			echo "                         (for 'vercel dev' - not needed for 'bun dev')"
+			echo "  -h, --help            Show this help message"
+			exit 0
+			;;
+		*)
+			echo "Unknown option: $1"
+			echo "Use -h or --help for usage information"
+			exit 1
+			;;
+	esac
+done
 
 # Warn if running as root
 if [ "$EUID" -eq 0 ]; then
@@ -30,8 +59,11 @@ source "$SCRIPT_DIR/lib/env-setup-lib.sh"
 echo "🚀 Environment Setup (Interactive & Secure)"
 echo ""
 echo "This script will configure environment variables for:"
-echo "  • Vercel (production, preview, development)"
+echo "  • Vercel (production, preview)"
 echo "  • GitHub Actions (secrets)"
+if [ "$INCLUDE_VERCEL_DEV" -eq 1 ]; then
+	echo "  • Vercel development (--include-vercel-dev enabled)"
+fi
 echo ""
 
 # Ask which platforms to configure
@@ -97,6 +129,22 @@ if [ "$PLATFORM" = "both" ]; then
 	USE_CACHE=1
 fi
 
+# Helper function to check if variable should be processed
+# Arguments: var_def
+# Returns: 0 if should process, 1 if should skip
+should_process_variable() {
+	local var_def=$1
+
+	# Skip Vercel development environment variables unless flag is set
+	if [ "$INCLUDE_VERCEL_DEV" -eq 0 ]; then
+		if [[ "$var_def" == *"|development|"* ]] && [[ "$var_def" == *"for vercel dev"* || "$var_def" == *"for DEVELOPMENT"* ]]; then
+			return 1
+		fi
+	fi
+
+	return 0
+}
+
 # ============================================================================
 # CONFIGURE VARIABLES
 # ============================================================================
@@ -109,14 +157,20 @@ echo ""
 
 if [ "$PLATFORM" = "vercel" ] || [ "$PLATFORM" = "both" ]; then
 	echo "ℹ️  Vercel deployments use DATABASE_URL (not DATABASE_URL_*)"
-	echo "   Setting for production, preview, and development environments."
+	if [ "$INCLUDE_VERCEL_DEV" -eq 1 ]; then
+		echo "   Setting for production, preview, and development environments."
+	else
+		echo "   Setting for production and preview environments."
+	fi
 	echo ""
 fi
 
 # Process database variables
 for var_def in "${ENV_VARIABLES[@]}"; do
 	if [[ "$var_def" == *"Database URL"* ]]; then
-		process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		if should_process_variable "$var_def"; then
+			process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		fi
 	fi
 done
 
@@ -132,7 +186,9 @@ echo ""
 # Process auth variables
 for var_def in "${ENV_VARIABLES[@]}"; do
 	if [[ "$var_def" == *"BETTER_AUTH_SECRET"* ]] || [[ "$var_def" == *"GOOGLE_"* ]]; then
-		process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		if should_process_variable "$var_def"; then
+			process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		fi
 	fi
 done
 
@@ -144,7 +200,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # Process third-party service variables
 for var_def in "${ENV_VARIABLES[@]}"; do
 	if [[ "$var_def" == *"PostHog"* ]] || [[ "$var_def" == *"Polar"* ]] || [[ "$var_def" == *"UploadThing"* ]]; then
-		process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		if should_process_variable "$var_def"; then
+			process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		fi
 	fi
 done
 
@@ -156,7 +214,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # Process project configuration variables
 for var_def in "${ENV_VARIABLES[@]}"; do
 	if [[ "$var_def" == *"NEXT_PUBLIC_PROJECT_NAME"* ]]; then
-		process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		if should_process_variable "$var_def"; then
+			process_variable "$var_def" "$PLATFORM" "$USE_CACHE"
+		fi
 	fi
 done
 

@@ -33,10 +33,30 @@ declare -gA MODE_CONFIG=(
 get_diagnostic_prompt() {
 	local cmd_outputs="$1"
 
+	# Build incremental mode context if --since was used
+	local incremental_context=""
+	if [[ -n "${FILTERED_CHANGED_FILES:-}" ]]; then
+		local changed_count
+		changed_count=$(echo "$FILTERED_CHANGED_FILES" | wc -l)
+		incremental_context="
+## Incremental Mode (--since)
+
+This analysis is running in incremental mode. Only files changed since '${SINCE_REF}' are being analyzed.
+
+Changed files ($changed_count):
+\`\`\`
+${FILTERED_CHANGED_FILES}
+\`\`\`
+
+**IMPORTANT**: Focus your analysis only on errors in these changed files and their direct dependencies. Ignore errors in unchanged files.
+"
+	fi
+
 	# Try to load from template first
 	if [[ -f "${MODE_CONFIG[prompts_dir]}/diagnostic.md" ]]; then
 		load_prompt "diagnostic.md" \
 			"CMD_OUTPUTS=${cmd_outputs}" \
+			"INCREMENTAL_CONTEXT=${incremental_context}" \
 			"ACTIONS_DIR=${ACTIONS_DIR:-src/actions}" \
 			"LIB_DIR=${LIB_DIR:-src/lib}" \
 			"COMPONENTS_DIR=${COMPONENTS_DIR:-src/components}" \
@@ -48,6 +68,7 @@ get_diagnostic_prompt() {
 	# Fallback: inline prompt
 	cat <<PROMPT
 You are analyzing a Next.js project for bugs. Below are the outputs from diagnostic commands.
+${incremental_context}
 
 ## Command Outputs
 

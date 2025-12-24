@@ -73,7 +73,7 @@
 		"cleanup": "knip --fix",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
-		"dev": "DRIZZLE_DATABASE_URL=$DATABASE_URL_DEV next dev --turbopack",
+		"dev": "next dev --turbopack",
 		"lint": "biome check --fix .",
 		"start": "next start",
 		"test": "bun test --exclude e2e/**/*.spec.ts",

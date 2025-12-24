@@ -246,3 +246,70 @@ filter_selected_groups() {
 
 	echo "$output_file"
 }
+
+# Show detailed preview of a single group
+# Usage: show_group_preview groups_file index
+show_group_preview() {
+	local groups_file="$1"
+	local index="$2"
+
+	# Extract group data
+	local name complexity files_json diagnostics_json
+	name=$(jq -r ".groups[$index].name" "$groups_file")
+	complexity=$(jq -r ".groups[$index].complexity" "$groups_file")
+	files_json=$(jq -r ".groups[$index].files[]" "$groups_file")
+	diagnostics_json=$(jq -c ".groups[$index].diagnostics" "$groups_file")
+
+	local files_count diagnostics_count
+	files_count=$(echo "$files_json" | wc -l)
+	diagnostics_count=$(echo "$diagnostics_json" | jq 'length')
+
+	# Display group header
+	echo ""
+	log_clean "📦" "Group: $name"
+	echo "  Complexity: $complexity"
+	echo "  Files: $files_count"
+	echo "  Issues: $diagnostics_count"
+	echo ""
+
+	# List files
+	log_clean "📄" "Files to be modified:"
+	echo "$files_json" | while read -r file; do
+		echo "    - $file"
+	done
+	echo ""
+
+	# Show sample diagnostics (first 5)
+	log_clean "🔍" "Issues preview (showing up to 5):"
+	echo "$diagnostics_json" | jq -r '.[:5][] | "    • \(.file):\(.line // "?") - \(.message // .text // "diagnostic")"' 2>/dev/null || true
+
+	local total_shown=5
+	if [[ $diagnostics_count -gt $total_shown ]]; then
+		echo "    ... and $((diagnostics_count - total_shown)) more"
+	fi
+	echo ""
+}
+
+# Prompt user to approve a group
+# Returns 0 if approved, 1 if skipped
+# Usage: prompt_group_approval group_name
+prompt_group_approval() {
+	local group_name="$1"
+
+	echo -n "❓ Apply fixes for '$group_name'? [y/n/q]: "
+	read -r response
+
+	case "$response" in
+		y|Y|yes|Yes|YES)
+			return 0
+			;;
+		q|Q|quit|Quit|QUIT)
+			log_clean "⏭️ " "Stopping group approval process"
+			exit 0
+			;;
+		*)
+			log_clean "⏭️ " "Skipping group '$group_name'"
+			return 1
+			;;
+	esac
+}
