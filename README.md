@@ -219,7 +219,7 @@ The following commands rely on Bun and the packages installed with `bun install`
 - `bun start` – run the production build
 - `bun lint` – lint and format code with Biome
 - `bun test` – execute unit tests
-- `bun run test:e2e` – execute end-to-end tests with Playwright
+- `bun run test:e2e` – execute end-to-end tests with Playwright (use `PORT=3001 bun test:e2e` to override port)
 - `bun run test:e2e:ui` – run e2e tests with Playwright UI mode
 - `bunx tsc --noEmit` – type‑check the project
 - `bun run db:push` – run Drizzle migrations
