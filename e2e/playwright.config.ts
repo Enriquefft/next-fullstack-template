@@ -1,5 +1,13 @@
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Use PORT env variable to allow port override (defaults to 3000)
+// Usage: PORT=3001 bun test:e2e
+const PORT = process.env["PORT"] || 3000;
+const baseURL = `http://localhost:${PORT}`;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -59,7 +67,7 @@ export default defineConfig({
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('/')`. */
-		baseURL: "http://localhost:3000",
+		baseURL,
 		screenshot: "only-on-failure",
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: "on-first-retry",
@@ -71,9 +79,12 @@ export default defineConfig({
 		env: {
 			// Inject test database URL for the Next.js dev server
 			DRIZZLE_DATABASE_URL: process.env["DATABASE_URL_TEST"] || "",
+			// Pass PORT to Next.js to ensure consistent port usage
+			PORT: PORT.toString(),
 		},
 		reuseExistingServer: !process.env["CI"],
-		url: "http://localhost:3000",
+		timeout: 120 * 1000,
+		url: baseURL,
 	},
 	/* Opt out of parallel tests on CI. */
 	workers: process.env["CI"] ? 1 : undefined,

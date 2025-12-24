@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Additional context-specific rules** are in `.claude/rules/` and load automatically based on file paths.
 
+**Product requirements and user flows** are documented in `.claude/prd/` for feature specifications and implementation planning. See "PRD-Based Development Workflow" below.
+
 ## Development Commands
 
 **Package Manager**: This project uses **Bun**. Always use `bun` instead of `npm` or `yarn`.
@@ -20,6 +22,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Testing Overview:**
 - **Unit tests**: Configured with Happy DOM (preloaded via `bunfig.toml`). Test files live in `tests/` and use `.test.ts` or `.test.tsx` extensions. Run with `bun test`.
 - **E2E tests**: Powered by Playwright (config in `e2e/playwright.config.ts`). Test files live in `e2e/tests/` and use `.spec.ts` extensions. Run with `bun run test:e2e`. See `.claude/rules/e2e-testing.md` for detailed documentation.
+
+**Planning & Implementation:**
+- **PRD workflow**: Use `/implement-prd` to scaffold from `.claude/prd/` requirements, then `/next-step` for incremental feature development
+- **Test-driven**: Each feature requires unit tests and E2E tests matching PRD flows before moving to next feature
+- **Plan tracking**: `plan.md` (auto-generated) tracks phases → steps → tasks with explicit test requirements
 
 ## Architecture Overview
 
@@ -136,6 +143,18 @@ These rules are enforced by Biome (see `biome.jsonc`):
 
 **Claude commits**: Claude Code can create commits following the conventional commit format. Always ensure `bun type`, `bun lint`, `bun run build` are successful before committing.
 
+**PRD references in commits**: When implementing features from `.claude/prd/`, reference the specific flow file and line number in commit messages:
+
+```bash
+git commit -m "feat: implement email/password signup
+
+Implements flow from .claude/prd/01-flows/auth/signup-flows.md:12
+
+- Add signUp() server action with validation
+- Create SignUpForm component
+- Add E2E tests for happy path and error cases"
+```
+
 ## Type Safety Notes
 
 - **Strict mode**: TypeScript is configured with all strict checks enabled
@@ -179,6 +198,44 @@ These rules are enforced by Biome (see `biome.jsonc`):
    }
    ```
 
+## PRD-Based Development Workflow
+
+This template supports a structured workflow from requirements to implementation:
+
+### 1. Generate PRD in Claude Chat
+
+Use Claude Chat to create your Product Requirements Document from your project idea. The PRD should be structured as:
+
+- `00-overview.md` – Project vision, success metrics, template customization notes
+- `01-flows/` – User flows organized by feature domain (auth/, payments/, etc.)
+- `02-data-models.md` – Database schema specifications
+- `03-api-design.md` – Server actions and API design
+- `04-ui-components.md` – UI/UX specifications
+- `05-integrations.md` – Third-party services and APIs
+
+See `.claude/prd/` for templates and examples.
+
+### 2. Place PRD in `.claude/prd/`
+
+Copy generated PRD files into `.claude/prd/` directory in your cloned template.
+
+### 3. Run `/implement-prd`
+
+Execute the `/implement-prd` slash command in Claude Code. This will:
+- Read your PRD requirements
+- Customize template (remove unused features, update configs)
+- Generate `plan.md` with implementation roadmap
+
+### 4. Incremental Implementation with `/next-step`
+
+Run `/next-step` repeatedly to implement features one at a time:
+- Verifies previous feature has passing tests
+- Implements next feature from plan.md
+- Creates unit tests and E2E tests
+- Validates with `bun test` and `bun run test:e2e`
+
+For detailed guidance, see `.claude/rules/prd-implementation.md` (auto-loads when working in `src/` or `.claude/prd/`).
+
 ## Template Customization
 
 This is a template repository. When adapting for a new project:
@@ -188,4 +245,5 @@ This is a template repository. When adapting for a new project:
 3. Replace OpenGraph images in `public/` directory
 4. Update `NEXT_PUBLIC_PROJECT_NAME` in `.env` (affects database schema namespace)
 5. Customize `docs/brand.md` if using brand guidelines
-6. Delete template-specific content from README.md and this file
+6. Populate `.claude/prd/` with your Product Requirements Document (see "PRD-Based Development Workflow" above)
+7. Delete template-specific content from README.md and this file

@@ -56,6 +56,160 @@ bun dev
 
 Visit <http://localhost:3000> in your browser.
 
+## Development Workflow
+
+This template includes a structured PRD-based workflow powered by Claude Code. The workflow transforms your project idea into a complete implementation through automated scaffolding and incremental feature development.
+
+### Recommended Workflow
+
+**1. Generate PRD in Claude Chat**
+
+Start a conversation in Claude Chat with this prompt:
+
+```
+I want to build a [project type] called [project name]. Here's what I need:
+
+[Describe your project idea, key features, target users, and any specific requirements]
+
+Please generate a complete Product Requirements Document (PRD) using this structure:
+- 00-overview.md: Project vision, success metrics, and template customization notes
+- 01-flows/: User flows organized by feature domain (auth/, payments/, etc.)
+  - Each flow should include: user goal, preconditions, step-by-step scenario, expected DB state, UI state, and E2E test mapping
+- 02-data-models.md: Database schema with Drizzle syntax
+- 03-api-design.md: Server actions with Zod validation
+- 04-ui-components.md: UI/UX specifications
+- 05-integrations.md: Third-party services and configuration
+
+Ask as many questions as needed to ensure the PRD is correct & complete
+
+```
+
+**Example for a SaaS product:**
+
+```
+I want to build a task management SaaS called "TaskFlow". Users can:
+- Sign up with email/password and Google OAuth
+- Create and organize tasks with tags and priorities
+- Collaborate with team members
+- Subscribe to Pro plan for unlimited tasks ($10/month via Stripe)
+- Get real-time notifications
+
+Please generate a complete PRD following the structure above.
+```
+
+**2. Copy PRD to `.claude/prd/`**
+
+Claude Chat will generate multiple markdown files. Copy them into your cloned template's `.claude/prd/` directory:
+
+```bash
+git clone https://github.com/Enriquefft/next-fullstack-template.git my-project
+cd my-project
+
+# Copy generated files into .claude/prd/
+# Your directory should look like:
+# .claude/prd/
+#   00-overview.md
+#   01-flows/
+#     _index.md
+#     auth/signup-flows.md
+#     auth/login-flows.md
+#     tasks/create-task-flows.md
+#     # ... etc
+#   02-data-models.md
+#   03-api-design.md
+#   04-ui-components.md
+#   05-integrations.md
+```
+
+**3. Run `/implement-prd` in Claude Code**
+
+Open the project in Claude Code and run:
+
+```
+/implement-prd
+```
+
+This will:
+- Read your PRD requirements
+- Customize the template (remove unused features, update configs, modify dependencies)
+- Generate `plan.md` with a complete implementation roadmap organized in phases → steps → tasks
+
+Example output:
+```
+✅ Barebones implementation complete!
+
+Completed:
+- Project identity updated (name: taskflow)
+- Authentication: Kept Better Auth + Google OAuth
+- Payments: Replaced Polar with Stripe
+- Analytics: Kept PostHog
+- Dependencies: Removed polar-sh/sdk, added @stripe/stripe-js
+- Database schema: Removed example post table
+
+📋 Implementation plan created: plan.md
+
+Next steps:
+1. Review plan.md to understand implementation phases
+2. Run `/next-step` to begin implementing Phase 1, Step 1
+```
+
+**4. Implement with `/next-step`**
+
+Run `/next-step` repeatedly to implement features one by one:
+
+```
+/next-step
+```
+
+Each execution:
+- Verifies previous feature has passing unit tests and E2E tests
+- Implements next feature from `plan.md` (database → server actions → UI → tests)
+- Validates with `bun test` and `bun run test:e2e`
+- Reports completion and waits for next command
+
+Example session:
+```
+✅ Tests verified for: User Signup
+✅ Plan is up to date
+📋 Next up: User Login
+
+Flow reference: .claude/prd/01-flows/auth/login-flows.md
+
+I'll now implement: Email/password login with session management
+
+Tasks for this step:
+- [ ] Implement signIn() server action with Zod validation
+- [ ] Create SignInForm component
+- [ ] Add login page at /login
+- [ ] Add unit tests for signIn() action
+- [ ] Add E2E tests for login flows (5 scenarios)
+
+[Claude implements feature systematically]
+
+✅ Feature complete: User Login
+
+All tests passing:
+- ✅ Unit tests: bun test
+- ✅ E2E tests: bun run test:e2e
+- ✅ Type check: bunx tsc --noEmit
+- ✅ Linting: bun lint
+
+Ready for next step. Run `/next-step` again to continue.
+```
+
+### PRD Templates
+
+The `.claude/prd/` directory includes templates and examples to guide PRD generation:
+- See `.claude/prd/01-flows/auth/signup-flows.md` for flow document examples
+- See `.claude/prd/_template-flow.md` for the reusable flow template
+- See `docs/plan-template.md` for the expected plan.md structure
+
+### Additional Resources
+
+- **Implementation guidance**: `.claude/rules/prd-implementation.md` (auto-loads when working in `src/` or `.claude/prd/`)
+- **E2E testing guide**: `.claude/rules/e2e-testing.md` (auto-loads when working in `e2e/`)
+- **Full workflow documentation**: See `CLAUDE.md` section "PRD-Based Development Workflow"
+
 ## Available Scripts
 
 The following commands rely on Bun and the packages installed with `bun install`:
