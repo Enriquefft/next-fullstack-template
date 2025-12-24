@@ -86,8 +86,10 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
+          # For PRs: compare base to head
+          # For pushes: compare previous commit to current (or empty tree if initial commit)
+          base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || (github.event.before == '0000000000000000000000000000000000000000' && '' || github.event.before) }}
+          head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           extra_args: --debug --only-verified
 
   license-check:
