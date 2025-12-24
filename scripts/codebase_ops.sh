@@ -273,6 +273,21 @@ check_dependencies() {
 	fi
 
 	if [[ ${#missing[@]} -gt 0 ]]; then
+		# Show specific error guidance based on what's missing
+		for dep in "${missing[@]}"; do
+			if [[ "$dep" == *"claude"* ]]; then
+				show_error_guidance "claude_not_found"
+				exit 1
+			elif [[ "$dep" == *"jq"* ]]; then
+				show_error_guidance "jq_not_found"
+				exit 1
+			elif [[ "$dep" == *"tmux"* ]]; then
+				show_error_guidance "tmux_not_found"
+				exit 1
+			fi
+		done
+
+		# Generic missing dependencies error
 		log "ERROR" "Missing required dependencies:"
 		for dep in "${missing[@]}"; do
 			log "ERROR" "  - $dep"
@@ -373,7 +388,7 @@ $(summarize_if_large "$output_file")
 		--dangerously-skip-permissions \
 		--model "$DIAGNOSTIC_MODEL" \
 		"$diag_prompt" > "$DIAGNOSTIC_OUTPUT" 2>&1; then
-		log "ERROR" "Claude diagnostic analysis failed"
+		show_error_guidance "claude_analysis_failed" "$DIAGNOSTIC_OUTPUT"
 		exit 2
 	fi
 
@@ -391,7 +406,7 @@ $(summarize_if_large "$output_file")
 		log "INFO" "Groups saved to: $GROUPS_FILE"
 		save_diagnostic_cache "$cache_key" "$GROUPS_FILE"
 	else
-		log "ERROR" "Failed to parse diagnostic output as JSON"
+		show_error_guidance "invalid_json" "$GROUPS_FILE"
 		exit 2
 	fi
 
@@ -401,9 +416,7 @@ $(summarize_if_large "$output_file")
 	groups_count=$(jq -r '.summary.groups_count // 0' "$GROUPS_FILE")
 
 	if [[ "$total_items" -eq 0 ]]; then
-		log "INFO" "=========================================="
-		log "INFO" "No issues found! Codebase is clean."
-		log "INFO" "=========================================="
+		show_error_guidance "no_issues_found"
 		exit 0
 	fi
 

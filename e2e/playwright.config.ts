@@ -47,10 +47,23 @@ export default defineConfig({
     webServer: {
         command: "bun run dev",
         env: {
-            // Inject test database URL for the Next.js dev server
+            // Database
             DATABASE_URL_TEST: process.env["DATABASE_URL_TEST"] || "",
             NODE_ENV: "test",
-            // Pass PORT to Next.js to ensure consistent port usage
+            // Authentication
+            GOOGLE_CLIENT_ID: process.env["GOOGLE_CLIENT_ID"] || "",
+            GOOGLE_CLIENT_SECRET: process.env["GOOGLE_CLIENT_SECRET"] || "",
+            BETTER_AUTH_SECRET: process.env["BETTER_AUTH_SECRET"] || "",
+            // Analytics
+            NEXT_PUBLIC_POSTHOG_KEY: process.env["NEXT_PUBLIC_POSTHOG_KEY"] || "",
+            // Payments
+            POLAR_ACCESS_TOKEN: process.env["POLAR_ACCESS_TOKEN"] || "",
+            POLAR_MODE: process.env["POLAR_MODE"] || "sandbox",
+            // File uploads
+            UPLOADTHING_TOKEN: process.env["UPLOADTHING_TOKEN"] || "",
+            // Project config
+            NEXT_PUBLIC_PROJECT_NAME: process.env["NEXT_PUBLIC_PROJECT_NAME"] || "",
+            // Server config
             PORT: PORT.toString(),
         },
         reuseExistingServer: !process.env["CI"],

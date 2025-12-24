@@ -1,19 +1,37 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+// Neon PostgreSQL URL validator
+const neonUrlSchema = z
+	.string()
+	.url()
+	.startsWith("postgresql://", "Database URL must be a PostgreSQL connection string")
+	.refine(
+		(url) => {
+			// Validate that the URL has the required parts for authentication
+			try {
+				const parsed = new URL(url);
+				return parsed.username && parsed.password && parsed.hostname;
+			} catch {
+				return false;
+			}
+		},
+		{ message: "Invalid database URL format: missing credentials or hostname" },
+	);
+
 export const dbEnv = createEnv({
 	client: {},
 	emptyStringAsUndefined: true,
 	experimental__runtimeEnv: process.env,
 	server: {
 		// Primary: single DATABASE_URL (for production/deployment)
-		DATABASE_URL: z.string().url().optional(),
+		DATABASE_URL: neonUrlSchema.optional(),
 
 		// Fallback: environment-specific URLs (for local development)
-		DATABASE_URL_DEV: z.string().url().optional(),
-		DATABASE_URL_PROD: z.string().url().optional(),
-		DATABASE_URL_STAGING: z.string().url().optional(),
-		DATABASE_URL_TEST: z.string().url().optional(),
+		DATABASE_URL_DEV: neonUrlSchema.optional(),
+		DATABASE_URL_PROD: neonUrlSchema.optional(),
+		DATABASE_URL_STAGING: neonUrlSchema.optional(),
+		DATABASE_URL_TEST: neonUrlSchema.optional(),
 
 		NODE_ENV: z
 			.enum(["development", "test", "production"])

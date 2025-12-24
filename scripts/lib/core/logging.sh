@@ -347,3 +347,171 @@ JSONEOF
 
 	log "INFO" "Report: ${REPORT_FILE:-/dev/null}"
 }
+
+# =============================================================================
+# ERROR GUIDANCE (Phase 2 DX Improvement)
+# =============================================================================
+
+# Show actionable error guidance for common failures
+# Usage: show_error_guidance <error_type> [context...]
+show_error_guidance() {
+	local error_type="$1"
+	shift
+	local context=("$@")
+
+	echo ""
+	log_clean "❌" "Operation failed"
+	echo ""
+
+	case "$error_type" in
+		claude_not_found)
+			log_clean "🔍" "Cause: Claude CLI not found"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Install Claude CLI:"
+			echo "     → Visit: https://github.com/anthropics/claude-cli"
+			echo ""
+			echo "  2. Ensure it's in your PATH:"
+			echo "     → Run: which claude"
+			;;
+
+		claude_not_authenticated)
+			log_clean "🔍" "Cause: Claude CLI not authenticated"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Authenticate with your API key:"
+			echo "     → Run: claude auth login"
+			echo ""
+			echo "  2. Check your API key:"
+			echo "     → Visit: https://console.anthropic.com/settings/keys"
+			;;
+
+		claude_analysis_failed)
+			local log_file="${context[0]:-$DIAGNOSTIC_OUTPUT}"
+			log_clean "🔍" "Cause: Claude analysis failed"
+			echo ""
+			log_clean "💡" "Possible causes:"
+			echo "  1. Claude CLI not authenticated"
+			echo "     → Run: claude auth login"
+			echo ""
+			echo "  2. No API credits remaining"
+			echo "     → Check: https://console.anthropic.com"
+			echo ""
+			echo "  3. Network error"
+			echo "     → Check internet connection"
+			echo "     → Retry with: ./scripts/codebase_ops.sh --continue"
+			echo ""
+			echo "  4. Invalid diagnostic output (too large/malformed)"
+			echo "     → Check logs: $log_file"
+			;;
+
+		jq_not_found)
+			log_clean "🔍" "Cause: jq not installed"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  Install jq using your package manager:"
+			echo "     → macOS:   brew install jq"
+			echo "     → Ubuntu:  sudo apt install jq"
+			echo "     → Fedora:  sudo dnf install jq"
+			echo "     → Arch:    sudo pacman -S jq"
+			;;
+
+		tmux_not_found)
+			log_clean "🔍" "Cause: tmux not found (required for --interactive mode)"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Install tmux:"
+			echo "     → macOS:   brew install tmux"
+			echo "     → Ubuntu:  sudo apt install tmux"
+			echo "     → Fedora:  sudo dnf install tmux"
+			echo ""
+			echo "  2. Or use non-interactive mode:"
+			echo "     → Run: ./scripts/codebase_ops.sh --auto"
+			;;
+
+		dirty_working_directory)
+			log_clean "🔍" "Cause: Uncommitted changes in working directory"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Commit your changes:"
+			echo "     → Run: git add . && git commit -m 'WIP'"
+			echo ""
+			echo "  2. Stash your changes:"
+			echo "     → Run: git stash"
+			echo ""
+			echo "  3. Allow dirty working directory (not recommended):"
+			echo "     → Run: ./scripts/codebase_ops.sh --allow-dirty"
+			;;
+
+		no_issues_found)
+			log_clean "🔍" "Cause: No issues found in diagnostics"
+			echo ""
+			log_clean "💡" "This means:"
+			echo "  ✓ All tests passed"
+			echo "  ✓ No type errors"
+			echo "  ✓ Build succeeded"
+			echo "  ✓ No lint issues"
+			echo ""
+			log_clean "🎉" "Your codebase is clean!"
+			;;
+
+		worktree_creation_failed)
+			local group_name="${context[0]:-unknown}"
+			log_clean "🔍" "Cause: Failed to create git worktree for '$group_name'"
+			echo ""
+			log_clean "💡" "Possible causes:"
+			echo "  1. Worktree directory already exists"
+			echo "     → Clean up: rm -rf /tmp/worktrees/*"
+			echo ""
+			echo "  2. Branch name conflict"
+			echo "     → Delete old branches: git branch -D fix-*"
+			echo ""
+			echo "  3. Disk space issue"
+			echo "     → Check: df -h /tmp"
+			;;
+
+		merge_conflicts)
+			local group_name="${context[0]:-unknown}"
+			log_clean "🔍" "Cause: Merge conflicts when merging '$group_name'"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Resolve conflicts manually:"
+			echo "     → Run: git status"
+			echo "     → Edit conflicted files"
+			echo "     → Run: git add . && git commit"
+			echo ""
+			echo "  2. Skip this group:"
+			echo "     → Run: git merge --abort"
+			echo "     → Continue with other groups"
+			echo ""
+			echo "  3. Undo all changes:"
+			echo "     → Run: ./scripts/codebase_ops.sh undo"
+			;;
+
+		invalid_json)
+			local json_file="${context[0]:-groups file}"
+			log_clean "🔍" "Cause: Invalid JSON in $json_file"
+			echo ""
+			log_clean "💡" "Solutions:"
+			echo "  1. Check Claude output for errors:"
+			echo "     → View: $DIAGNOSTIC_OUTPUT"
+			echo ""
+			echo "  2. Claude may have returned markdown instead of JSON"
+			echo "     → This is usually due to no issues found"
+			echo ""
+			echo "  3. Retry the analysis:"
+			echo "     → Run: ./scripts/codebase_ops.sh"
+			;;
+
+		*)
+			log_clean "🔍" "Cause: $error_type"
+			echo ""
+			log_clean "💡" "General troubleshooting:"
+			echo "  1. Check logs: ${LOG_FILE:-logs}"
+			echo "  2. Try again: ./scripts/codebase_ops.sh"
+			echo "  3. Report issue: https://github.com/anthropics/claude-code/issues"
+			;;
+	esac
+
+	echo ""
+}

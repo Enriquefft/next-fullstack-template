@@ -46,9 +46,8 @@ create_worktrees() {
 	# Check for uncommitted changes (both staged and unstaged)
 	if ! git diff-index --quiet HEAD -- 2>/dev/null || ! git diff --quiet 2>/dev/null; then
 		if [[ "${ALLOW_DIRTY:-false}" == false ]]; then
-			log "ERROR" "You have uncommitted changes. Please commit or stash them first."
-			log "ERROR" "Or use --allow-dirty to bypass this check (not recommended)."
 			git status --short
+			show_error_guidance "dirty_working_directory"
 			exit 3
 		else
 			log "WARN" "Proceeding with uncommitted changes (--allow-dirty enabled)"
