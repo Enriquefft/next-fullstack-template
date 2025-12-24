@@ -47,7 +47,7 @@
 		"@types/react": "19.2.7",
 		"@types/react-dom": "19.2.3",
 		"drizzle-kit": "^0.31.8",
-		"knip": "^5.76.3",
+		"knip": "^5.77.0",
 		"pg": "^8.16.3",
 		"playwright": "^1.57.0",
 		"postcss": "^8.5.6",
