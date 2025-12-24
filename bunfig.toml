@@ -1,2 +1,4 @@
 [test]
 preload = ["./tests/happydom.ts", "./tests/testing-library.ts"]
+timeout = 30000
+root = "./tests"
