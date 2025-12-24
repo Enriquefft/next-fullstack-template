@@ -221,6 +221,15 @@ bun run test:e2e:headed
 bun run test:e2e:report
 ```
 
+### Port Already in Use
+
+If you see "Port 3000 is already in use", the tests will fail immediately with a helpful error message. You have two options:
+
+1. Stop the process using port 3000
+2. Use a different port: `PORT=3001 bun run test:e2e`
+
+The port check happens during global setup, so you'll get immediate feedback rather than hanging indefinitely.
+
 ### Add Debug Breakpoint
 ```typescript
 test("debug this test", async ({ page }) => {

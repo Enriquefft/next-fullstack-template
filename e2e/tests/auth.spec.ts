@@ -9,17 +9,20 @@ import { getSessionByToken, getUserByEmail } from "../helpers/db.ts";
 test.describe("Authentication", () => {
 	test("unauthenticated users can access home page", async ({ page }) => {
 		await page.goto("/");
-		await expect(page).toHaveURL("/");
+		// next-intl redirects to locale-prefixed URL
+		await expect(page).toHaveURL(/\/(en|es)/);
 	});
 
 	test("can create authenticated user and verify in database", async () => {
+		// Use unique email to avoid conflicts when tests run in parallel
+		const uniqueEmail = `newuser-${crypto.randomUUID()}@test.com`;
 		const user = await createAuthenticatedUser({
-			email: "newuser@test.com",
+			email: uniqueEmail,
 			name: "New Test User",
 		});
 
 		// Verify user exists in database
-		const dbUser = await getUserByEmail("newuser@test.com");
+		const dbUser = await getUserByEmail(uniqueEmail);
 		expect(dbUser).toBeTruthy();
 		expect(dbUser?.id).toBe(user.id);
 		expect(dbUser?.name).toBe("New Test User");
@@ -31,9 +34,10 @@ test.describe("Authentication", () => {
 	});
 
 	test("authenticated users can access protected routes", async ({ page }) => {
-		// Create and authenticate a user
+		// Create and authenticate a user with unique email
+		const uniqueEmail = `authenticated-${crypto.randomUUID()}@test.com`;
 		await createAndAuthenticateUser(page, {
-			email: "authenticated@test.com",
+			email: uniqueEmail,
 		});
 
 		// Try to access a protected route (adjust URL to match your app)

@@ -30,14 +30,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-### E2E Testing & Database Architecture
+### Database Architecture
 
-This project uses a **multi-database architecture** with separate Neon branches for different environments:
+This project uses a **multi-environment database architecture** with automatic environment selection:
 
-1. **Single Entry Point**: Application code (`src/db/index.ts`) reads only `DRIZZLE_DATABASE_URL`
-2. **Environment Selection**: Scripts inject the appropriate database URL (`DATABASE_URL_DEV`, `DATABASE_URL_TEST`, etc.)
-3. **E2E Isolation**: All E2E-specific code lives in the `e2e/` folder—no test logic in application code
-4. **Infrastructure-Free**: No Docker or local PostgreSQL required—Neon branches are always available
+**Environment Selection Logic** (`src/env/db.ts`):
+1. **Production/Deployment**: Set `DATABASE_URL` environment variable (Vercel, Railway, etc.)
+2. **Local Development**: Uses environment-specific URLs based on `NODE_ENV`:
+   - `NODE_ENV=development` → `DATABASE_URL_DEV`
+   - `NODE_ENV=test` → `DATABASE_URL_TEST`
+   - `NODE_ENV=production` → `DATABASE_URL_PROD`
+
+**Configuration**:
+- All database URLs are defined in `.env` file
+- Validation ensures either `DATABASE_URL` OR the appropriate `DATABASE_URL_{ENV}` is set
+- Application code (`src/db/index.ts`) imports `databaseUrl` from `src/env/db.ts`
+- No manual script injection required—automatic selection via `NODE_ENV`
+
+**Example `.env` setup**:
+```env
+# Local development databases (for different environments)
+DATABASE_URL_DEV='postgresql://...'
+DATABASE_URL_TEST='postgresql://...'
+DATABASE_URL_STAGING='postgresql://...'
+DATABASE_URL_PROD='postgresql://...'
+
+# Optional: Override for production deployment (Vercel sets this)
+# DATABASE_URL='postgresql://...'
+```
+
+**Infrastructure**:
+- Uses **Neon Serverless** PostgreSQL (separate branches per environment)
+- No Docker or local PostgreSQL required—Neon branches are always available
+- E2E tests automatically use `DATABASE_URL_TEST` via `NODE_ENV=test`
 
 **For detailed E2E testing guide**, see `.claude/rules/e2e-testing.md` (loads automatically when working in `e2e/`).
 
@@ -74,7 +99,7 @@ Uses **TanStack Form** (`@tanstack/react-form`) with **Field** components from `
 
 Uses **Drizzle ORM** with **Neon Serverless** driver for PostgreSQL.
 
-- **Connection**: `src/db/index.ts` exports `db` instance connected via `DRIZZLE_DATABASE_URL`
+- **Connection**: `src/db/index.ts` exports `db` instance using `databaseUrl` from `src/env/db.ts`
 - **Schema organization**: All schemas live in `src/db/schema/` directory
   - `schema.ts` creates the base schema using `pgSchema(env.NEXT_PUBLIC_PROJECT_NAME)` – this means all tables are namespaced by project name
   - `index.ts` re-exports all schemas for convenient imports
@@ -89,7 +114,7 @@ Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[clien
 
 - **Client vars** (prefixed with `NEXT_PUBLIC_`): Available in browser
 - **Server vars**: Backend-only, validated at build time
-- **Database URLs**: Multi-environment setup using Neon branches (`DATABASE_URL_DEV`, `DATABASE_URL_TEST`, etc.). Application code reads only `DRIZZLE_DATABASE_URL`, which is set automatically by scripts.
+- **Database URLs**: See "Database Architecture" section above for details on multi-environment setup
 
 ### Code Organization
 
