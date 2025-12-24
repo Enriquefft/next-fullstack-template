@@ -59,7 +59,16 @@
       "Bash(pkg-config:*)",
       "Bash(env -u PLAYWRIGHT_BROWSERS_PATH bash -c 'echo \"\"$LD_LIBRARY_PATH\"\" | tr \"\":\"\" \"\"\\n\"\" | grep mesa')",
       "Bash(printenv:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(vercel --help:*)",
+      "Bash(vercel git --help:*)",
+      "Bash(bash:*)",
+      "Bash(vercel --version:*)",
+      "Bash(gh --version:*)",
+      "Bash(vercel env ls:*)",
+      "Bash(gh secret list:*)",
+      "Bash(test:*)",
+      "Bash(./scripts/codebase_ops.sh:*)"
     ],
     "deny": [],
     "ask": []

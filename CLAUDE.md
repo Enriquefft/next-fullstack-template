@@ -30,6 +30,84 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Test-driven**: Each feature requires unit tests and E2E tests matching PRD flows before moving to next feature
 - **Plan tracking**: `plan.md` (auto-generated) tracks phases → steps → tasks with explicit test requirements
 
+### Automated Codebase Operations
+
+**`scripts/codebase_ops.sh`** - Multi-mode automation script using Claude Code CLI for parallel bug fixing and improvements.
+
+**Modes:**
+- `fix` (default) - Automated bug fixing from test/type/build failures
+- `improve` - Codebase improvement using static analysis
+
+**🆕 Improved Developer Experience (DX):**
+- **Preview by Default** - Shows what will be fixed before doing anything (safe to explore!)
+- **Interactive Selection** - Choose exactly which issues to fix
+- **Incremental Mode** - Fix only files changed in your PR (`--since main`)
+- **Desktop Notifications** - Get notified when fixes complete
+- **Clean Output** - No more log spam, just clear status updates
+- **Time Estimates** - Know how long each fix will take
+
+**Common Workflows:**
+```bash
+# 🌟 RECOMMENDED: First time? Start here
+./scripts/codebase_ops.sh --dry-run
+# See all issues, no changes made
+
+# ⚡ FASTEST: Fix only what you changed in your PR (90% use case)
+./scripts/codebase_ops.sh --since main
+# Interactive: choose which groups to fix
+# Time: ~30-60 seconds vs 10-15 minutes
+
+# 🎯 SELECTIVE: Preview and choose specific issues
+./scripts/codebase_ops.sh
+# Shows grouped issues, you pick which to fix
+# Example: "Select: 1,3,5" or "safe" for automated fixes only
+
+# 🧹 QUICK CLEANUP: Fix only safe/automated issues
+./scripts/codebase_ops.sh
+# When prompted, type: safe
+# Fixes formatting, imports, simple type errors
+
+# 🚀 POWER USER: Fix everything automatically
+./scripts/codebase_ops.sh --all --execute --auto
+# Skips confirmation, fixes all issues (use with caution!)
+
+# 🔍 CODE IMPROVEMENTS: Find quality improvements
+./scripts/codebase_ops.sh --mode improve
+# Finds dead code, bandaid fixes, type safety issues
+```
+
+**How It Works:**
+1. 🔍 Runs diagnostics (test, type, build, E2E, lint) in parallel
+2. 🤖 Uses Claude Opus to analyze and group issues by module/dependencies
+3. 📋 Shows preview with time estimates and complexity markers
+4. ❓ Prompts you to select which groups to fix (interactive)
+5. 🔧 Creates isolated git worktrees for parallel fixing
+6. 🎯 Launches Claude Code CLI instances to fix selected groups
+7. ✅ Merges changes back to main in dependency order
+8. 🔔 Sends desktop notification when complete
+
+**Key Options:**
+- `--since <ref>` - Only analyze files changed since git ref (main, HEAD~1, etc.)
+- `--execute` - Apply fixes without confirmation (preview still shown)
+- `--dry-run` - Just show what would be fixed (no prompt, no changes)
+- `--mode <mode>` - Select mode: fix or improve
+- `--all` - Process ALL issues (default: simple/safe only)
+- `--continue` - Resume from previous interactive session
+- `--no-notifications` - Disable desktop notifications
+
+**Advanced Options:**
+- `--interactive` - Launch Claude in tmux for Q&A [DEFAULT]
+- `--auto` - Fully automatic mode (background + auto-merge, no interaction)
+- `--final-review` - Run final Claude review after all merges
+- `--verbose/-v` - Show detailed debug messages
+- `--quiet/-q` - Show only warnings and errors
+
+**Requirements:**
+- `claude` CLI installed and authenticated
+- `jq` for JSON processing
+- `tmux` for interactive mode
+- Clean git working directory (or use `--allow-dirty`)
+
 ## Architecture Overview
 
 ### Database Architecture

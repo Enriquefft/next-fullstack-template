@@ -23,6 +23,8 @@
           lefthook
           commitlint-rs
 
+          nodePackages.vercel
+
         ];
 
       devShell.env = pkgs: {
