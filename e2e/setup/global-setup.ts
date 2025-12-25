@@ -15,7 +15,7 @@ export default async function globalSetup() {
 	// Push latest schema to test database
 	console.log("📦 Pushing database schema...");
 	try {
-		const output = execSync("bun run db:push", {
+		const output = execSync("bunx drizzle-kit push --force", {
 			env: {
 				...process.env,
 				NODE_ENV: "test",
