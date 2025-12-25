@@ -313,3 +313,47 @@ prompt_group_approval() {
 			;;
 	esac
 }
+
+# =============================================================================
+# CONTEXT DETECTION (Phase 3: Smart Defaults)
+# =============================================================================
+
+# Detect execution context to apply smart defaults
+# Returns: "ci", "git-hook", "pr", or "local"
+detect_context() {
+	# CI Environment (GitHub Actions, GitLab CI, CircleCI, etc.)
+	if [[ -n "${CI:-}" ]] || \
+	   [[ -n "${GITHUB_ACTIONS:-}" ]] || \
+	   [[ -n "${GITLAB_CI:-}" ]] || \
+	   [[ -n "${CIRCLECI:-}" ]] || \
+	   [[ -n "${JENKINS_HOME:-}" ]] || \
+	   [[ -n "${TRAVIS:-}" ]]; then
+		echo "ci"
+		return
+	fi
+
+	# Git Hook (pre-commit, pre-push, etc.)
+	# Detect via GIT_INDEX_FILE or if script is running from .git/hooks/
+	if [[ -n "${GIT_INDEX_FILE:-}" ]] || [[ "$0" == *".git/hooks/"* ]]; then
+		echo "git-hook"
+		return
+	fi
+
+	# Pull Request / Feature Branch
+	# Check if on a branch that's not main/master/develop
+	if git rev-parse --git-dir &>/dev/null 2>&1; then
+		local current_branch
+		current_branch=$(git branch --show-current 2>/dev/null || echo "")
+
+		if [[ -n "$current_branch" ]] && \
+		   [[ "$current_branch" != "main" ]] && \
+		   [[ "$current_branch" != "master" ]] && \
+		   [[ "$current_branch" != "develop" ]]; then
+			echo "pr"
+			return
+		fi
+	fi
+
+	# Default: Local development
+	echo "local"
+}

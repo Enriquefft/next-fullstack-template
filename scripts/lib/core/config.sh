@@ -282,3 +282,90 @@ build_filtered_commands() {
 
 	return 0
 }
+
+# =============================================================================
+# SMART DEFAULTS (Phase 3: Context-Aware Configuration)
+# =============================================================================
+
+# Apply smart defaults based on execution context
+# This function sets appropriate flags based on whether we're in:
+#   - CI (automated, non-interactive)
+#   - Git hook (fast, safe-only)
+#   - PR branch (incremental, safe)
+#   - Local development (interactive, preview)
+#
+# Note: Explicit CLI flags will override these defaults
+apply_smart_defaults() {
+	local context
+	context=$(detect_context)
+
+	log "DEBUG" "Detected context: $context"
+
+	case "$context" in
+		ci)
+			# CI Environment: Fully automated, non-interactive
+			log "DEBUG" "Applying CI defaults: --execute --auto --all --quiet"
+
+			# Override defaults for CI (user flags will override these later)
+			EXECUTE_MODE=true
+			AUTO_FIX=true
+			AUTO_MERGE=true
+			INTERACTIVE=false
+			VERBOSITY=0
+			ENABLE_NOTIFICATIONS=false
+			SIMPLE_ONLY=false
+
+			# Export for environment detection
+			export CODEBASE_OPS_CONTEXT="ci"
+			;;
+
+		git-hook)
+			# Git Hook: Fast and safe, minimal output
+			log "DEBUG" "Applying git-hook defaults: --since HEAD --safe --quiet"
+
+			SINCE_REF="HEAD"
+			SAFE_ONLY=true
+			CONFIDENCE_LEVEL="safe"
+			VERBOSITY=0
+			ENABLE_NOTIFICATIONS=false
+
+			export CODEBASE_OPS_CONTEXT="git-hook"
+			;;
+
+		pr)
+			# Pull Request: Incremental fixes, safe defaults
+			log "DEBUG" "Applying PR defaults: --since origin/main --safe"
+
+			# Try origin/main first, fall back to main if origin not available
+			if git rev-parse --verify origin/main &>/dev/null; then
+				SINCE_REF="origin/main"
+			elif git rev-parse --verify main &>/dev/null; then
+				SINCE_REF="main"
+			elif git rev-parse --verify origin/master &>/dev/null; then
+				SINCE_REF="origin/master"
+			else
+				SINCE_REF="master"
+			fi
+
+			CONFIDENCE_LEVEL="safe"
+			PREVIEW_MODE=true
+
+			export CODEBASE_OPS_CONTEXT="pr"
+			;;
+
+		local)
+			# Local Development: Interactive, preview-first
+			log "DEBUG" "Applying local defaults: interactive preview mode"
+
+			# Keep existing defaults (already set in script)
+			# No overrides needed for local development
+
+			export CODEBASE_OPS_CONTEXT="local"
+			;;
+
+		*)
+			log "WARN" "Unknown context: $context (using local defaults)"
+			export CODEBASE_OPS_CONTEXT="unknown"
+			;;
+	esac
+}

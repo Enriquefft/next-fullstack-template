@@ -19,6 +19,8 @@
           nodejs
 
           coreutils
+          jq
+          tmux
 
           lefthook
           commitlint-rs

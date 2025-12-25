@@ -60,6 +60,7 @@ set -- "${REMAINING_ARGS[@]:-}"
 source "${SCRIPT_DIR}/lib/core/utils.sh"
 source "${SCRIPT_DIR}/lib/core/logging.sh"
 source "${SCRIPT_DIR}/lib/core/config.sh"
+source "${SCRIPT_DIR}/lib/core/config-loader.sh"
 source "${SCRIPT_DIR}/lib/core/cache.sh"
 source "${SCRIPT_DIR}/lib/core/cleanup.sh"
 source "${SCRIPT_DIR}/lib/core/worktree.sh"
@@ -168,6 +169,7 @@ KEY OPTIONS:
   --execute           Apply fixes without confirmation (preview still shown)
   --dry-run           Only run analysis, don't prompt or fix anything
   --mode <mode>       Select mode: fix or improve
+  --profile <name>    Load named profile from team config (safe, review, full, pr)
   --all               Process ALL issues (default: simple/safe only)
   --continue          Resume from previous interactive session
   --no-notifications  Disable desktop notifications
@@ -223,6 +225,38 @@ REQUIREMENTS:
   - tmux (for --interactive mode)
   - Clean git working directory (or use --allow-dirty)
 
+SMART DEFAULTS (Auto-Detects Context):
+  - CI (GitHub Actions, etc.): Fully automated, non-interactive
+  - Git Hook: Fast, safe-only fixes
+  - PR Branch: Incremental fixes since main, safe defaults
+  - Local: Interactive preview mode (normal defaults)
+
+CONFIGURATION FILES:
+  .codebase-ops.json         Team config (committed to repo)
+  .codebase-ops.local.json   Personal overrides (gitignored)
+
+  Priority (highest to lowest):
+    1. CLI flags (--safe, --execute, etc.)
+    2. Profiles (--profile safe)
+    3. Personal config (.codebase-ops.local.json)
+    4. Team config (.codebase-ops.json)
+    5. Smart defaults (context detection)
+    6. Script defaults
+
+  Example team config:
+    {
+      "mode": "fix",
+      "confidence": "safe",
+      "since": "origin/main",
+      "profiles": {
+        "safe": { "confidence": "safe", "execute": true },
+        "review": { "show_diff": true }
+      }
+    }
+
+  Use profiles:
+    ./scripts/codebase_ops.sh --profile safe
+
 TIPS:
   - Use --since main for fastest feedback (only fix your changes)
   - Use --safe for fully automated, zero-risk fixes
@@ -231,8 +265,9 @@ TIPS:
   - Groups marked "REVIEW" (⚠️ ) should be inspected before applying
   - Confidence levels: safe < medium < low (increasing complexity)
   - Logs saved to: .fix_bugs_logs/ (auto-cleaned after 7 days)
+  - Smart defaults apply automatically - explicit flags override them
 
-Full docs: See CLAUDE.md section "Automated Codebase Operations"
+Full docs: See README.md section "Automated Codebase Operations"
 EOF
 }
 
@@ -661,8 +696,19 @@ fi
 
 main() {
 	local CONTINUE_MODE=false
+	local PROFILE_NAME=""
 
-	# Parse remaining arguments
+	# Apply smart defaults based on context (CI, git-hook, PR, local)
+	# This must happen BEFORE config files and argument parsing
+	apply_smart_defaults
+
+	# Load configuration files (team config, then personal overrides)
+	# This must happen AFTER smart defaults, BEFORE argument parsing
+	if ! load_configuration_files; then
+		exit 1
+	fi
+
+	# Parse remaining arguments (these override everything)
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
 			--dry-run) DRY_RUN=true; PREVIEW_MODE=false; shift ;;
@@ -681,6 +727,8 @@ main() {
 			--continue|-c) CONTINUE_MODE=true; shift ;;
 			--allow-dirty) ALLOW_DIRTY=true; shift ;;
 			--final-review) FINAL_REVIEW=true; shift ;;
+			--profile) PROFILE_NAME="$2"; shift 2 ;;
+			--profile=*) PROFILE_NAME="${1#*=}"; shift ;;
 			--all) SIMPLE_ONLY=false; shift ;;
 			--verbose|-v) VERBOSITY=2; shift ;;
 			--quiet|-q) VERBOSITY=0; shift ;;
@@ -698,6 +746,13 @@ main() {
 				;;
 		esac
 	done
+
+	# Load profile if specified (this happens after CLI parsing, so profiles override configs)
+	if [[ -n "$PROFILE_NAME" ]]; then
+		if ! load_profile "$PROFILE_NAME"; then
+			exit 1
+		fi
+	fi
 
 	# Setup
 	mkdir -p "$LOG_DIR" "$QUESTIONS_DIR" "$CACHE_DIR"

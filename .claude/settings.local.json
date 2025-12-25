@@ -77,7 +77,10 @@
       "Bash(node scripts/test-db-connection.js:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(gh run watch:*)"
+      "Bash(gh run watch:*)",
+      "Bash(python3:*)",
+      "Bash(/dev/null)",
+      "Bash(direnv status:*)"
     ],
     "deny": [],
     "ask": []
