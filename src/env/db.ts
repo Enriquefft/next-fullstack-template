@@ -26,13 +26,11 @@ export const dbEnv = createEnv({
 	emptyStringAsUndefined: true,
 	experimental__runtimeEnv: process.env,
 	server: {
-		// Primary: single DATABASE_URL (for production/deployment)
+		// Primary: DATABASE_URL (set by Vercel for production/preview)
 		DATABASE_URL: neonUrlSchema.optional(),
 
-		// Fallback: environment-specific URLs (for local development)
+		// Local development URLs (set in .env.local)
 		DATABASE_URL_DEV: neonUrlSchema.optional(),
-		DATABASE_URL_PROD: neonUrlSchema.optional(),
-		DATABASE_URL_STAGING: neonUrlSchema.optional(),
 		DATABASE_URL_TEST: neonUrlSchema.optional(),
 
 		NODE_ENV: z
@@ -46,36 +44,26 @@ export const dbEnv = createEnv({
  * Get the database URL based on the current environment.
  *
  * Priority:
- * 1. DATABASE_URL (if set - typically for production/Vercel)
- * 2. DATABASE_URL_{NODE_ENV} (environment-specific URL)
+ * 1. DATABASE_URL (set by Vercel for production/preview deployments)
+ * 2. DATABASE_URL_TEST (when NODE_ENV=test, for E2E tests)
+ * 3. DATABASE_URL_DEV (for local development)
  *
  * @throws {Error} If no valid database URL is configured
  */
 function getDatabaseUrl(): string {
-	// 1. Prefer explicit DATABASE_URL (production/Vercel)
+	// 1. Prefer DATABASE_URL (set by Vercel)
 	if (dbEnv.DATABASE_URL) {
 		return dbEnv.DATABASE_URL;
 	}
 
-	// 2. Fall back to environment-specific (local development)
+	// 2. Fall back to local environment URLs
 	const env = dbEnv.NODE_ENV;
-
-	let url: string | undefined;
-	switch (env) {
-		case "production":
-			url = dbEnv.DATABASE_URL_PROD;
-			break;
-		case "test":
-			url = dbEnv.DATABASE_URL_TEST;
-			break;
-		default:
-			url = dbEnv.DATABASE_URL_DEV;
-	}
+	const url = env === "test" ? dbEnv.DATABASE_URL_TEST : dbEnv.DATABASE_URL_DEV;
 
 	if (!url) {
+		const varName = env === "test" ? "DATABASE_URL_TEST" : "DATABASE_URL_DEV";
 		throw new Error(
-			`Database URL not configured for environment: ${env}. ` +
-				`Set DATABASE_URL or DATABASE_URL_${env.toUpperCase()}`,
+			`Database URL not configured. Set DATABASE_URL or ${varName} in your .env.local file.`,
 		);
 	}
 

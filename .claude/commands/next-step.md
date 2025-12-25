@@ -72,7 +72,8 @@ Tasks for this step:
    - E2E tests based on PRD flows
 
 6. **Update TodoWrite** as you complete each task
-7. **When feature is complete**: Stop and announce completion
+7. **Update plan.md**: Mark completed tasks with `[x]` (see "Updating plan.md" section below)
+8. **When feature is complete**: Stop and announce completion
 
 **Completion announcement**:
 
@@ -91,6 +92,8 @@ All tests passing:
 - ✅ E2E tests: bun run test:e2e
 - ✅ Type check: bunx tsc --noEmit
 - ✅ Linting: bun lint
+
+📋 Updated plan.md: [Step X.X] marked complete ✅
 
 Ready for next step. Run `/next-step` again to continue.
 ```
@@ -118,6 +121,70 @@ If plan is ambiguous or PRD is unclear, use AskUserQuestion:
 
 ### One Feature at a Time
 Complete current feature fully (including tests) before moving to next.
+
+## Updating plan.md
+
+**IMPORTANT**: After completing each task, update `plan.md` to reflect progress.
+
+### How to Mark Tasks Complete
+
+1. **Individual tasks**: Change `- [ ]` to `- [x]` for each completed task
+2. **Test requirements**: Mark test items as complete when tests are written and passing
+
+### When to Update
+
+Update `plan.md` incrementally as you work:
+- After completing each task in a step (e.g., creating a schema, implementing a server action)
+- After writing and verifying tests pass
+- Before announcing feature completion
+
+### Example Update
+
+**Before**:
+```markdown
+### Step 1.1: User Signup
+**Tasks**:
+- [ ] Create User table schema in `src/db/schema/user.ts`
+- [ ] Implement `signUp()` server action with Zod validation
+- [ ] Create SignUpForm component
+
+**Test Requirements**:
+- **Unit Tests**:
+  - [ ] `tests/actions/auth.test.ts` - Test signUp() validation
+- **E2E Tests**:
+  - [ ] `e2e/tests/auth.spec.ts` - "user can sign up with email and password"
+```
+
+**After** (when step is complete):
+```markdown
+### Step 1.1: User Signup ✅
+**Tasks**:
+- [x] Create User table schema in `src/db/schema/user.ts`
+- [x] Implement `signUp()` server action with Zod validation
+- [x] Create SignUpForm component
+
+**Test Requirements**:
+- **Unit Tests**:
+  - [x] `tests/actions/auth.test.ts` - Test signUp() validation
+- **E2E Tests**:
+  - [x] `e2e/tests/auth.spec.ts` - "user can sign up with email and password"
+```
+
+### Marking Steps and Phases Complete
+
+- Add `✅` after step title when all tasks and tests are complete
+- Add `✅` after phase title when all steps in that phase are complete
+
+Example:
+```markdown
+## Phase 1: MVP ✅
+
+### Step 1.1: User Signup ✅
+...
+
+### Step 1.2: User Login ✅
+...
+```
 
 ## Implementation Order (Reminder)
 
@@ -220,6 +287,8 @@ Tasks for this step:
 
 **Claude**: [Proceeds to implement login feature systematically]
 
+**Claude**: [Updates plan.md after each task - marks `- [ ]` → `- [x]`]
+
 **Claude**: [After completing all tasks]
 ```
 ✅ Feature complete: User Login
@@ -236,7 +305,72 @@ All tests passing:
 - ✅ Type check: bunx tsc --noEmit
 - ✅ Linting: bun lint
 
+📋 Updated plan.md: Step 1.2 marked complete ✅
+
 Ready for next step. Run `/next-step` again to continue.
+```
+
+## Handling the UI/UX Revamp Step
+
+The UI/UX Revamp step (Step F.1) is **iterative**. Handle it differently:
+
+### Iteration Process
+
+1. **Analyze current state**: Review the application's visual design
+2. **Identify improvements**: List 3-5 specific UI/UX issues to fix
+3. **Implement changes**: Make the improvements
+4. **Evaluate**: Check if the UI meets quality standards
+5. **Repeat or complete**: If not satisfactory, go back to step 1
+
+### Evaluation Criteria
+
+Ask yourself these questions after each iteration:
+- Does the visual hierarchy guide user attention effectively?
+- Is spacing consistent throughout the app?
+- Are colors harmonious and accessible?
+- Do interactive elements have clear affordances?
+- Is the mobile experience smooth?
+
+### When to Mark Complete
+
+Mark the UI/UX step complete when:
+- All items in the Quality Checklist are checked
+- The app looks polished and professional
+- No obvious visual inconsistencies remain
+
+### Example UI/UX Iteration
+
+```
+🎨 UI/UX Revamp - Iteration 1
+
+Current issues identified:
+1. Inconsistent button padding across forms
+2. Card shadows too harsh
+3. Mobile nav menu lacks smooth transition
+4. Form labels have inconsistent font weights
+5. Empty states use plain text, need illustrations
+
+Implementing fixes...
+
+[Makes changes]
+
+Evaluation: Better, but spacing in dashboard cards still inconsistent.
+Continuing to iteration 2...
+```
+
+```
+🎨 UI/UX Revamp - Iteration 2
+
+Remaining issues:
+1. Dashboard card spacing inconsistent
+2. Table headers need better visual weight
+3. Loading spinners are plain
+
+Implementing fixes...
+
+[Makes changes]
+
+Evaluation: ✅ UI meets quality standards. Marking complete.
 ```
 
 ## Error Handling

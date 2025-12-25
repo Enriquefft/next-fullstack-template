@@ -54,15 +54,11 @@ Two helper scripts are provided for faster setup:
 
 Add these secrets in **Settings → Secrets and variables → Actions** (or use `./scripts/setup-github-secrets.sh`):
 
-**Database** (these should already exist in your `.env` from Getting Started):
-- `DATABASE_URL_TEST` - Test database connection string
-- `DATABASE_URL_STAGING` - Staging database connection string
-- `DATABASE_URL_PROD` - Production database connection string
+**Database**:
+- `DATABASE_URL_TEST` - Test database connection string (for E2E tests)
 
 **Authentication** (copy from `.env` or generate new):
 - `BETTER_AUTH_SECRET_TEST` - Generate: `bun run auth:secret`
-- `BETTER_AUTH_SECRET_STAGING` - Generate: `bun run auth:secret`
-- `BETTER_AUTH_SECRET_PROD` - Generate: `bun run auth:secret`
 - `GOOGLE_CLIENT_ID` - Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET` - Google OAuth client secret
 

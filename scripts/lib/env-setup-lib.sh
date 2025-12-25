@@ -6,6 +6,12 @@
 # Used by setup-vercel-env.sh, setup-github-secrets.sh, and setup-env.sh.
 #
 
+# Get the directory of this library file
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source the configuration file
+source "$LIB_DIR/env-config.sh"
+
 # ============================================================================
 # VALUE CACHING (for unified script to share values between platforms)
 # ============================================================================
@@ -104,11 +110,11 @@ prompt_for_value() {
 	# Display prompt with existence status
 	echo "" >&2
 	echo "────────────────────────────────────────" >&2
-	echo "🔑 $description" >&2
 	echo "Variable: $var_name" >&2
+	echo "$description" >&2
 
 	if [ "$exists" = true ]; then
-		local status_msg="📌 Status: Already exists"
+		local status_msg="Status: Already exists"
 
 		# Try to get last 8 chars for Vercel env vars only
 		if [ "$check_func" = "check_vercel_var_exists" ] && [ -n "$env_arg" ]; then
@@ -125,12 +131,12 @@ prompt_for_value() {
 
 		echo "$status_msg (will be updated if you provide a value)" >&2
 	else
-		echo "⚠️  Status: Does not exist (will be created)" >&2
+		echo "Status: Does not exist (will be created)" >&2
 	fi
 
 	# Show default value if available
 	if [ -n "$default_value" ]; then
-		echo "💡 Default: $default_value" >&2
+		echo "Default: $default_value" >&2
 	fi
 
 	# Read value (hidden)
@@ -146,20 +152,20 @@ prompt_for_value() {
 	if [ -z "$value" ]; then
 		# Use default value if available
 		if [ -n "$default_value" ]; then
-			echo "✓ Using default value: $default_value" >&2
+			echo "Using default value: $default_value" >&2
 			value="$default_value"
 		elif [ "$exists" = true ]; then
-			echo "✓ Skipping - keeping existing value" >&2
+			echo "Skipping - keeping existing value" >&2
 			return 1  # Signal to skip
 		else
 			# Confirm blank input for non-existing variables
-			echo "⚠️  WARNING: This variable does not exist yet." >&2
+			echo "WARNING: This variable does not exist yet." >&2
 			local confirm
 			read -rp "Are you sure you want to skip? (y/n): " -n 1 confirm
 			echo "" >&2
 
 			if [[ $confirm =~ ^[Yy]$ ]]; then
-				echo "⏭️  Skipped" >&2
+				echo "Skipped" >&2
 				return 1  # Signal to skip
 			else
 				# Re-prompt
@@ -168,7 +174,7 @@ prompt_for_value() {
 				echo "" >&2
 
 				if [ -z "$value" ]; then
-					echo "❌ Still empty - skipping" >&2
+					echo "Still empty - skipping" >&2
 					return 1
 				fi
 			fi
@@ -177,17 +183,17 @@ prompt_for_value() {
 
 	# Validate value is not just whitespace
 	if [[ "$value" =~ ^[[:space:]]*$ ]]; then
-		echo "❌ Error: Value cannot be empty or whitespace only" >&2
+		echo "Error: Value cannot be empty or whitespace only" >&2
 		return 1
 	fi
 
 	# Warn if value contains shell variable syntax
 	if [[ "$value" =~ \$\{?[A-Za-z_] ]]; then
-		echo "⚠️  Warning: Value contains '\$' - make sure this is intentional" >&2
+		echo "Warning: Value contains '\$' - make sure this is intentional" >&2
 		read -rp "Continue? (y/n): " -n 1 confirm
 		echo "" >&2
 		if [[ ! $confirm =~ ^[Yy]$ ]]; then
-			echo "⏭️  Skipped" >&2
+			echo "Skipped" >&2
 			return 1
 		fi
 	fi
@@ -222,10 +228,10 @@ set_vercel_var() {
 	vercel env rm "$var_name" "$env" --yes > /dev/null 2>&1 || true
 
 	if echo "$value" | vercel env add "$var_name" "$env" > /dev/null 2>&1; then
-		echo "✅ $var_name configured for $env" >&2
+		echo "$var_name configured for $env" >&2
 		return 0
 	else
-		echo "❌ Failed to set $var_name for $env (check permissions)" >&2
+		echo "Failed to set $var_name for $env (check permissions)" >&2
 		return 1
 	fi
 }
@@ -249,10 +255,10 @@ set_vercel_var_all_envs() {
 	done
 
 	if [ "$success" = true ]; then
-		echo "✅ $var_name configured for all environments" >&2
+		echo "$var_name configured for all environments" >&2
 		return 0
 	else
-		echo "⚠️  Some environments may have failed for $var_name" >&2
+		echo "Some environments may have failed for $var_name" >&2
 		return 1
 	fi
 }
@@ -270,10 +276,10 @@ set_github_secret() {
 
 	# Use gh secret set with stdin
 	if echo "$value" | gh secret set "$secret_name" > /dev/null 2>&1; then
-		echo "✅ $secret_name configured" >&2
+		echo "$secret_name configured" >&2
 		return 0
 	else
-		echo "❌ Failed to set $secret_name (check permissions)" >&2
+		echo "Failed to set $secret_name (check permissions)" >&2
 		return 1
 	fi
 }
@@ -286,14 +292,14 @@ set_github_secret() {
 # Returns: 0 if OK, 1 if not
 check_vercel_cli() {
 	if ! command -v vercel &> /dev/null; then
-		echo "❌ Vercel CLI not found. Please install it first:"
+		echo "Vercel CLI not found. Please install it first:"
 		echo "   npm i -g vercel"
 		echo "   or: bun add -g vercel"
 		return 1
 	fi
 
 	if ! vercel whoami &> /dev/null; then
-		echo "❌ Not authenticated with Vercel. Run: vercel login"
+		echo "Not authenticated with Vercel. Run: vercel login"
 		return 1
 	fi
 
@@ -321,7 +327,7 @@ check_vercel_project() {
 	fi
 
 	if [ "$needs_linking" = true ]; then
-		echo "⚠️  Project is $reason."
+		echo "Project is $reason."
 		echo "Run 'vercel link' to connect this directory to a Vercel project."
 		echo ""
 		local reply
@@ -331,11 +337,11 @@ check_vercel_project() {
 		if [[ $reply =~ ^[Yy]$ ]]; then
 			vercel link
 			if [ $? -ne 0 ]; then
-				echo "❌ Failed to link project. Exiting."
+				echo "Failed to link project. Exiting."
 				return 1
 			fi
 		else
-			echo "❌ Project must be linked before setting environment variables."
+			echo "Project must be linked before setting environment variables."
 			return 1
 		fi
 	fi
@@ -347,14 +353,14 @@ check_vercel_project() {
 # Returns: 0 if OK, 1 if not
 check_github_cli() {
 	if ! command -v gh &> /dev/null; then
-		echo "❌ gh CLI not found. Please install it first:"
+		echo "gh CLI not found. Please install it first:"
 		echo "   macOS: brew install gh"
 		echo "   Linux: https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
 		return 1
 	fi
 
 	if ! gh auth status &> /dev/null; then
-		echo "❌ Not authenticated with GitHub. Run: gh auth login"
+		echo "Not authenticated with GitHub. Run: gh auth login"
 		return 1
 	fi
 
@@ -362,45 +368,8 @@ check_github_cli() {
 }
 
 # ============================================================================
-# VARIABLE DEFINITIONS
+# VARIABLE PROCESSING
 # ============================================================================
-
-# Define all environment variables with metadata
-# Format: "VERCEL_NAME|DESCRIPTION|VERCEL_SCOPE|GITHUB_NAME|CACHE_KEY|DEFAULT_VALUE"
-# VERCEL_SCOPE: all, production, preview, development, or none
-# Use "none" for VERCEL_NAME or GITHUB_NAME to skip that platform
-# DEFAULT_VALUE: optional default value (empty string if none)
-declare -a ENV_VARIABLES=(
-	# Database - Environment-specific
-	"DATABASE_URL|Production Database URL (Neon prod branch) [Get free DB: https://neon.tech]|production|none|db_url_prod|"
-	"DATABASE_URL|Preview Database URL (Neon staging branch) [Get free DB: https://neon.tech]|preview|none|db_url_preview|"
-	"DATABASE_URL|Development Database URL (for vercel dev) [Get free DB: https://neon.tech]|development|none|db_url_dev|"
-	"none|Test Database URL (for GitHub Actions) [Get free DB: https://neon.tech]|none|DATABASE_URL_TEST|db_url_test|"
-	"none|Staging Database URL (for GitHub Actions) [Get free DB: https://neon.tech]|none|DATABASE_URL_STAGING|db_url_staging|"
-	"none|Production Database URL (for GitHub Actions) [Get free DB: https://neon.tech]|none|DATABASE_URL_PROD|db_url_prod|"
-
-	# Auth - Environment-specific secrets
-	"BETTER_AUTH_SECRET|Better Auth Secret for PRODUCTION [Generate with: bun run auth:secret]|production|none|auth_secret_prod|"
-	"BETTER_AUTH_SECRET|Better Auth Secret for PREVIEW [Generate with: bun run auth:secret]|preview|none|auth_secret_preview|"
-	"BETTER_AUTH_SECRET|Better Auth Secret for DEVELOPMENT [Generate with: bun run auth:secret]|development|none|auth_secret_dev|"
-	"none|Better Auth Secret for TEST [Generate with: bun run auth:secret]|none|BETTER_AUTH_SECRET_TEST|auth_secret_test|"
-	"none|Better Auth Secret for STAGING [Generate with: bun run auth:secret]|none|BETTER_AUTH_SECRET_STAGING|auth_secret_staging|"
-	"none|Better Auth Secret for PROD [Generate with: bun run auth:secret]|none|BETTER_AUTH_SECRET_PROD|auth_secret_prod|"
-
-	# OAuth - Shared across all environments
-	"GOOGLE_CLIENT_ID|Google OAuth Client ID [Setup at: https://console.cloud.google.com]|all|GOOGLE_CLIENT_ID|google_client_id|"
-	"GOOGLE_CLIENT_SECRET|Google OAuth Client Secret [Setup at: https://console.cloud.google.com]|all|GOOGLE_CLIENT_SECRET|google_client_secret|"
-
-	# Third-party services - Shared
-	"NEXT_PUBLIC_POSTHOG_KEY|PostHog API Key (public) [Get at: https://posthog.com]|all|NEXT_PUBLIC_POSTHOG_KEY|posthog_key|"
-	"POSTHOG_PROJECT_ID|PostHog Project ID [Get at: https://posthog.com]|all|POSTHOG_PROJECT_ID|posthog_project|"
-	"POLAR_ACCESS_TOKEN|Polar Access Token [Get at: https://polar.sh/settings]|all|POLAR_ACCESS_TOKEN|polar_token|"
-	"POLAR_MODE|Polar Mode (production or sandbox) [Recommended: sandbox]|all|none|polar_mode|sandbox"
-	"UPLOADTHING_TOKEN|UploadThing Token [Get at: https://uploadthing.com/dashboard]|all|UPLOADTHING_TOKEN|uploadthing_token|"
-
-	# Project configuration
-	"NEXT_PUBLIC_PROJECT_NAME|Project Name (used for DB schema) [Default: auto-detected from package.json]|all|NEXT_PUBLIC_PROJECT_NAME|project_name|AUTO"
-)
 
 # Process a single variable definition
 # Arguments: var_def, platform (vercel/github/both), use_cache (0/1)
@@ -505,4 +474,74 @@ process_variable() {
 	fi
 
 	return 0
+}
+
+# ============================================================================
+# CATEGORY PROCESSING
+# ============================================================================
+
+# Print category header
+# Arguments: category_id
+print_category_header() {
+	local category=$1
+	local info
+	info=$(get_category_info "$category")
+	if [ $? -ne 0 ]; then
+		echo "Unknown category: $category" >&2
+		return 1
+	fi
+
+	IFS='|' read -r title emoji <<< "$info"
+
+	echo ""
+	echo "============================================================"
+	echo "  $title"
+	echo "============================================================"
+}
+
+# Process all variables in a category
+# Arguments: category, platform (vercel/github/both), use_cache (0/1), include_vercel_dev (0/1)
+# Returns: 0 on success
+process_category() {
+	local category=$1
+	local platform=$2
+	local use_cache=$3
+	local include_vercel_dev=${4:-0}
+
+	# Print header
+	print_category_header "$category"
+	echo ""
+
+	# Show category-specific notes
+	show_category_notes "$category" "$platform"
+	echo ""
+
+	# Get and process variables for this category
+	while IFS= read -r var_def; do
+		[ -z "$var_def" ] && continue
+
+		# Skip Vercel development environment variables unless flag is set
+		if [ "$include_vercel_dev" -eq 0 ]; then
+			if [[ "$var_def" == *"|development|"* ]] && [[ "$var_def" == *"for vercel dev"* || "$var_def" == *"for DEVELOPMENT"* ]]; then
+				continue
+			fi
+		fi
+
+		process_variable "$var_def" "$platform" "$use_cache"
+	done < <(get_category_variables "$category")
+
+	return 0
+}
+
+# Process all categories
+# Arguments: platform (vercel/github/both), use_cache (0/1), include_vercel_dev (0/1)
+process_all_categories() {
+	local platform=$1
+	local use_cache=$2
+	local include_vercel_dev=${3:-0}
+
+	for cat_def in "${ENV_CATEGORIES[@]}"; do
+		IFS='|' read -r cat_id _ _ <<< "$cat_def"
+		process_category "$cat_id" "$platform" "$use_cache" "$include_vercel_dev"
+	done
 }

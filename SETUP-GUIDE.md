@@ -87,8 +87,6 @@ NEXT_PUBLIC_PROJECT_NAME='your-project-name'
 # Database URLs (from Neon dashboard)
 DATABASE_URL_DEV='postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require'
 DATABASE_URL_TEST='postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require'
-DATABASE_URL_STAGING='postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require'
-DATABASE_URL_PROD='postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require'
 
 # Google OAuth (if using - get from Google Cloud Console)
 GOOGLE_CLIENT_ID='your-client-id.apps.googleusercontent.com'

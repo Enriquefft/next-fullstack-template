@@ -118,8 +118,6 @@ NEXT_PUBLIC_PROJECT_NAME='my-project'
 # Database URLs from Neon (step 3)
 DATABASE_URL_DEV='postgresql://...'    # From dev branch
 DATABASE_URL_TEST='postgresql://...'   # From test branch
-DATABASE_URL_STAGING='postgresql://...' # From staging branch
-DATABASE_URL_PROD='postgresql://...'   # From prod branch
 
 # Generate auth secret (run: bun run auth:secret)
 BETTER_AUTH_SECRET='...'

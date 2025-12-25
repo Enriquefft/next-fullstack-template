@@ -289,23 +289,18 @@ export const apiClient = {
 
 **Environment Variables**:
 ```env
-# Development
-DATABASE_URL_DEV=postgresql://...
+# Local development (in .env.local)
+DATABASE_URL_DEV=postgresql://...   # For bun dev
+DATABASE_URL_TEST=postgresql://...  # For E2E tests
 
-# Test (for E2E tests)
-DATABASE_URL_TEST=postgresql://...
-
-# Production
-DATABASE_URL_PROD=postgresql://...
-
-# Active (set by scripts)
-DRIZZLE_DATABASE_URL=<auto-set-by-scripts>
+# Deployed environments (set by Vercel)
+DATABASE_URL=postgresql://...       # Auto-set per environment
 ```
 
 **Branch Strategy**:
-- `main` branch → Production database
-- `dev` branch → Development database
-- `test` branch → E2E test database
+- Vercel production → Neon main branch
+- Vercel preview → Neon preview branch
+- Local/CI tests → Neon test branch
 
 **Connection Pooling**:
 ```typescript

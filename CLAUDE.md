@@ -1,3 +1,5 @@
+<!-- This file is customized during /implement-prd based on PRD choices in .claude/prd/00-overview.md -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -36,11 +38,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Multi-environment PostgreSQL via **Neon Serverless**:
 
-- **Production/Deployment**: Use `DATABASE_URL` environment variable (set by hosting platform)
-- **Local Development**: Environment-specific URLs automatically selected via `NODE_ENV`:
-  - `NODE_ENV=development` → `DATABASE_URL_DEV`
-  - `NODE_ENV=test` → `DATABASE_URL_TEST`
-  - `NODE_ENV=production` → `DATABASE_URL_PROD`
+- **Deployed environments**: `DATABASE_URL` set by Vercel (different value for production vs preview)
+- **Local development**: `DATABASE_URL_DEV` in `.env.local`
+- **E2E tests**: `DATABASE_URL_TEST` in `.env.local` (and GitHub Actions secret)
 
 **Key Points**:
 - Configuration logic in `src/env/db.ts` with automatic selection
@@ -158,6 +158,38 @@ Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[clien
 
 - `src/lib/posthog.ts` – Server-side PostHog client
 - `src/components/PostHogProvider.tsx` – Client-side provider wrapper
+
+### WhatsApp Messaging (Kapso)
+
+**Kapso** provides WhatsApp Business API integration for sending messages, templates, and handling webhooks.
+
+- `src/lib/kapso.ts` – Server-side Kapso client with helper functions
+- `src/app/api/whatsapp/webhook/route.ts` – Webhook handler for incoming messages and status updates
+
+**Environment Variables** (optional):
+- `KAPSO_API_KEY` – API key from [kapso.ai](https://kapso.ai)
+- `KAPSO_PHONE_NUMBER_ID` – WhatsApp phone number ID
+- `META_APP_SECRET` – For webhook signature verification
+
+**Usage Example**:
+```ts
+import { sendTextMessage, sendButtonMessage } from "@/lib/kapso";
+
+// Send a text message
+await sendTextMessage("+1234567890", "Hello from WhatsApp!");
+
+// Send interactive buttons
+await sendButtonMessage(
+  "+1234567890",
+  "Choose an option:",
+  [
+    { id: "opt1", title: "Option 1" },
+    { id: "opt2", title: "Option 2" },
+  ]
+);
+```
+
+**Webhook Setup**: Configure your webhook URL in Meta Business Suite as `https://yourdomain.com/api/whatsapp/webhook` with `META_APP_SECRET` as the verify token.
 
 ### SEO & GEO (Generative Engine Optimization)
 

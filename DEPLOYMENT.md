@@ -105,9 +105,7 @@ git push origin main           # Auto-deploys to production (if Git connected)
 
 **Variables configured:**
 - `DATABASE_URL_TEST` - For running E2E tests in CI
-- `DATABASE_URL_STAGING` - For staging deployments
-- `DATABASE_URL_PROD` - For production deployments (if deploying from GH Actions)
-- `BETTER_AUTH_SECRET_*` - Per-environment auth secrets
+- `BETTER_AUTH_SECRET_TEST` - Auth secret for test environment
 - All third-party service tokens (same as Vercel script)
 
 ## Deployment Workflows
@@ -259,8 +257,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
-      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET_PROD }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
       # ... other secrets
     steps:
       - uses: actions/checkout@v4
@@ -291,26 +289,21 @@ jobs:
 
 ### Database URLs
 
-**Local Development (`.env` file):**
+**Local Development (`.env.local`):**
 ```env
-DATABASE_URL_DEV='postgresql://...'     # Your dev branch
-DATABASE_URL_TEST='postgresql://...'    # Your test branch
-DATABASE_URL_STAGING='postgresql://...' # Your staging branch
-DATABASE_URL_PROD='postgresql://...'    # Your prod branch
+DATABASE_URL_DEV='postgresql://...'     # For bun dev
+DATABASE_URL_TEST='postgresql://...'    # For bun run test:e2e
 ```
 
-**Vercel (via `setup-vercel-env.sh`):**
+**Vercel (via `setup-env.sh`):**
 ```bash
 DATABASE_URL (production)  → Neon prod branch
-DATABASE_URL (preview)     → Neon staging branch
-DATABASE_URL (development) → Neon dev branch
+DATABASE_URL (preview)     → Neon preview branch
 ```
 
-**GitHub Actions (via `setup-github-secrets.sh`):**
+**GitHub Actions (via `setup-env.sh`):**
 ```bash
 DATABASE_URL_TEST     → Used by E2E tests in CI
-DATABASE_URL_STAGING  → Used by staging deployments
-DATABASE_URL_PROD     → Used by production deployments (if deploying from GH)
 ```
 
 ### Better Auth Secrets
@@ -389,7 +382,7 @@ gh secret list
 ./scripts/setup-github-secrets.sh
 
 # Or update a single secret manually
-gh secret set DATABASE_URL_PROD
+gh secret set DATABASE_URL_TEST
 ```
 
 ## Troubleshooting

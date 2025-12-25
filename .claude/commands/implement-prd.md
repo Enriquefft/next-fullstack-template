@@ -17,7 +17,7 @@ Read these files in order:
 
 ### Step 2: Generate TodoWrite Tasks from Checklist
 
-Based on the PRD's "Template Customization Notes" section, create TodoWrite tasks for these 13 categories:
+Based on the PRD's "Template Customization Notes" section, create TodoWrite tasks for these 14 categories:
 
 #### 1. Project Identity
 - Update `package.json` → name, description, repository, author
@@ -113,6 +113,42 @@ Based on the PRD's "Template Customization Notes" section, create TodoWrite task
   - Locale-specific OpenGraph tags
   - Viewport and theme-color meta tags
 
+#### 14. CLAUDE.md Customization
+
+Regenerate `CLAUDE.md` based on PRD choices to ensure documentation matches the actual project state.
+
+**Read Current CLAUDE.md**: Use as reference for section content and structure.
+
+**Apply Section Rules for 4 Major Features**:
+
+1. **Authentication Section**:
+   - **If NOT using auth**: Remove entire "Authentication System" section
+   - **If email/password only**: Remove OAuth provider mentions, remove Polar integration mention
+   - **If using OAuth**: List configured providers (Google, GitHub, etc.)
+   - **If using payments**: Keep Polar integration mention; otherwise remove it
+
+2. **Analytics Section**:
+   - **If NOT using analytics**: Remove entire "Analytics" section (PostHog)
+   - **If using PostHog**: Keep section as-is
+   - **If using different provider** (GA, Mixpanel): Replace PostHog content with provider-specific guidance
+
+3. **Payments (Polar references)**:
+   - **If NOT using payments**: Remove Polar mentions from Authentication section and any other references
+   - **If using Polar**: Keep references
+   - **If using Stripe**: Replace Polar references with Stripe guidance
+
+4. **Messaging Section (WhatsApp/Kapso)**:
+   - **If NOT using messaging**: Remove entire "WhatsApp Messaging (Kapso)" section
+   - **If using Kapso**: Keep section as-is
+
+**Auto-Generate New Sections**:
+- If `05-integrations.md` defines integrations NOT in template (e.g., Stripe, Twilio, custom APIs):
+  - Generate new documentation section following existing format
+  - Include: purpose, key files, environment variables, usage examples
+  - Place after existing integration sections
+
+**Write Updated CLAUDE.md**: Generate final version reflecting actual project state.
+
 ### Step 3: Ask User Questions
 
 For ambiguous items in the PRD, use AskUserQuestion:
@@ -165,16 +201,70 @@ Once barebones customization is complete, generate `plan.md` in project root bas
 
 **Test Requirements**:
 - **Unit Tests**:
-  - `tests/actions/auth.test.ts` - Test signUp() validation
-  - Test password hashing
-  - Test duplicate email handling
+  - [ ] `tests/actions/auth.test.ts` - Test signUp() validation
+  - [ ] Test password hashing
+  - [ ] Test duplicate email handling
 - **E2E Tests**:
-  - `e2e/tests/auth.spec.ts` - "user can sign up with email and password"
-  - `e2e/tests/auth.spec.ts` - "shows error when email already exists"
-  - `e2e/tests/auth.spec.ts` - "shows error for invalid email"
-  - `e2e/tests/auth.spec.ts` - "shows error for weak password"
+  - [ ] `e2e/tests/auth.spec.ts` - "user can sign up with email and password"
+  - [ ] `e2e/tests/auth.spec.ts` - "shows error when email already exists"
+  - [ ] `e2e/tests/auth.spec.ts` - "shows error for invalid email"
+  - [ ] `e2e/tests/auth.spec.ts` - "shows error for weak password"
 
 [Continue for all steps in all phases]
+
+---
+
+## Final Phase: Polish & Cleanup
+
+> **Note**: This phase runs after all feature implementation is complete.
+
+### Step F.1: UI/UX Revamp (Iterative)
+**Goal**: Analyze and improve the application's visual design and user experience.
+
+This step is **iterative** - repeat until the UI meets quality standards.
+
+**Tasks**:
+- [ ] Audit current UI against modern design principles
+- [ ] Review spacing, typography, and visual hierarchy
+- [ ] Ensure consistent color usage and contrast ratios
+- [ ] Improve component aesthetics (buttons, cards, forms, etc.)
+- [ ] Add subtle animations/transitions where appropriate
+- [ ] Verify responsive design across breakpoints
+- [ ] Run visual regression check
+
+**Iteration Cycle**:
+1. Take screenshots or review current state
+2. Identify 3-5 specific UI/UX improvements
+3. Implement improvements
+4. Evaluate result - if not satisfactory, repeat from step 1
+5. Mark complete when UI is polished and attractive
+
+**Quality Checklist**:
+- [ ] Visual hierarchy is clear and guides user attention
+- [ ] Consistent spacing (padding, margins, gaps)
+- [ ] Typography is readable and well-structured
+- [ ] Colors are harmonious and accessible (WCAG AA)
+- [ ] Interactive elements have clear affordances
+- [ ] Loading/empty/error states are well-designed
+- [ ] Mobile experience is smooth and intuitive
+
+### Step F.2: CI/CD Cleanup
+**Goal**: Finalize CI configuration and ensure clean builds.
+
+**Tasks**:
+- [ ] Remove `continue-on-error: true` from deps check in `.github/workflows/ci.yaml`
+- [ ] Run `bun cleanup` and fix any issues
+- [ ] Verify CI pipeline passes without errors
+- [ ] Run full test suite: `bun test && bun run test:e2e`
+- [ ] Run type check: `bun type`
+- [ ] Run linter: `bun lint`
+
+**Verification**:
+- [ ] All CI checks pass without `continue-on-error`
+- [ ] `bun cleanup` completes successfully
+- [ ] No TypeScript errors
+- [ ] No linting errors
+- [ ] All tests pass
 ```
 
 ### Step 6: Report to User
@@ -189,8 +279,10 @@ Completed:
 - Authentication: [kept/removed/modified]
 - Payments: [kept/removed]
 - Analytics: [kept/removed]
+- Messaging: [kept/removed]
 - Dependencies: [removed X, added Y]
 - Database schema: [cleaned up]
+- CLAUDE.md: [customized - removed/modified sections]
 - [Other customizations]
 
 📋 Implementation plan created: plan.md
@@ -225,13 +317,14 @@ Claude: Understood! This is a [project type] with:
 
 Creating TodoWrite checklist...
 
-[Works through 12 categories systematically]
+[Works through 14 categories systematically]
 
-Claude: ✅ Task 1/12 complete: Project identity updated
-Claude: ✅ Task 2/12 complete: Authentication configured (kept Better Auth + Google)
-Claude: ✅ Task 3/12 complete: Removed Polar integration
+Claude: ✅ Task 1/14 complete: Project identity updated
+Claude: ✅ Task 2/14 complete: Authentication configured (kept Better Auth + Google)
+Claude: ✅ Task 3/14 complete: Removed Polar integration
 ...
-Claude: ✅ Task 12/12 complete: Documentation updated
+Claude: ✅ Task 13/14 complete: SEO configuration updated
+Claude: ✅ Task 14/14 complete: CLAUDE.md customized (removed Polar/Kapso sections)
 
 Generating plan.md based on implementation priorities...
 

@@ -109,6 +109,19 @@ This template uses:
 
 **Notes**: [Analytics-specific requirements]
 
+### Messaging
+
+**Messaging Provider**: [Kapso (WhatsApp) / Twilio / None]
+
+**Features Needed**:
+- [ ] Send text messages
+- [ ] Send template messages
+- [ ] Interactive buttons/lists
+- [ ] Webhook handling for incoming messages
+- [ ] Other: [Specify]
+
+**Notes**: [Messaging-specific requirements]
+
 ### Features to Remove from Template
 
 Check items that should be removed:
@@ -118,6 +131,8 @@ Check items that should be removed:
 - [ ] PostHog integration (if not using analytics)
 - [ ] Polar integration (if not using payments)
 - [ ] Google OAuth (if not needed)
+- [ ] GitHub OAuth (if not needed)
+- [ ] WhatsApp/Kapso integration (if not using messaging)
 - [ ] ProductCard component (if not e-commerce)
 - [ ] Other: [Specify]
 

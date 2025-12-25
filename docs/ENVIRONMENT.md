@@ -12,14 +12,14 @@ NEXT_PUBLIC_PROJECT_NAME=  # Your project name (used for database schema namespa
 
 ### Database
 
-Multi-environment PostgreSQL via Neon Serverless. Automatically selected via `NODE_ENV`:
+Multi-environment PostgreSQL via Neon Serverless:
 
 ```bash
-DATABASE_URL_DEV=       # Development database
-DATABASE_URL_TEST=      # E2E tests and CI
-DATABASE_URL_STAGING=   # Staging environment (optional)
-DATABASE_URL_PROD=      # Production database
+DATABASE_URL_DEV=       # Local development (bun dev)
+DATABASE_URL_TEST=      # E2E tests (bun run test:e2e)
 ```
+
+For deployed environments, `DATABASE_URL` is set by Vercel (different values for production vs preview).
 
 ### Authentication
 
@@ -54,13 +54,11 @@ UPLOADTHING_TOKEN=      # UploadThing API token
 
 ## Environment-Specific Configuration
 
-The `src/env/db.ts` file automatically selects the correct database URL based on `NODE_ENV`:
+The `src/env/db.ts` file automatically selects the correct database URL:
 
-- `NODE_ENV=development` → `DATABASE_URL_DEV`
-- `NODE_ENV=test` → `DATABASE_URL_TEST`
-- `NODE_ENV=production` → `DATABASE_URL_PROD`
-
-For deployment platforms (Vercel, etc.), set `DATABASE_URL` directly - it will override the environment-specific URLs.
+1. `DATABASE_URL` (if set - used by Vercel for production/preview)
+2. `DATABASE_URL_TEST` (when `NODE_ENV=test`)
+3. `DATABASE_URL_DEV` (for local development)
 
 ## Setup Instructions
 
