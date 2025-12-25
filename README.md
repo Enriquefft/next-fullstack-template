@@ -201,6 +201,12 @@ Quick commands:
 - `Ctrl+Shift+D` - Preview issues (dry run)
 - `Ctrl+Shift+U` - Undo last operation
 
+**Analytics & History:** Track your automation impact:
+- `./scripts/codebase_ops.sh stats` - View statistics (operations, time saved, success rate)
+- `./scripts/codebase_ops.sh history` - List recent operations
+- `./scripts/codebase_ops.sh export json` - Export stats for analysis
+- `./scripts/codebase_ops.sh export csv` - Export operation history
+
 See [`.vscode/README.md`](.vscode/README.md) for all tasks and shortcuts, or [scripts/README.md](scripts/README.md) for full script documentation.
 
 ## Documentation
