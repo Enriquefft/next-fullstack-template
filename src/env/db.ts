@@ -25,6 +25,10 @@ export const dbEnv = createEnv({
 	client: {},
 	emptyStringAsUndefined: true,
 	experimental__runtimeEnv: process.env,
+	// Explicitly mark as server-side - this module should never run on the client.
+	// Without this, test environments with Happy DOM (which creates a `window` global)
+	// are incorrectly detected as client environments by t3-env.
+	isServer: true,
 	server: {
 		// Primary: DATABASE_URL (set by Vercel for production/preview)
 		DATABASE_URL: neonUrlSchema.optional(),

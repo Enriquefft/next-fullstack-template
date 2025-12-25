@@ -94,7 +94,10 @@
 			"WebFetch(domain:platform.claude.com)",
 			"WebFetch(domain:docs.kapso.ai)",
 			"WebFetch(domain:kapso.ai)",
-			"WebFetch(domain:www.npmjs.com)"
+			"WebFetch(domain:www.npmjs.com)",
+			"Bash(NODE_ENV=test bun test:*)",
+			"Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test POLAR_ACCESS_TOKEN=test bun test:*)",
+			"Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test POLAR_ACCESS_TOKEN=test BETTER_AUTH_URL=http://localhost:3000 bun test:*)"
 		],
 		"ask": [],
 		"deny": []

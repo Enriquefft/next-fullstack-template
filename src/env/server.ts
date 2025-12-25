@@ -32,6 +32,10 @@ export const serverEnv = createEnv({
 	client: {},
 	emptyStringAsUndefined: true,
 	experimental__runtimeEnv: process.env,
+	// Explicitly mark as server-side - this module should never run on the client.
+	// Without this, test environments with Happy DOM (which creates a `window` global)
+	// are incorrectly detected as client environments by t3-env.
+	isServer: true,
 	server: {
 		BETTER_AUTH_URL: z.string().default(url),
 		GOOGLE_CLIENT_ID: z.string(),
