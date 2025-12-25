@@ -21,6 +21,9 @@ export default defineConfig({
     globalSetup: path.resolve(__dirname, "./setup/global-setup.ts"),
     globalTeardown: path.resolve(__dirname, "./setup/global-teardown.ts"),
 
+    /* Increase timeout for slow server responses */
+    timeout: 60 * 1000,
+
 	/* Configure projects for major browsers */
 	projects: [
 		{
@@ -48,12 +51,16 @@ export default defineConfig({
         command: "bash scripts/start-test-server.sh",
         cwd: path.resolve(__dirname, ".."),
         env: {
+            ...process.env,
             PORT: PORT.toString(),
+            NODE_ENV: "test",
         },
         reuseExistingServer: !process.env["CI"],
+        stdout: "pipe",
+        stderr: "pipe",
         timeout: 120 * 1000,
         url: baseURL,
     },
-    /* Opt out of parallel tests on CI. */
-    workers: process.env["CI"] ? 1 : undefined,
+    /* Limit parallel workers to avoid overwhelming dev server */
+    workers: process.env["CI"] ? 1 : 3,
 });

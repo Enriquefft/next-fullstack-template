@@ -5,6 +5,14 @@
 
 set -e  # Exit on error
 
+# On NixOS, add library paths for Next.js native modules
+if [ -d "/nix/store" ]; then
+  LIB_PATHS=$(ls -d /nix/store/*-gcc-*-lib/lib 2>/dev/null | tr "\n" ":" | sed 's/:$//')
+  if [ -n "$LIB_PATHS" ]; then
+    export LD_LIBRARY_PATH="${LIB_PATHS}:${LD_LIBRARY_PATH}"
+  fi
+fi
+
 # Export all test environment variables
 export NODE_ENV=test
 export PORT="${PORT:-3000}"
