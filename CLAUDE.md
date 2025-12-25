@@ -48,6 +48,7 @@ Multi-environment PostgreSQL via **Neon Serverless**:
 - See `.env.example` for setup template
 - **Driver**: Uses `drizzle-orm/neon-serverless` for full transaction support
 - **E2E Tests**: WebSocket configured with `ws` package for Node.js/CI environments (see `e2e/setup/db.ts`)
+- **Schema Management**: E2E global setup automatically pushes schema via `drizzle-kit push` before each test run
 
 ### Authentication System
 

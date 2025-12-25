@@ -80,7 +80,8 @@
 			"Bash(gh run watch:*)",
 			"Bash(python3:*)",
 			"Bash(/dev/null)",
-			"Bash(direnv status:*)"
+			"Bash(direnv status:*)",
+			"Bash(MOCK_LOG_DIR=/tmp ./tests/script/mocks/claude auth:*)"
 		],
 		"ask": [],
 		"deny": []

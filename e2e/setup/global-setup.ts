@@ -1,3 +1,4 @@
+import { $ } from "bun";
 import { createTestDb, seedTestData, truncateAllTables } from "./db.ts";
 
 export default async function globalSetup() {
@@ -10,6 +11,21 @@ export default async function globalSetup() {
 	}
 
 	console.log("🔧 Setting up E2E test database...");
+
+	// Push latest schema to test database
+	console.log("📦 Pushing database schema...");
+	try {
+		await $`bun run db:push`.env({
+			NODE_ENV: "test",
+			DATABASE_URL_TEST: connectionString,
+			NEXT_PUBLIC_PROJECT_NAME:
+				process.env["NEXT_PUBLIC_PROJECT_NAME"] || "next-fullstack-template",
+		}).quiet();
+		console.log("✅ Schema pushed successfully");
+	} catch (error) {
+		console.error("❌ Failed to push schema:", error);
+		throw error;
+	}
 
 	const db = createTestDb(connectionString);
 
