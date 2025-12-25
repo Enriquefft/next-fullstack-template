@@ -1,0 +1,106 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "Feature manifest for dynamic CLAUDE.md generation. Maps features to documentation sections.",
+	"features": {
+		"auth": {
+			"name": "Authentication (Better Auth)",
+			"section": "features/auth.md",
+			"detectors": {
+				"packages": ["better-auth", "@polar-sh/better-auth"],
+				"files": ["src/lib/auth.ts", "src/lib/auth-client.ts"],
+				"envVars": ["GOOGLE_CLIENT_ID", "BETTER_AUTH_SECRET"]
+			}
+		},
+		"database": {
+			"name": "Database (Drizzle + Neon)",
+			"section": "features/database.md",
+			"detectors": {
+				"packages": ["drizzle-orm", "@neondatabase/serverless"],
+				"files": ["src/db/index.ts"],
+				"envVars": ["DATABASE_URL", "DATABASE_URL_DEV"]
+			}
+		},
+		"payments": {
+			"name": "Payments (Polar)",
+			"section": "features/payments.md",
+			"detectors": {
+				"packages": ["@polar-sh/sdk"],
+				"files": ["src/lib/polar.ts"],
+				"envVars": ["POLAR_ACCESS_TOKEN"]
+			}
+		},
+		"analytics": {
+			"name": "Analytics (PostHog)",
+			"section": "features/analytics.md",
+			"detectors": {
+				"packages": ["posthog-js", "posthog-node"],
+				"files": ["src/lib/posthog.ts"],
+				"envVars": ["NEXT_PUBLIC_POSTHOG_KEY"]
+			}
+		},
+		"uploads": {
+			"name": "File Uploads (UploadThing)",
+			"section": "features/uploads.md",
+			"detectors": {
+				"packages": ["uploadthing", "@uploadthing/react"],
+				"files": ["src/app/api/uploadthing/core.ts"],
+				"envVars": ["UPLOADTHING_TOKEN"]
+			}
+		},
+		"whatsapp": {
+			"name": "WhatsApp Integration (Kapso)",
+			"section": "features/whatsapp.md",
+			"detectors": {
+				"packages": ["@kapso/whatsapp-cloud-api"],
+				"files": ["src/lib/kapso.ts"],
+				"envVars": ["KAPSO_API_KEY"]
+			}
+		},
+		"seo": {
+			"name": "SEO & GEO",
+			"section": "features/seo.md",
+			"detectors": {
+				"files": ["src/lib/seo/metadata.ts", "src/lib/seo/schema/index.ts"],
+				"directories": ["src/lib/seo"]
+			}
+		},
+		"i18n": {
+			"name": "Internationalization (next-intl)",
+			"section": "features/i18n.md",
+			"detectors": {
+				"packages": ["next-intl"],
+				"files": ["src/i18n/request.ts", "src/i18n/routing.ts"]
+			}
+		},
+		"forms": {
+			"name": "Forms (TanStack Form)",
+			"section": "features/forms.md",
+			"detectors": {
+				"packages": ["@tanstack/react-form"],
+				"files": ["src/components/form-example.tsx"]
+			}
+		},
+		"maps": {
+			"name": "Maps (Google Maps)",
+			"section": "features/maps.md",
+			"detectors": {
+				"packages": ["@react-google-maps/api"],
+				"files": ["src/components/AddressAutocomplete.tsx"]
+			}
+		}
+	},
+	"coreSections": [
+		"core/01-intro.md",
+		"core/02-dev-commands.md",
+		"core/03-architecture-base.md",
+		"core/04-nextjs-patterns.md",
+		"core/05-code-organization.md",
+		"core/06-styling.md",
+		"core/07-performance.md",
+		"core/08-code-style.md",
+		"core/09-git-workflow.md",
+		"core/10-type-safety.md",
+		"core/11-important-patterns.md",
+		"core/12-prd-workflow.md"
+	]
+}

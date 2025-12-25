@@ -3,6 +3,7 @@
 		"url": "https://github.com/Enriquefft/next-fullstack-template/issues"
 	},
 	"dependencies": {
+		"@kapso/whatsapp-cloud-api": "^0.1.1",
 		"@neondatabase/serverless": "^1.0.2",
 		"@polar-sh/better-auth": "^1.6.3",
 		"@polar-sh/sdk": "^0.42.1",
@@ -71,6 +72,7 @@
 		"auth:gen": "bunx @better-auth/cli@latest generate",
 		"auth:secret": "bunx @better-auth/cli@latest secret",
 		"build": "next build",
+		"build:claude-md": "bun .claude/scripts/build-claude-md.ts",
 		"check:deps": "knip",
 		"cleanup": "knip --fix",
 		"db:generate": "drizzle-kit generate",

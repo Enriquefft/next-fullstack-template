@@ -36,6 +36,7 @@ export const serverEnv = createEnv({
 		BETTER_AUTH_URL: z.string().default(url),
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
+		KAPSO_API_KEY: z.string().optional(),
 		POLAR_ACCESS_TOKEN: z.string(),
 		POLAR_MODE: z.enum(["sandbox", "production"]).default("sandbox"),
 	},
