@@ -121,16 +121,6 @@ jobs:
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium
 
-      - name: Validate DATABASE_URL_TEST
-        run: node scripts/debug-db-url.js
-        env:
-          DATABASE_URL_TEST: ${{ secrets.DATABASE_URL_TEST }}
-
-      - name: Test database connection
-        run: node scripts/test-db-connection.js
-        env:
-          DATABASE_URL_TEST: ${{ secrets.DATABASE_URL_TEST }}
-
       - name: Run E2E tests
         run: bun run test:e2e
         env:

@@ -196,7 +196,12 @@ Quick commands:
 - `./scripts/codebase_ops.sh --since main` - Fix only files changed in your PR
 - `./scripts/codebase_ops.sh undo` - Rollback last operation
 
-See [scripts/README.md](scripts/README.md) for full documentation.
+**VSCode Integration:** Run tasks directly from VSCode with keyboard shortcuts:
+- `Ctrl+Shift+F` - Fix changed files (most common workflow)
+- `Ctrl+Shift+D` - Preview issues (dry run)
+- `Ctrl+Shift+U` - Undo last operation
+
+See [`.vscode/README.md`](.vscode/README.md) for all tasks and shortcuts, or [scripts/README.md](scripts/README.md) for full script documentation.
 
 ## Documentation
 

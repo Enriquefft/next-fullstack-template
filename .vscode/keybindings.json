@@ -1,0 +1,20 @@
+[
+  {
+    "key": "ctrl+shift+f",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Codebase: Fix Changed Files (Recommended)",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+d",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Codebase: Preview Issues (Dry Run)",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+u",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Codebase: Undo Last Operation",
+    "when": "!terminalFocus"
+  }
+]

@@ -1,0 +1,120 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Codebase: Fix Changed Files (Recommended)",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh --since main --safe",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Fix only files changed since main branch (safe mode)"
+    },
+    {
+      "label": "Codebase: Preview Issues (Dry Run)",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh --dry-run",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Show what issues would be fixed without applying changes"
+    },
+    {
+      "label": "Codebase: Fix with Review",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh --profile review",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Review each group before applying fixes (show-diff mode)"
+    },
+    {
+      "label": "Codebase: Safe Auto-Fix",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh --profile safe",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Automatically apply only safe, low-risk fixes"
+    },
+    {
+      "label": "Codebase: Fix All Issues",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Interactive: Choose which groups to fix"
+    },
+    {
+      "label": "Codebase: Show History",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh history",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "View last 10 operations with rollback options"
+    },
+    {
+      "label": "Codebase: Undo Last Operation",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh undo",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Rollback the last codebase operation"
+    },
+    {
+      "label": "Codebase: Code Improvements",
+      "type": "shell",
+      "command": "./scripts/codebase_ops.sh --mode improve",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Find code quality improvements (dead code, bandaid fixes, etc.)"
+    }
+  ]
+}

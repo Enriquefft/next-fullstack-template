@@ -5,11 +5,6 @@
 
 set -e  # Exit on error
 
-echo "🚀 Starting test server..."
-echo "   NODE_ENV: ${NODE_ENV:-not set}"
-echo "   PORT: ${PORT:-3000}"
-echo "   DATABASE_URL_TEST length: ${#DATABASE_URL_TEST}"
-
 # Export all test environment variables
 export NODE_ENV=test
 export PORT="${PORT:-3000}"
@@ -26,8 +21,6 @@ export UPLOADTHING_TOKEN="${UPLOADTHING_TOKEN:?UPLOADTHING_TOKEN is required}"
 # Optional with defaults
 export POLAR_MODE="${POLAR_MODE:-sandbox}"
 export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY:-}"
-
-echo "✅ All required environment variables are set"
 
 # Start Next.js dev server (use bunx to run locally installed next)
 exec bunx --bun next dev --turbopack
