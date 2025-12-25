@@ -20,7 +20,7 @@ Search for these patterns:
 - `eslint-disable`, `biome-ignore` comments
 - Large blocks of commented-out code
 
-### 3. Project Rules - TiendaKit Specific (Priority: High/Critical)
+### 3. Project-Specific Rules (Priority: High/Critical)
 - **CRITICAL**: Database queries on tenant-scoped tables (`products`, `categories`, `orders`, `customers`) without `tenant_id` filter
 - Missing translations: keys in `messages/en.json` not in `messages/es.json` or vice versa
 - Wrong navigation import: `from "next/navigation"` should be `from "@/i18n/navigation"`
@@ -36,31 +36,11 @@ Search for these patterns:
 
 ## Output Format
 
-Group findings by scope and provide valid JSON:
+Group findings by scope and return ONLY a JSON object (no surrounding text, no markdown code fences).
 
-```json
-{
-  "summary": {
-    "total_findings": <n>,
-    "groups_count": <n>,
-    "commands_run": ["biome", "tsc", "knip"]
-  },
-  "groups": [{
-    "name": "<kebab-case-scope>",
-    "order": <priority-number>,
-    "files": ["<file1>", "<file2>"],
-    "findings": [{
-      "file": "<path>",
-      "line": <number|null>,
-      "type": "dead-code|bandaid|project-rule|type-safety",
-      "severity": "critical|high|medium|low",
-      "message": "<description of the issue>"
-    }],
-    "estimated_complexity": "quick-win|moderate|major",
-    "suggested_approach": "<brief strategy for fixing>"
-  }]
-}
-```
+Example structure:
+
+{"summary": {"total_findings": 5, "groups_count": 2, "commands_run": ["biome", "tsc", "knip"]}, "groups": [{"name": "type-safety-auth", "order": 2, "files": ["src/lib/auth.ts"], "findings": [{"file": "src/lib/auth.ts", "line": 15, "type": "type-safety", "severity": "high", "message": "Uses 'any' type annotation"}], "estimated_complexity": "quick-win", "suggested_approach": "Replace 'any' with explicit Session type"}]}
 
 ## Priority Ordering (order field)
 
@@ -85,5 +65,8 @@ Group findings by scope and provide valid JSON:
   - Remove widely-used but incorrect pattern
   - Restructure validation schemas
 
-Output ONLY valid JSON (no markdown code blocks). If no improvements found:
-`{"summary": {"total_findings": 0, "groups_count": 0, "commands_run": [...]}, "groups": []}`
+## Output Requirements
+
+- Return ONLY the JSON object - no explanatory text, no markdown code blocks
+- The JSON must be valid and parseable by `jq`
+- If no improvements are found, return: {"summary": {"total_findings": 0, "groups_count": 0, "commands_run": [...]}, "groups": []}

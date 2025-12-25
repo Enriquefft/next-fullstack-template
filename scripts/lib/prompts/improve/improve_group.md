@@ -16,30 +16,42 @@ ${APPROACH}
 
 ## Instructions
 
-1. Address each finding in the appropriate files
-2. Ensure changes don't break existing functionality
-3. Run type check after changes: `bunx tsc --noEmit`
-4. Commit your changes:
+1. **Read each affected file first** to understand the existing code, patterns, and context
+2. After reading, pause to consider: Does the finding match what you see? Are there related areas to update?
+3. Address each finding in the appropriate files
+4. Run type check after changes: `bunx tsc --noEmit`
+5. Commit your changes:
    ```bash
    git add . && git commit --no-verify -m "${COMMIT_PREFIX}(${GROUP_NAME}): implement ${COMPLEXITY} improvements"
    ```
 
-## Important Guidelines
+## Scope
 
-### Do's
-- **Preserve existing behavior** - improvements shouldn't change functionality
-- **Test after changes** - run type check to verify
-- **Keep changes focused** - only address the listed findings
-- **Document if needed** - update `${DOCS_FILE}` for significant changes
+Keep changes minimal and focused:
+- Focus exclusively on the listed findings
+- Preserve existing code behavior and patterns
+- Avoid refactoring surrounding code, even if it could be "improved"
+- Avoid adding comments, docstrings, or type annotations to unchanged code
+- Quality improvements should enhance the code, not change what it does
 
-### Don'ts
-- **Don't refactor beyond scope** - stick to the findings list
-- **Don't change behavior** - these are quality improvements, not features
-- **Don't skip verification** - always type check before committing
+## Important
 
-## TiendaKit Project Rules
+- **Preserve behavior**: These are quality improvements, not feature changes. Functionality must remain identical.
+- **Verify before committing**: Always run type check to catch regressions.
+- **Document significant changes**: Update `${DOCS_FILE}` for notable improvements.
+- **Temporary files**: If you create any debug files, remove them before committing.
 
-When making changes, follow these project-specific rules:
+## Progress Tracking
+
+For complex improvements, keep notes in `${QUESTIONS_FILE}` about:
+- What approaches you've tried
+- What's working vs. not working
+- Decisions made and their rationale
+- Any blockers that need human input
+
+## Project-Specific Rules
+
+When making changes, follow these project conventions:
 
 1. **Tenant Isolation** (CRITICAL)
    - ALL queries on tenant-scoped tables MUST filter by `tenant_id`
@@ -61,7 +73,3 @@ When making changes, follow these project-specific rules:
 
 5. **Environment Variables**
    - Access env vars through `@/env.ts`, not `process.env` directly
-
-## Questions or Blockers?
-
-Write to: `${QUESTIONS_FILE}`

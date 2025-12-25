@@ -26,26 +26,20 @@ Analyze ALL errors found in the outputs above. Then perform deep analysis:
    - Medium: Multiple files in same module, straightforward fix
    - Complex: Cross-module issues, requires understanding of business logic
 
-4. **Output valid JSON** (no markdown):
+4. **Output format**: Return ONLY a JSON object (no surrounding text, no markdown code fences).
 
-```json
-{
-  "summary": {"total_errors": <n>, "groups_count": <n>, "commands_run": [...]},
-  "groups": [{
-    "name": "<kebab-case-name>",
-    "order": <priority-number>,
-    "files": ["<file1>", "<file2>"],
-    "errors": [{"file": "", "line": <n|null>, "message": "", "type": "typescript|test|build|e2e|format"}],
-    "independence_score": <1-10>,
-    "estimated_complexity": "simple|medium|complex",
-    "dependencies_within_group": ["<file-imports-file>"]
-  }]
-}
-```
+Example structure:
 
-Rules:
-- ${LIB_DIR} + importers = same group
-- Analyze imports to detect dependencies
-- Output ONLY valid JSON (no markdown code blocks)
-- If no bugs found: `{"summary": {"total_errors": 0, "groups_count": 0, "commands_run": [...]}, "groups": []}`
-- The JSON must be valid and parseable by jq
+{"summary": {"total_errors": 3, "groups_count": 2, "commands_run": ["bun type", "bun test"]}, "groups": [{"name": "auth-helpers", "order": 1, "files": ["src/lib/auth.ts"], "errors": [{"file": "src/lib/auth.ts", "line": 42, "message": "Property 'userId' does not exist on type 'Session'", "type": "typescript"}], "independence_score": 9, "estimated_complexity": "simple", "dependencies_within_group": []}]}
+
+## Grouping Rules
+
+- **Library files and their importers belong together**: If `${LIB_DIR}/auth.ts` has an error and `src/app/login/page.tsx` imports it and also has errors, put them in the SAME group. Fixing the library file often resolves the importer's errors.
+- **Use import statements to detect dependencies**: Check which files import which, and group accordingly.
+- **Groups should be independent**: Each group should be fixable without touching files in other groups.
+
+## Output Requirements
+
+- Return ONLY the JSON object - no explanatory text, no markdown code blocks
+- The JSON must be valid and parseable by `jq`
+- If no bugs are found, return: {"summary": {"total_errors": 0, "groups_count": 0, "commands_run": [...]}, "groups": []}

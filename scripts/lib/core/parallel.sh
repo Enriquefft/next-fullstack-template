@@ -60,8 +60,12 @@ run_parallel_tasks_interactive() {
 	local first_prompt
 	first_prompt=$(get_task_prompt "$first_group_name" "$first_questions")
 
+	# Write prompt to temp file to avoid shell quoting issues (prompts may contain quotes)
+	local first_prompt_file="${LOG_DIR}/prompt_${first_branch//\//_}_${TIMESTAMP}.txt"
+	printf '%s' "$first_prompt" > "$first_prompt_file"
+
 	tmux new-session -d -s "$session_name" -c "$first_worktree" \
-		"claude --model $first_model '$first_prompt'; echo 'Press Enter to close...'; read"
+		"claude --model $first_model \"\$(cat '$first_prompt_file')\"; echo 'Press Enter to close...'; read"
 
 	if [[ "$use_splits" == true ]]; then
 		# Split pane mode: create panes in a tiled layout
@@ -84,9 +88,13 @@ run_parallel_tasks_interactive() {
 			local task_prompt
 			task_prompt=$(get_task_prompt "$group_name_clean" "$questions_file")
 
+			# Write prompt to temp file to avoid shell quoting issues
+			local prompt_file="${LOG_DIR}/prompt_${branch_name//\//_}_${TIMESTAMP}.txt"
+			printf '%s' "$task_prompt" > "$prompt_file"
+
 			# Split and run claude in new pane
 			tmux split-window -t "$session_name" -c "$worktree" \
-				"claude --model $model '$task_prompt'; echo 'Press Enter to close...'; read"
+				"claude --model $model \"\$(cat '$prompt_file')\"; echo 'Press Enter to close...'; read"
 
 			# Rebalance to tiled layout after each split
 			tmux select-layout -t "$session_name" tiled
@@ -120,8 +128,12 @@ run_parallel_tasks_interactive() {
 			local task_prompt
 			task_prompt=$(get_task_prompt "$group_name_clean" "$questions_file")
 
+			# Write prompt to temp file to avoid shell quoting issues
+			local prompt_file="${LOG_DIR}/prompt_${branch_name//\//_}_${TIMESTAMP}.txt"
+			printf '%s' "$task_prompt" > "$prompt_file"
+
 			tmux new-window -t "$session_name" -c "$worktree" -n "$(basename "$worktree")" \
-				"claude --model $model '$task_prompt'; echo 'Press Enter to close...'; read"
+				"claude --model $model \"\$(cat '$prompt_file')\"; echo 'Press Enter to close...'; read"
 		done
 
 		# Create a status window (only in window mode)
