@@ -1,10 +1,15 @@
+import { neonConfig } from "@neondatabase/serverless";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-serverless";
+import ws from "ws";
 import * as schema from "@/db/schema/index.ts";
+
+// Configure WebSocket for Node.js environments (required for CI)
+neonConfig.webSocketConstructor = ws;
 
 /**
  * E2E-specific database instance
- * Uses same driver as production (neon-serverless) for parity
+ * Uses neon-serverless driver for full transaction support
  */
 export function createTestDb(connectionString: string) {
 	return drizzle(connectionString, { schema });

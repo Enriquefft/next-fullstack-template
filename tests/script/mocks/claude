@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+#
+# Mock Claude CLI for testing (ZERO TOKENS CONSUMED)
+#
+# This mock returns pre-defined responses for different commands
+# allowing full end-to-end testing without consuming Claude API tokens
+
+# Track calls for assertion in tests
+MOCK_LOG="${MOCK_LOG_DIR:-/tmp}/mock-claude-calls.log"
+mkdir -p "$(dirname "$MOCK_LOG")"
+echo "$(date +%s) $*" >> "$MOCK_LOG"
+
+# Parse arguments
+MODE=""
+MODEL=""
+PROMPT=""
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--print)
+			MODE="print"
+			shift
+			;;
+		--model)
+			MODEL="$2"
+			shift 2
+			;;
+		--dangerously-skip-permissions)
+			shift
+			;;
+		auth)
+			if [[ "$2" == "status" ]]; then
+				# Mock successful auth
+				echo "✓ Authenticated as mock@example.com"
+				exit 0
+			elif [[ "$2" == "login" ]]; then
+				echo "Mock: Already authenticated"
+				exit 0
+			fi
+			shift
+			;;
+		*)
+			PROMPT="$1"
+			shift
+			;;
+	esac
+done
+
+# Handle different modes
+case "$MODE" in
+	print)
+		# Diagnostic analysis mode
+		if [[ "$MODEL" == "opus" ]] || [[ "$PROMPT" =~ "diagnostic" ]] || [[ "$PROMPT" =~ "Analyze" ]]; then
+			# Return mock diagnostic grouping output
+			cat <<'EOF'
+{
+  "summary": {
+    "groups_count": 3,
+    "total_files": 8,
+    "total_issues": 12
+  },
+  "groups": [
+    {
+      "name": "type-errors-auth",
+      "order": 1,
+      "complexity": "simple",
+      "estimated_time_minutes": 5,
+      "files": [
+        "src/auth.ts",
+        "src/types.ts"
+      ],
+      "diagnostics": [
+        "src/auth.ts:12:5 - Type 'string | undefined' is not assignable to type 'string'",
+        "src/types.ts:23:10 - Property 'id' does not exist on type 'User'"
+      ]
+    },
+    {
+      "name": "lint-formatting",
+      "order": 2,
+      "complexity": "simple",
+      "estimated_time_minutes": 3,
+      "files": [
+        "src/components/Button.tsx",
+        "src/components/Input.tsx"
+      ],
+      "diagnostics": [
+        "Missing semicolons in 4 locations",
+        "Inconsistent spacing in 3 files"
+      ]
+    },
+    {
+      "name": "test-failures-api",
+      "order": 3,
+      "complexity": "medium",
+      "estimated_time_minutes": 10,
+      "files": [
+        "tests/api.test.ts",
+        "src/api/handler.ts"
+      ],
+      "diagnostics": [
+        "Expected 200, received 404",
+        "Timeout in async test"
+      ]
+    }
+  ]
+}
+EOF
+			exit 0
+		fi
+
+		# Fix mode - return success message
+		echo "Mock: Fixes applied successfully"
+		exit 0
+		;;
+	*)
+		# Interactive mode or other - just succeed
+		echo "Mock: Operation completed"
+		exit 0
+		;;
+esac
+
+# Default success
+exit 0

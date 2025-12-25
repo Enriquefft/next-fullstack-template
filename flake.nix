@@ -21,11 +21,13 @@
           coreutils
           jq
           tmux
+          bats
 
           lefthook
           commitlint-rs
 
           nodePackages.vercel
+          stdenv.cc.cc.lib
 
         ];
 

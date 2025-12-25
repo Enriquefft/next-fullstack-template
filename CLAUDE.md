@@ -46,6 +46,8 @@ Multi-environment PostgreSQL via **Neon Serverless**:
 - Configuration logic in `src/env/db.ts` with automatic selection
 - No Docker or local PostgreSQL required—uses Neon branches
 - See `.env.example` for setup template
+- **Driver**: Uses `drizzle-orm/neon-serverless` for full transaction support
+- **E2E Tests**: WebSocket configured with `ws` package for Node.js/CI environments (see `e2e/setup/db.ts`)
 
 ### Authentication System
 

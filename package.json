@@ -46,13 +46,15 @@
 		"@types/node": "^25.0.3",
 		"@types/react": "19.2.7",
 		"@types/react-dom": "19.2.3",
+		"@types/ws": "^8.18.1",
 		"drizzle-kit": "^0.31.8",
 		"knip": "^5.77.0",
 		"pg": "^8.16.3",
 		"playwright": "^1.57.0",
 		"postcss": "^8.5.6",
 		"tailwindcss": "^4.1.18",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"ws": "^8.18.3"
 	},
 	"license": "SEE LICENSE IN LICENSE.public",
 	"name": "next-fullstack-template",
@@ -81,6 +83,9 @@
 		"test:e2e:headed": "./scripts/run-e2e.sh --headed",
 		"test:e2e:report": "bunx playwright show-report",
 		"test:e2e:ui": "./scripts/run-e2e.sh --ui",
+		"test:script": "bats tests/script/unit tests/script/integration",
+		"test:script:integration": "bats tests/script/integration",
+		"test:script:unit": "bats tests/script/unit",
 		"type": "tsc --noEmit --pretty"
 	},
 	"type": "module",

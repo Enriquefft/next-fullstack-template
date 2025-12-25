@@ -1,36 +1,36 @@
 {
-  "mode": "fix",
-  "confidence": "safe",
-  "since": "origin/main",
-  "execute": false,
-  "auto": false,
-  "simple_only": true,
-  "notifications": true,
-  "verbosity": 1,
-  "allow_dirty": false,
-  "show_diff": false,
-  "profiles": {
-    "safe": {
-      "confidence": "safe",
-      "execute": true,
-      "auto": false,
-      "simple_only": true
-    },
-    "review": {
-      "confidence": "medium",
-      "show_diff": true,
-      "execute": false
-    },
-    "full": {
-      "confidence": "low",
-      "simple_only": false,
-      "execute": true,
-      "auto": true
-    },
-    "pr": {
-      "since": "origin/main",
-      "confidence": "safe",
-      "execute": false
-    }
-  }
+	"allow_dirty": false,
+	"auto": false,
+	"confidence": "safe",
+	"execute": false,
+	"mode": "fix",
+	"notifications": true,
+	"profiles": {
+		"full": {
+			"auto": true,
+			"confidence": "low",
+			"execute": true,
+			"simple_only": false
+		},
+		"pr": {
+			"confidence": "safe",
+			"execute": false,
+			"since": "origin/main"
+		},
+		"review": {
+			"confidence": "medium",
+			"execute": false,
+			"show_diff": true
+		},
+		"safe": {
+			"auto": false,
+			"confidence": "safe",
+			"execute": true,
+			"simple_only": true
+		}
+	},
+	"show_diff": false,
+	"simple_only": true,
+	"since": "origin/main",
+	"verbosity": 1
 }
