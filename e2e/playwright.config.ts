@@ -45,7 +45,8 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: "./scripts/start-test-server.sh",
+        command: "bash scripts/start-test-server.sh",
+        cwd: path.resolve(__dirname, ".."),
         env: {
             PORT: PORT.toString(),
         },
