@@ -72,6 +72,7 @@
 		"auth:gen": "bunx @better-auth/cli@latest generate",
 		"auth:secret": "bunx @better-auth/cli@latest secret",
 		"build": "next build",
+		"build:claude-md": "bun .claude/scripts/build-claude-md.ts",
 		"check:deps": "knip",
 		"cleanup": "knip --fix",
 		"db:generate": "drizzle-kit generate",
