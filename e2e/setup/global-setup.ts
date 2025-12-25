@@ -15,7 +15,7 @@ export default async function globalSetup() {
 	// Push latest schema to test database
 	console.log("📦 Pushing database schema...");
 	try {
-		execSync("bun run db:push", {
+		const output = execSync("bun run db:push", {
 			env: {
 				...process.env,
 				NODE_ENV: "test",
@@ -23,11 +23,16 @@ export default async function globalSetup() {
 				NEXT_PUBLIC_PROJECT_NAME:
 					process.env["NEXT_PUBLIC_PROJECT_NAME"] || "next-fullstack-template",
 			},
-			stdio: "pipe",
+			encoding: "utf-8",
 		});
+		console.log(output);
 		console.log("✅ Schema pushed successfully");
 	} catch (error) {
-		console.error("❌ Failed to push schema:", error);
+		console.error("❌ Failed to push schema:");
+		if (error instanceof Error && "stdout" in error) {
+			console.error((error as any).stdout?.toString());
+			console.error((error as any).stderr?.toString());
+		}
 		throw error;
 	}
 
