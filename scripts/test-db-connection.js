@@ -6,7 +6,7 @@
 
 import { neon } from "@neondatabase/serverless";
 
-const url = process.env.DATABASE_URL_TEST;
+const url = process.env["DATABASE_URL_TEST"];
 
 console.log("🔌 Database Connection Test");
 console.log("============================\n");
