@@ -64,6 +64,11 @@
 			"!**/src/components/ui/*"
 		],
 		"rules": {
+			"complexity": {
+				// Allow bracket notation for index signature access
+				// (required by TS noPropertyAccessFromIndexSignature)
+				"useLiteralKeys": "off"
+			},
 			"recommended": true,
 			"style": {
 				"noInferrableTypes": "error",
