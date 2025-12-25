@@ -1,4 +1,4 @@
-"server-only";
+import "server-only";
 import { Polar } from "@polar-sh/sdk";
 import { serverEnv } from "@/env/server.ts";
 
