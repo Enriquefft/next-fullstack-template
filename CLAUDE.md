@@ -34,39 +34,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Database Architecture
 
-This project uses a **multi-environment database architecture** with automatic environment selection:
+Multi-environment PostgreSQL via **Neon Serverless**:
 
-**Environment Selection Logic** (`src/env/db.ts`):
-1. **Production/Deployment**: Set `DATABASE_URL` environment variable (Vercel, Railway, etc.)
-2. **Local Development**: Uses environment-specific URLs based on `NODE_ENV`:
-   - `NODE_ENV=development` → `DATABASE_URL_DEV`
-   - `NODE_ENV=test` → `DATABASE_URL_TEST`
-   - `NODE_ENV=production` → `DATABASE_URL_PROD`
+- **Production/Deployment**: Use `DATABASE_URL` environment variable (set by hosting platform)
+- **Local Development**: Environment-specific URLs automatically selected via `NODE_ENV`:
+  - `NODE_ENV=development` → `DATABASE_URL_DEV`
+  - `NODE_ENV=test` → `DATABASE_URL_TEST`
+  - `NODE_ENV=production` → `DATABASE_URL_PROD`
 
-**Configuration**:
-- All database URLs are defined in `.env` file
-- Validation ensures either `DATABASE_URL` OR the appropriate `DATABASE_URL_{ENV}` is set
-- Application code (`src/db/index.ts`) imports `databaseUrl` from `src/env/db.ts`
-- No manual script injection required—automatic selection via `NODE_ENV`
-
-**Example `.env` setup**:
-```env
-# Local development databases (for different environments)
-DATABASE_URL_DEV='postgresql://...'
-DATABASE_URL_TEST='postgresql://...'
-DATABASE_URL_STAGING='postgresql://...'
-DATABASE_URL_PROD='postgresql://...'
-
-# Optional: Override for production deployment (Vercel sets this)
-# DATABASE_URL='postgresql://...'
-```
-
-**Infrastructure**:
-- Uses **Neon Serverless** PostgreSQL (separate branches per environment)
-- No Docker or local PostgreSQL required—Neon branches are always available
-- E2E tests automatically use `DATABASE_URL_TEST` via `NODE_ENV=test`
-
-**For detailed E2E testing guide**, see `.claude/rules/e2e-testing.md` (loads automatically when working in `e2e/`).
+**Key Points**:
+- Configuration logic in `src/env/db.ts` with automatic selection
+- No Docker or local PostgreSQL required—uses Neon branches
+- See `.env.example` for setup template
 
 ### Authentication System
 
@@ -82,7 +61,7 @@ Authentication is handled by **Better Auth** with **Polar** integration for paym
 
 - **Server Actions**: Use for form submissions, mutations, and server-side logic called from client components
 - **Server Components**: Default for data fetching; they run on the server and can directly access the database
-- **API Routes**: Reserve for external webhooks, third-party integrations, or when you need a public REST endpoint. Server Actions & Server Components are prefered.
+- **API Routes**: Reserve for external webhooks, third-party integrations, or when you need a public REST endpoint. Server Actions & Server Components are preferred.
 
 Server Actions / Server Components provide better type safety, automatic request deduplication, and simpler data flow compared to API routes.
 
@@ -113,7 +92,6 @@ Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[clien
 
 - **Client vars** (prefixed with `NEXT_PUBLIC_`): Available in browser
 - **Server vars**: Backend-only, validated at build time
-- **Database URLs**: See "Database Architecture" section above for details on multi-environment setup
 
 ### Code Organization
 
@@ -150,198 +128,21 @@ Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[clien
 
 ### SEO & GEO (Generative Engine Optimization)
 
-This template includes comprehensive SEO infrastructure optimized for both traditional search engines and AI search engines (ChatGPT, Perplexity, Claude, Gemini).
+Comprehensive SEO infrastructure for traditional and AI search engines:
 
-**Core Components:**
+- Locale-aware metadata utilities (`src/lib/seo/metadata.ts`)
+- JSON-LD structured data schemas (`src/lib/seo/schema/`)
+- Environment-aware robots.txt and multi-locale sitemap
+- Customized during `/implement-prd` from PRD requirements
 
-- **`src/metadata.ts`** – Site configuration (name, description, keywords, author, theme color, OG image)
-- **`src/lib/seo/metadata.ts`** – Locale-aware metadata utilities
-- **`src/lib/seo/sitemap-utils.ts`** – Sitemap generation helpers
-- **`src/app/robots.ts`** – Dynamic robots.txt (environment-aware)
-- **`src/app/sitemap.ts`** – Multi-locale sitemap generator
-
-**Features Included:**
-
-1. **Locale-Aware Metadata**
-   - Automatic canonical URLs for all pages
-   - Hreflang links for all supported locales + x-default
-   - Locale-specific OpenGraph tags (og:locale)
-   - Viewport and theme-color meta tags
-   - Twitter card support
-
-2. **Robots.txt**
-   - Environment-aware: blocks crawlers in development/staging, allows in production
-   - Override via `NEXT_PUBLIC_ROBOTS_ALLOW` env var
-   - Excludes `/api/`, `/admin/`, `/_next/`, `/private/`, `*.json`
-
-3. **Sitemap.xml**
-   - Automatic locale variants for all routes
-   - Configurable changeFrequency and priority per route
-   - Utilities for dynamic routes (blog posts, products, etc.)
-
-**Using SEO Utilities:**
-
-```typescript
-// In any page.tsx file
-import { generatePageMetadata } from "@/lib/seo/metadata";
-
-export async function generateMetadata({ params }: Props) {
-  const { locale } = await params;
-  return generatePageMetadata({
-    locale,
-    path: "/about", // Current page path
-    namespace: "AboutPage", // Translation namespace in messages/{locale}.json
-    keywords: ["about", "company"], // Additional keywords
-  });
-}
-```
-
-**Adding Routes to Sitemap:**
-
-Edit `src/app/sitemap.ts` and add routes to the `staticRoutes` array:
-
-```typescript
-const staticRoutes = [
-  { path: "/", changeFrequency: "daily", priority: 1.0 },
-  { path: "/about", changeFrequency: "monthly", priority: 0.8 },
-  // Add more routes here
-];
-```
-
-For dynamic routes (e.g., blog posts):
-
-```typescript
-import { db } from "@/db";
-import { posts } from "@/db/schema";
-import { generateDynamicEntries } from "@/lib/seo/sitemap-utils";
-
-const blogPosts = await db.select().from(posts);
-const blogEntries = generateDynamicEntries(
-  blogPosts,
-  (post) => `/blog/${post.slug}`,
-  {
-    changeFrequency: 'weekly',
-    priority: 0.7,
-    lastModifiedGetter: (post) => post.updatedAt,
-  }
-);
-```
-
-**Customizing for New Projects:**
-
-When running `/implement-prd`, update `src/metadata.ts` with project-specific values:
-
-- `name` – Your product name
-- `description` – SEO description (155 chars max recommended)
-- `keywords` – Relevant keywords array
-- `author` – Your name and URL
-- `themeColor` – Brand color (hex)
-- `ogImage` – Path to 1200x630px OpenGraph image
-
-Also update `messages/{locale}.json` files with localized metadata under the `Metadata` namespace.
-
-**JSON-LD Structured Data (GEO Optimization):**
-
-The template includes a comprehensive JSON-LD schema system for AI search engines. All pages automatically include Organization and WebSite schemas. Add page-specific schemas as needed:
-
-```typescript
-// Example: Article/Blog page
-import { SchemaScript } from "@/components/seo/schema-script";
-import { generateArticleSchema, createPerson } from "@/lib/seo/schema";
-
-export default function BlogPost() {
-  const articleSchema = generateArticleSchema({
-    type: "BlogPosting",
-    headline: "10 Tips for Better SEO",
-    description: "Learn how to optimize your content",
-    image: "https://example.com/article.jpg",
-    datePublished: "2024-01-15",
-    author: createPerson("John Doe", { url: "https://example.com/author/john" }),
-    publisher: {
-      name: "My Blog",
-      logo: { "@type": "ImageObject", url: "https://example.com/logo.png" },
-    },
-    keywords: ["SEO", "optimization"],
-  });
-
-  return (
-    <>
-      <SchemaScript schema={articleSchema} />
-      {/* Page content */}
-    </>
-  );
-}
-```
-
-Available schema types:
-- `generateOrganizationSchema()` – Company/organization info (auto-added to all pages)
-- `generateWebSiteSchema()` – Website info with optional search action (auto-added)
-- `generateWebPageSchema()` – Individual page metadata
-- `generateArticleSchema()` – Blog posts, news articles (CRITICAL for GEO)
-- `generateFAQSchema()` – FAQ pages (ChatGPT loves these!)
-- `generateProductSchema()` – E-commerce products
-- `generateBreadcrumbSchema()` – Breadcrumb navigation
-
-See `src/lib/seo/schema/` for all available schemas and detailed usage examples.
+**Note**: Detailed usage documentation loads automatically when working in SEO-related files.
 
 ### Performance Optimization
 
-This template is optimized for fast development and production builds.
-
-**Turbopack (Development)**
-
-The development server uses **Turbopack** for 5-25x faster builds compared to Webpack:
-
-- Enabled in `package.json`: `"dev": "... next dev --turbopack"`
-- Instant server startup (~1s)
-- Fast Hot Module Replacement (HMR)
-- Incremental compilation
-
-**Image Optimization**
-
-Automatic image optimization is configured in `next.config.ts`:
-
-- **Modern Formats**: AVIF and WebP (automatic fallback to original format)
-- **Responsive Images**: Automatic srcset generation for different device sizes
-- **Device Sizes**: `[640, 750, 828, 1080, 1200, 1920, 2048, 3840]`
-- **Image Sizes**: `[16, 32, 48, 64, 96, 128, 256, 384]`
-- **Cache TTL**: 7 days for optimized images
-
-**Best Practices for Images:**
-
-```tsx
-import Image from "next/image";
-
-// Always specify width and height for static images
-<Image
-  src="/hero.jpg"
-  alt="Hero image"
-  width={1200}
-  height={630}
-  priority // Use for above-the-fold images
-/>
-
-// For responsive images, use fill with object-fit
-<div className="relative w-full h-64">
-  <Image
-    src="/background.jpg"
-    alt="Background"
-    fill
-    className="object-cover"
-    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  />
-</div>
-
-// External images require domain configuration
-// Add to next.config.ts: images.remotePatterns
-```
-
-**Production Builds:**
-
-- Uses Turbopack for faster compilation (~14s for this template)
-- Automatic code splitting and tree shaking
-- Bundle size optimization
-- Static page generation (SSG) where possible
+- **Turbopack**: Enabled for faster dev server and production builds
+- **Image Optimization**: AVIF/WebP formats with responsive srcset (configured in `next.config.ts`)
+- Use Next.js `<Image>` component with `width`/`height` or `fill` + `sizes` prop
+- External images require `images.remotePatterns` configuration in `next.config.ts`
 
 ## Code Style Guidelines
 

@@ -70,7 +70,14 @@
       "Bash(test:*)",
       "Bash(./scripts/codebase_ops.sh:*)",
       "Bash(./scripts/setup-env.sh:*)",
-      "Bash(node scripts/debug-db-url.js:*)"
+      "Bash(node scripts/debug-db-url.js:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh secret set:*)",
+      "Bash(node scripts/test-db-connection.js:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh run watch:*)"
     ],
     "deny": [],
     "ask": []
