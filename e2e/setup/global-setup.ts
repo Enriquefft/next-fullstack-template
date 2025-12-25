@@ -1,4 +1,4 @@
-import { $ } from "bun";
+import { execSync } from "node:child_process";
 import { createTestDb, seedTestData, truncateAllTables } from "./db.ts";
 
 export default async function globalSetup() {
@@ -15,12 +15,16 @@ export default async function globalSetup() {
 	// Push latest schema to test database
 	console.log("📦 Pushing database schema...");
 	try {
-		await $`bun run db:push`.env({
-			NODE_ENV: "test",
-			DATABASE_URL_TEST: connectionString,
-			NEXT_PUBLIC_PROJECT_NAME:
-				process.env["NEXT_PUBLIC_PROJECT_NAME"] || "next-fullstack-template",
-		}).quiet();
+		execSync("bun run db:push", {
+			env: {
+				...process.env,
+				NODE_ENV: "test",
+				DATABASE_URL_TEST: connectionString,
+				NEXT_PUBLIC_PROJECT_NAME:
+					process.env["NEXT_PUBLIC_PROJECT_NAME"] || "next-fullstack-template",
+			},
+			stdio: "pipe",
+		});
 		console.log("✅ Schema pushed successfully");
 	} catch (error) {
 		console.error("❌ Failed to push schema:", error);

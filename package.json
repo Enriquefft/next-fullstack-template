@@ -73,6 +73,8 @@
 		"build": "next build",
 		"check:deps": "knip",
 		"cleanup": "knip --fix",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "bun run scripts/migrate.ts",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
 		"dev": "next dev --turbopack",

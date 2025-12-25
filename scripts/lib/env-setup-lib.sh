@@ -217,7 +217,11 @@ set_vercel_var() {
 		return 1
 	fi
 
-	if echo "$value" | vercel env add "$var_name" "$env" --force > /dev/null 2>&1; then
+	# Remove existing variable first to prevent duplicates
+	# (--force flag doesn't always replace correctly in some Vercel CLI versions)
+	vercel env rm "$var_name" "$env" --yes > /dev/null 2>&1 || true
+
+	if echo "$value" | vercel env add "$var_name" "$env" > /dev/null 2>&1; then
 		echo "✅ $var_name configured for $env" >&2
 		return 0
 	else

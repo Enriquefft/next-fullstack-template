@@ -50,6 +50,36 @@ Multi-environment PostgreSQL via **Neon Serverless**:
 - **E2E Tests**: WebSocket configured with `ws` package for Node.js/CI environments (see `e2e/setup/db.ts`)
 - **Schema Management**: E2E global setup automatically pushes schema via `drizzle-kit push` before each test run
 
+#### Database Migration Workflow
+
+**Development (Local)**:
+- Use `bun run db:push` for rapid iteration—directly syncs schema changes without migration files
+- Ideal for prototyping and quick schema adjustments
+
+**Production/Staging Deployment**:
+```bash
+# 1. Generate migration files from schema changes
+bun run db:generate
+
+# 2. Review generated SQL in drizzle/ folder
+# Commit migration files to git
+
+# 3. In deployment: Run migrations before starting the app
+bun run db:migrate
+```
+
+**Key Differences**:
+- `db:push`: Direct schema sync, no history, **development only**
+- `db:generate` + `db:migrate`: Version-controlled migrations with rollback capability, **required for production**
+
+**Migration files** are stored in `drizzle/` and provide:
+- Complete schema change history
+- Peer review via git commits
+- Safe rollback capability
+- Protection against data loss
+
+**IMPORTANT**: Never use `db:push` in CI/CD or deployment pipelines. Always use migration-based workflow for production/staging environments.
+
 ### Authentication System
 
 Authentication is handled by **Better Auth** with **Polar** integration for payment/subscription features.

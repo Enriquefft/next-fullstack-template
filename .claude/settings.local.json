@@ -81,7 +81,15 @@
 			"Bash(python3:*)",
 			"Bash(/dev/null)",
 			"Bash(direnv status:*)",
-			"Bash(MOCK_LOG_DIR=/tmp ./tests/script/mocks/claude auth:*)"
+			"Bash(MOCK_LOG_DIR=/tmp ./tests/script/mocks/claude auth:*)",
+			"Bash(MOCK_LOG_DIR=/tmp ./tests/script/mocks/claude:*)",
+			"Bash(for file in tests/script/fixtures/operations/*.json)",
+			"Bash(do if [ -f \"$file\" ])",
+			"Bash(then python3 -m json.tool \"$file\")",
+			"Bash(fi)",
+			"Bash(done)",
+			"Bash(node:*)",
+			"Bash(ls:*)"
 		],
 		"ask": [],
 		"deny": []
