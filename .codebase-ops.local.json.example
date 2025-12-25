@@ -1,0 +1,7 @@
+{
+  "description": "Personal configuration overrides (copy to .codebase-ops.local.json)",
+  "confidence": "medium",
+  "notifications": false,
+  "verbosity": 2,
+  "show_diff": true
+}
