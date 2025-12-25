@@ -132,7 +132,7 @@ jobs:
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET_TEST }}
           NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
           NEXT_PUBLIC_PROJECT_NAME: ${{ secrets.NEXT_PUBLIC_PROJECT_NAME }}
-          POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
+          POLAR_ACCESS_TOKEN: dummy-polar-token-disabled-for-tests
           POLAR_MODE: sandbox
           UPLOADTHING_TOKEN: ${{ secrets.UPLOADTHING_TOKEN }}
 

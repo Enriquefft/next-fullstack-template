@@ -67,6 +67,7 @@ source "${SCRIPT_DIR}/lib/core/worktree.sh"
 source "${SCRIPT_DIR}/lib/core/parallel.sh"
 source "${SCRIPT_DIR}/lib/core/merge.sh"
 source "${SCRIPT_DIR}/lib/core/history.sh"
+source "${SCRIPT_DIR}/lib/core/analytics.sh"
 
 # Load mode system
 source "${SCRIPT_DIR}/lib/modes/base.sh"
@@ -210,6 +211,15 @@ EXAMPLES:
 
   # Code quality improvements
   $(basename "$0") --mode improve
+
+HISTORY & ANALYTICS:
+  $(basename "$0") history        # Show last 10 operations
+  $(basename "$0") undo            # Rollback last operation
+  $(basename "$0") rollback 3      # Rollback to specific operation by number
+  $(basename "$0") stats           # Show statistics (last 30 days)
+  $(basename "$0") export json     # Export stats to stats.json
+  $(basename "$0") export csv      # Export history to operations.csv
+  $(basename "$0") export all      # Export both stats and history
 
 HOW IT WORKS:
   1. 🔍 Runs diagnostics (test, type, build, lint) in parallel
@@ -686,6 +696,43 @@ if [[ $# -gt 0 ]]; then
 			fi
 			rollback_to "$2"
 			exit $?
+			;;
+		stats)
+			# Show statistics and analytics
+			mkdir -p "$LOG_DIR"
+			show_stats_report "${2:-30}"
+			exit 0
+			;;
+		export)
+			# Export statistics and history
+			mkdir -p "$LOG_DIR"
+			if [[ -z "$2" ]]; then
+				log_clean "❌" "Usage: $0 export <format>"
+				log_clean "💡" "Formats: json, csv, all"
+				log_clean "" ""
+				log_clean "" "Examples:"
+				log_clean "" "  $0 export json     # Export stats to stats.json"
+				log_clean "" "  $0 export csv      # Export history to operations.csv"
+				log_clean "" "  $0 export all      # Export both (default filenames)"
+				exit 1
+			fi
+			case "$2" in
+				json)
+					export_stats_json "${3:-stats.json}"
+					;;
+				csv)
+					export_history_csv "${3:-operations.csv}"
+					;;
+				all)
+					export_all "${3:-codebase-ops-export}"
+					;;
+				*)
+					log_clean "❌" "Unknown export format: $2"
+					log_clean "💡" "Valid formats: json, csv, all"
+					exit 1
+					;;
+			esac
+			exit 0
 			;;
 	esac
 fi
