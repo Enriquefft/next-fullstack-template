@@ -126,6 +126,11 @@ jobs:
         env:
           DATABASE_URL_TEST: ${{ secrets.DATABASE_URL_TEST }}
 
+      - name: Test database connection
+        run: node scripts/test-db-connection.js
+        env:
+          DATABASE_URL_TEST: ${{ secrets.DATABASE_URL_TEST }}
+
       - name: Run E2E tests
         run: bun run test:e2e
         env:
