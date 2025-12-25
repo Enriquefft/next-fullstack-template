@@ -3,22 +3,31 @@
 # Start Next.js dev server for E2E tests with proper environment variables
 #
 
+set -e  # Exit on error
+
+echo "🚀 Starting test server..."
+echo "   NODE_ENV: ${NODE_ENV:-not set}"
+echo "   PORT: ${PORT:-3000}"
+echo "   DATABASE_URL_TEST length: ${#DATABASE_URL_TEST}"
+
 # Export all test environment variables
 export NODE_ENV=test
 export PORT="${PORT:-3000}"
 
-# Required for E2E tests - these should be set by CI or local .env
-: "${DATABASE_URL_TEST:?DATABASE_URL_TEST is required}"
-: "${GOOGLE_CLIENT_ID:?GOOGLE_CLIENT_ID is required}"
-: "${GOOGLE_CLIENT_SECRET:?GOOGLE_CLIENT_SECRET is required}"
-: "${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}"
-: "${NEXT_PUBLIC_PROJECT_NAME:?NEXT_PUBLIC_PROJECT_NAME is required}"
-: "${POLAR_ACCESS_TOKEN:?POLAR_ACCESS_TOKEN is required}"
-: "${UPLOADTHING_TOKEN:?UPLOADTHING_TOKEN is required}"
+# Required for E2E tests - validate and export
+export DATABASE_URL_TEST="${DATABASE_URL_TEST:?DATABASE_URL_TEST is required}"
+export GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID:?GOOGLE_CLIENT_ID is required}"
+export GOOGLE_CLIENT_SECRET="${GOOGLE_CLIENT_SECRET:?GOOGLE_CLIENT_SECRET is required}"
+export BETTER_AUTH_SECRET="${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}"
+export NEXT_PUBLIC_PROJECT_NAME="${NEXT_PUBLIC_PROJECT_NAME:?NEXT_PUBLIC_PROJECT_NAME is required}"
+export POLAR_ACCESS_TOKEN="${POLAR_ACCESS_TOKEN:?POLAR_ACCESS_TOKEN is required}"
+export UPLOADTHING_TOKEN="${UPLOADTHING_TOKEN:?UPLOADTHING_TOKEN is required}"
 
 # Optional with defaults
 export POLAR_MODE="${POLAR_MODE:-sandbox}"
 export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY:-}"
+
+echo "✅ All required environment variables are set"
 
 # Start Next.js dev server
 exec next dev --turbopack
