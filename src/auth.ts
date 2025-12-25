@@ -6,16 +6,12 @@ import { nextCookies } from "better-auth/next-js";
 import { db } from "@/db";
 import { serverEnv } from "./env/server.ts";
 
-// Build plugins array conditionally
-const plugins = [nextCookies()];
-
-// Only add Polar plugin if token is valid (skip in test environments with dummy tokens)
-const isPolarEnabled =
-	serverEnv.POLAR_ACCESS_TOKEN &&
-	!serverEnv.POLAR_ACCESS_TOKEN.startsWith("dummy");
-
-if (isPolarEnabled) {
-	plugins.push(
+export const auth = betterAuth({
+	database: drizzleAdapter(db, {
+		provider: "pg",
+	}),
+	plugins: [
+		nextCookies(),
 		polar({
 			client: new Polar({
 				accessToken: serverEnv.POLAR_ACCESS_TOKEN,
@@ -30,14 +26,7 @@ if (isPolarEnabled) {
 				portal(),
 			],
 		}),
-	);
-}
-
-export const auth = betterAuth({
-	database: drizzleAdapter(db, {
-		provider: "pg",
-	}),
-	plugins,
+	],
 	socialProviders: {
 		google: {
 			clientId: serverEnv.GOOGLE_CLIENT_ID,
