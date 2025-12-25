@@ -29,5 +29,5 @@ export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY:-}"
 
 echo "✅ All required environment variables are set"
 
-# Start Next.js dev server
-exec next dev --turbopack
+# Start Next.js dev server (use bunx to run locally installed next)
+exec bunx --bun next dev --turbopack
