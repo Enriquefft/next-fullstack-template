@@ -5,6 +5,7 @@
     "": {
       "name": "next-fullstack-template",
       "dependencies": {
+        "@kapso/whatsapp-cloud-api": "^0.1.1",
         "@neondatabase/serverless": "^1.0.2",
         "@polar-sh/better-auth": "^1.6.3",
         "@polar-sh/sdk": "^0.42.1",
@@ -343,6 +344,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@kapso/whatsapp-cloud-api": ["@kapso/whatsapp-cloud-api@0.1.1", "", { "dependencies": { "zod": "^4.1.11" } }, "sha512-TnT8Mq08twUHgermibkdpnjEdOVPr/fuXaOz5RUEnAh8QKdCYDeqTmPJO54GZ8AOxTIGPH4N+Q+YN++Gt+gDBg=="],
 
     "@msgpackr-extract/msgpackr-extract-darwin-arm64": ["@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.3", "", { "os": "darwin", "cpu": "arm64" }, "sha512-QZHtlVgbAdy2zAqNA9Gu1UpIuI8Xvsd1v8ic6B2pZmeFnFcMWiPLfWXh7TVw4eGEZ/C9TH281KwhVoeQUKbyjw=="],
 
