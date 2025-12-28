@@ -40,16 +40,19 @@ async function checkIfExists(
 	platform: "vercel" | "github" | "both",
 ): Promise<boolean> {
 	try {
-		if (platform === "vercel" && config.deployment.vercelScope !== "none") {
+		if (
+			platform === "vercel" &&
+			config.deployment.vercelName &&
+			config.deployment.vercelScope &&
+			config.deployment.vercelScope !== "none"
+		) {
 			const scope = config.deployment.vercelScope;
+			const vercelName = config.deployment.vercelName;
 			if (scope === "all") {
 				// Check production as representative
-				return await checkVercelVarExists(
-					config.deployment.vercelName!,
-					"production",
-				);
+				return await checkVercelVarExists(vercelName, "production");
 			}
-			return await checkVercelVarExists(config.deployment.vercelName!, scope!);
+			return await checkVercelVarExists(vercelName, scope);
 		}
 
 		if (platform === "github" && config.deployment.githubName) {
@@ -60,12 +63,13 @@ async function checkIfExists(
 		if (
 			platform === "both" &&
 			config.deployment.vercelName &&
+			config.deployment.vercelScope &&
 			config.deployment.vercelScope !== "none"
 		) {
 			const scope =
 				config.deployment.vercelScope === "all"
 					? "production"
-					: config.deployment.vercelScope!;
+					: config.deployment.vercelScope;
 			return await checkVercelVarExists(config.deployment.vercelName, scope);
 		}
 
@@ -100,16 +104,14 @@ async function pushValue(
 	if (
 		(platform === "vercel" || platform === "both") &&
 		config.deployment.vercelName &&
+		config.deployment.vercelScope &&
 		config.deployment.vercelScope !== "none"
 	) {
-		await setVercelVar(
-			config.deployment.vercelName,
-			value,
-			config.deployment.vercelScope!,
-		);
+		const vercelScope = config.deployment.vercelScope;
+		await setVercelVar(config.deployment.vercelName, value, vercelScope);
 		console.log(
 			chalk.green(
-				`✓ ${config.deployment.vercelName} → Vercel (${config.deployment.vercelScope})`,
+				`✓ ${config.deployment.vercelName} → Vercel (${vercelScope})`,
 			),
 		);
 	}

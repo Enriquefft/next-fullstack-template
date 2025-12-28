@@ -1,312 +1,213 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
-**Additional context-specific rules** are in `.claude/rules/` and load automatically based on file paths.
+Additional context-specific rules load automatically from `.claude/rules/`.
 
-## Development Commands
+## Commands
 
-**Package Manager**: This project uses **Bun**. Always use `bun` instead of `npm` or `yarn`.
+**Package Manager**: Bun only. Never use npm or yarn.
 
-**Most Frequently Used:**
-- `bun dev` – Start development server on port 3000
-- `bun run build` – Build for production
-- `bun lint` – Lint and format code with Biome
-- `bun test` – Run unit tests with Happy DOM
-- `bun run test:e2e` – Run end-to-end tests with Playwright
-- `bun type` – Type-check without emitting files
-- `bun run db:push` – Push Drizzle schema changes to database
-
-**Testing Overview:**
-- **Unit tests**: Configured with Happy DOM (preloaded via `bunfig.toml`). Test files live in `tests/` and use `.test.ts` or `.test.tsx` extensions. Run with `bun test`.
-- **E2E tests**: Powered by Playwright (config in `e2e/playwright.config.ts`). Test files live in `e2e/tests/` and use `.spec.ts` extensions. Run with `bun run test:e2e`. Override port with `PORT=3001 bun test:e2e` if needed. See `.claude/rules/e2e-testing.md` for detailed documentation.
-
-## Architecture Overview
-
-### Database Architecture
-
-Multi-environment PostgreSQL via **Neon Serverless**:
-
-- **Deployed environments**: `DATABASE_URL` set by Vercel (different value for production vs preview)
-- **Local development**: `DATABASE_URL_DEV` in `.env.local`
-- **E2E tests**: `DATABASE_URL_TEST` in `.env.local` (and GitHub Actions secret)
-
-**Key Points**:
-- Configuration logic in `src/env/db.ts` with automatic selection
-- No Docker or local PostgreSQL required—uses Neon branches
-- See `.env.example` for setup template
-- **Driver**: Uses `drizzle-orm/neon-serverless` for full transaction support
-- **E2E Tests**: WebSocket configured with `ws` package for Node.js/CI environments (see `e2e/setup/db.ts`)
-- **Schema Management**: E2E global setup automatically pushes schema via `drizzle-kit push` before each test run
-
-#### Database Migration Workflow
-
-**Development (Local)**:
-- Use `bun run db:push` for rapid iteration—directly syncs schema changes without migration files
-- Ideal for prototyping and quick schema adjustments
-
-**Production/Staging Deployment**:
 ```bash
-# 1. Generate migration files from schema changes
-bun run db:generate
-
-# 2. Review generated SQL in drizzle/ folder
-# Commit migration files to git
-
-# 3. In deployment: Run migrations before starting the app
-bun run db:migrate
+bun dev                # Dev server (port 3000)
+bun run build          # Production build
+bun test               # Unit tests
+bun test:e2e           # E2E tests (PORT=3001 bun test:e2e for custom port)
+bun type               # Type check
+bun lint               # Lint & format
+bun run db:push        # Sync schema (dev only)
+bun run db:generate    # Generate migrations
+bun run db:migrate     # Apply migrations (prod)
+bun run db:studio      # Database GUI
+bun run auth:secret    # Generate auth secret
+bun run auth:gen       # Regenerate auth types after config changes
 ```
 
-**Key Differences**:
-- `db:push`: Direct schema sync, no history, **development only**
-- `db:generate` + `db:migrate`: Version-controlled migrations with rollback capability, **required for production**
+## File Locations
 
-**Migration files** are stored in `drizzle/` and provide:
-- Complete schema change history
-- Peer review via git commits
-- Safe rollback capability
-- Protection against data loss
+| Path | Purpose |
+|------|---------|
+| `src/app/` | Next.js App Router pages |
+| `src/components/` | React components |
+| `src/components/ui/` | shadcn/ui (excluded from linting) |
+| `src/db/` | Database client & schemas |
+| `src/db/schema/` | All Drizzle schemas |
+| `src/lib/` | Utilities (auth, analytics, kapso, etc.) |
+| `src/env/` | Environment validation (client.ts, server.ts, db.ts) |
+| `src/hooks/` | Custom React hooks |
+| `tests/` | Unit tests (*.test.ts) |
+| `e2e/tests/` | E2E tests (*.spec.ts) |
+| `scripts/seed/` | Database seed scripts |
+| `drizzle/` | Migration files |
 
-**IMPORTANT**: Never use `db:push` in CI/CD or deployment pipelines. Always use migration-based workflow for production/staging environments.
+## Database
 
-#### Database Seeding
+### Schema Pattern
 
-When inserting data into tables (except for debugging or fixing issues), never insert manually. Use TypeScript seed scripts located in `scripts/seed/` instead. This ensures reproducible, version-controlled data seeding.
+Always use the namespaced schema object:
 
-### Authentication System
+```ts
+import { schema } from "./schema.ts";
 
-Authentication is handled by **Better Auth** with **Polar** integration for payment/subscription features.
+export const myTable = schema.table("my_table", {
+  id: serial("id").primaryKey(),
+  // ...
+});
+```
 
-- Uses Drizzle adapter with PostgreSQL for session storage
-- Google OAuth configured via `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
-- Polar integration for checkout and customer portal (configured via `POLAR_ACCESS_TOKEN` and `POLAR_MODE`)
+Never use `pgSchema` directly. The schema is namespaced by `NEXT_PUBLIC_PROJECT_NAME`.
 
-### Next.js Patterns
+### Environment Selection
 
-**IMPORTANT**: Prefer **Server Actions** and **Server Components** over API routes for data mutations and fetching.
+- `DATABASE_URL_DEV` → local development
+- `DATABASE_URL_TEST` → E2E tests and CI
+- `DATABASE_URL` → Vercel (production/preview)
 
-- **Server Actions**: Use for form submissions, mutations, and server-side logic called from client components
-- **Server Components**: Default for data fetching; they run on the server and can directly access the database
-- **API Routes**: Reserve for external webhooks, third-party integrations, or when you need a public REST endpoint. Server Actions & Server Components are preferred.
+Logic in `src/env/db.ts`.
 
-Server Actions / Server Components provide better type safety, automatic request deduplication, and simpler data flow compared to API routes.
+### Migrations
 
-### Forms
+- **Development**: `bun run db:push` (direct sync, no history)
+- **Production**: `bun run db:generate` → commit → `bun run db:migrate`
 
-Uses **TanStack Form** (`@tanstack/react-form`) with **Field** components from `src/components/ui/field.tsx`.
+Never use `db:push` in CI/CD.
 
-- **Validation**: Zod schemas passed directly to validators (TanStack Form supports Standard Schema spec)
-- **Pattern**: `useForm()` hook with Zod schema in validators, render fields with `<form.Field>` children function
-- **Examples**: See `src/components/form-example.tsx` and `src/components/AddressAutocomplete.tsx`
+### Seeding
 
-### Database Layer
+Use scripts in `scripts/seed/`. Never insert data manually except for debugging.
 
-Uses **Drizzle ORM** with **Neon Serverless** driver for PostgreSQL.
+## Code Patterns
 
-- **Connection**: `src/db/index.ts` exports `db` instance using `databaseUrl` from `src/env/db.ts`
-- **Schema organization**: All schemas live in `src/db/schema/` directory
-  - `schema.ts` creates the base schema using `pgSchema(env.NEXT_PUBLIC_PROJECT_NAME)` – this means all tables are namespaced by project name
-  - `index.ts` re-exports all schemas for convenient imports
-  - `auth.ts` contains Better Auth tables (user, session, account, verification)
-  - `post.ts` is an example schema file
-- **Schema filter**: `drizzle.config.ts` uses `schemaFilter` to isolate this project's tables by `NEXT_PUBLIC_PROJECT_NAME`
-- **Important**: When creating new tables, always use the `schema` object from `schema.ts`, not `pgSchema` directly
+### Server Actions (preferred for mutations)
 
-### Environment Variables
+```ts
+"use server";
 
-Type-safe environment validation using **@t3-oss/env-nextjs** in `src/env/[client|server|db].ts`.
+import { db } from "@/db";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
-- **Client vars** (prefixed with `NEXT_PUBLIC_`): Available in browser
-- **Server vars**: Backend-only, validated at build time
+const schema = z.object({ title: z.string().min(1) });
 
-### Code Organization
+export async function createPost(formData: FormData) {
+  const parsed = schema.parse({ title: formData.get("title") });
+  await db.insert(posts).values(parsed);
+  revalidatePath("/posts");
+}
+```
 
-- `src/app/` – Next.js 15 App Router pages and routes
-- `src/components/` – React components
-  - `ui/` – shadcn/ui primitives (excluded from Biome linting)
-  - Root level: Custom components like `sign-in.tsx`, `ProductCard.tsx`, theme provider
-- `src/db/` – Database client and schemas
-- `src/lib/` – Utilities (`utils.ts`, `auth-client.ts`, `posthog.ts`, `polar.ts`, `handle-error.ts`)
-- `src/hooks/` – Custom React hooks (e.g., `use-google-places.tsx`, `use-mobile.tsx`)
-- `src/styles/` – Global CSS and fonts
-- `src/metadata.ts` – Centralized Next.js metadata (title, description, OG images)
-- `tests/` – Unit tests (Happy DOM)
-- `e2e/` – End-to-end tests (Playwright)
-  - `setup/` – Global setup/teardown and database utilities
-  - `helpers/` – Auth, database, and fixture helpers
-  - `fixtures/` – Seed data definitions
-  - `tests/` – Test files (*.spec.ts)
-  - `playwright.config.ts` – Playwright configuration
+### Client Auth
 
-### Styling System
+```ts
+import { useSession } from "@/lib/auth-client";
+const { data: session } = useSession();
+```
 
-- **Tailwind CSS v4** with **shadcn/ui** components
-- **Global styles**: `src/styles/` directory
-- **Theme**: Dark mode support via `next-themes` (see `theme-provider.tsx`)
-- **Utility**: `cn()` function in `src/lib/utils.ts` for class merging with `clsx` and `tailwind-merge`
+### Forms (TanStack Form + Zod)
 
-### Analytics
+```ts
+import { useForm } from "@tanstack/react-form";
 
-**PostHog** is integrated for analytics and feature flags.
+const form = useForm({
+  defaultValues: { email: "" },
+  validators: { onChange: emailSchema },
+  onSubmit: async ({ value }) => { /* ... */ },
+});
+```
 
-- `src/lib/posthog.ts` – Server-side PostHog client
-- `src/components/PostHogProvider.tsx` – Client-side provider wrapper
+### Utilities
 
-### WhatsApp Messaging (Kapso)
+```ts
+import { cn } from "@/lib/utils";
+```
 
-**Kapso** provides WhatsApp Business API integration for sending messages, templates, and handling webhooks.
+### Test Selectors
 
-- `src/lib/kapso.ts` – Server-side Kapso client with helper functions
-- `src/app/api/whatsapp/webhook/route.ts` – Webhook handler for incoming messages and status updates
+```tsx
+const headingId = useId();
 
-**Environment Variables** (optional):
-- `KAPSO_API_KEY` – API key from [kapso.ai](https://kapso.ai)
-- `KAPSO_PHONE_NUMBER_ID` – WhatsApp phone number ID
-- `META_APP_SECRET` – For webhook signature verification
+<section aria-labelledby={headingId} data-testid="my-section">
+  <h2 id={headingId}>Title</h2>
+</section>
+```
 
-**Usage Example**:
+- `useId()` for accessibility IDs
+- `data-testid` for E2E selectors
+- `aria-labelledby` only on landmarks (`<section>`, `<nav>`, `<aside>`)
+
+## Type Safety Rules
+
+- Strict mode enabled
+- No implicit any
+- No `@ts-ignore` — fix the error
+- No `as` casting — use type guards or refactor
+- Use `@/` path alias for imports from `src/`
+- avoid typing return types, prefer infered return types
+
+## Style Rules (Biome)
+
+- Tabs for indentation
+- Double quotes
+- ~80 char lines
+- `PascalCase` for components/types
+- `camelCase` for variables/functions
+- `kebab-case` for files
+- No default exports (except Next.js route files)
+
+## Git
+
+Claude can commit using conventional commit format. Before committing:
+
+```bash
+bun type && bun lint && bun run build
+```
+
+## Integrations
+
+### Polar (Payments)
+
+- Config: `POLAR_ACCESS_TOKEN`, `POLAR_MODE`
+- Use `POLAR_MODE='sandbox'` during development
+
+### Kapso (WhatsApp)
+
 ```ts
 import { sendTextMessage, sendButtonMessage } from "@/lib/kapso";
 
-// Send a text message
-await sendTextMessage("+1234567890", "Hello from WhatsApp!");
-
-// Send interactive buttons
-await sendButtonMessage(
-  "+1234567890",
-  "Choose an option:",
-  [
-    { id: "opt1", title: "Option 1" },
-    { id: "opt2", title: "Option 2" },
-  ]
-);
+await sendTextMessage("+1234567890", "Hello!");
+await sendButtonMessage("+1234567890", "Choose:", [
+  { id: "a", title: "Option A" },
+  { id: "b", title: "Option B" },
+]);
 ```
 
-**Webhook Setup**: Configure your webhook URL in Meta Business Suite as `https://yourdomain.com/api/whatsapp/webhook` with `META_APP_SECRET` as the verify token.
+Webhook: `https://yourdomain.com/api/whatsapp/webhook`
 
-### SEO & GEO (Generative Engine Optimization)
+### PostHog (Analytics)
 
-Comprehensive SEO infrastructure for traditional and AI search engines:
+- Server: `src/lib/posthog.ts`
+- Client: `src/components/PostHogProvider.tsx`
 
-- Locale-aware metadata utilities (`src/lib/seo/metadata.ts`)
-- JSON-LD structured data schemas (`src/lib/seo/schema/`)
-- Environment-aware robots.txt and multi-locale sitemap
-- Customized during `/implement-prd` from PRD requirements
+## Speckit Commands
 
-**Note**: Detailed usage documentation loads automatically when working in SEO-related files.
+```bash
+/speckit.specify    # Create spec from natural language
+/speckit.plan       # Generate technical plan
+/speckit.tasks      # Break into tasks
+/speckit.implement  # Execute implementation
+/speckit.clarify    # Resolve ambiguities
+/speckit.analyze    # Validate consistency
+/speckit.checklist  # Generate quality checklists
+/speckit.constitution  # Define project principles
+/speckit.taskstoissues # Convert to GitHub issues
+```
 
-### Performance Optimization
+Commands defined in `.claude/commands/speckit.*.md`.
 
-- **Turbopack**: Enabled for faster dev server and production builds
-- **Image Optimization**: AVIF/WebP formats with responsive srcset (configured in `next.config.ts`)
-- Use Next.js `<Image>` component with `width`/`height` or `fill` + `sizes` prop
-- External images require `images.remotePatterns` configuration in `next.config.ts`
+## Template Customization
 
-## Code Style Guidelines
+1. Run `/speckit.specify` to configure what to keep/remove
+2. Follow `TEMPLATE_CHECKLIST.md`
+3. Delete checklist when done
 
-**Single Responsibility Principle**: Each function, component, and module should do one thing well. This prevents bugs by making code easier to test, understand, and modify without unintended side effects.
-
-These rules are enforced by Biome (see `biome.jsonc`):
-
-- **Indentation**: Tabs (not spaces)
-- **Quotes**: Double quotes for JavaScript/TypeScript
-- **Line length**: Keep under 80 characters when practical
-- **Naming conventions**:
-  - Components and types: `PascalCase`
-  - Variables and functions: `camelCase`
-  - Files: `kebab-case`
-- **Imports**: Auto-organized and sorted via Biome
-- **No default exports**: Except in Next.js route files (page.tsx, layout.tsx, error.tsx)
-- **shadcn/ui files**: Components in `src/components/ui/` are excluded from linting
-
-## Git Workflow
-
-**Claude commits**: Claude Code can create commits following the conventional commit format. Always ensure `bun type`, `bun lint`, `bun run build` are successful before committing.
-
-## Type Safety Notes
-
-- **Strict mode**: TypeScript is configured with all strict checks enabled
-- **No implicit any**: All types must be explicit
-- **No `@ts-ignore`**: Never use `@ts-ignore` comments. Fix type errors properly instead of suppressing them
-- **No `as` casting**: Avoid type assertions with `as`. Use proper type guards, validation, or refactor to eliminate the need for casting
-- **Path aliases**: Use `@/` prefix for imports from `src/` (e.g., `@/db`, `@/lib/utils`)
-- **File extensions**: Import statements should include `.ts`/`.tsx` extensions (e.g., `from "./schema.ts"`)
-- **Better Auth types**: Run `bun run auth:gen` after modifying auth configuration
-
-## Important Patterns
-
-1. **Database schemas must use the namespaced schema object**:
-   ```ts
-   import { schema } from "./schema.ts";
-   export const myTable = schema.table("my_table", { ... });
-   ```
-
-2. **Client-side auth usage**:
-   ```ts
-   import { useSession } from "@/lib/auth-client";
-   const { data: session } = useSession();
-   ```
-
-3. **Utility imports**:
-   ```ts
-   import { cn } from "@/lib/utils";
-   ```
-
-4. **Server Actions with proper validation**:
-   ```ts
-   "use server";
-
-   import { db } from "@/db";
-   import { revalidatePath } from "next/cache";
-   import { z } from "zod";
-
-   const createPostSchema = z.object({
-     title: z.string().min(1),
-   });
-
-   export async function createPost(formData: FormData) {
-     const parsed = createPostSchema.parse({
-       title: formData.get("title"),
-     });
-
-     await db.insert(posts).values(parsed);
-
-     revalidatePath("/posts");
-   }
-   ```
-
-5. **Element IDs and test selectors**:
-   - `useId()` for accessibility IDs (dynamic, collision-safe)
-   - `data-testid` for E2E tests (stable selectors)
-   - Use `aria-labelledby` only on landmark elements (`<section>`, `<nav>`, `<aside>`) with a visible heading
-   - Skip `aria-labelledby` on presentational elements or those with implicit labels
-   ```tsx
-   const headingId = useId();
-
-   <section aria-labelledby={headingId} data-testid="programs-section">
-     <h2 id={headingId}>{t("title")}</h2>
-   </section>
-   ```
-
-## Template Usage
-
-This is a template repository designed to kickstart new Next.js projects with best practices and modern tooling pre-configured.
-
-**Getting Started:**
-1. Clone the template
-2. Complete initial setup (see [README - Development Process](README.md#development-process))
-3. Customize using the speckit workflow with TEMPLATE_CHECKLIST.md as your guide
-4. Build features using: `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`
-
-**Speckit Commands** (`.claude/commands/speckit.*.md`):
-- `/speckit.specify` - Create feature specification
-- `/speckit.plan` - Generate implementation plan
-- `/speckit.tasks` - Break down into tasks
-- `/speckit.implement` - Execute implementation
-- `/speckit.clarify`, `/speckit.analyze`, `/speckit.checklist`, `/speckit.constitution`, `/speckit.taskstoissues`
-
-**Template Customization:**
-- Use the special `0-template-init` spec to configure auth, payments, analytics, and other integrations
-- Follow TEMPLATE_CHECKLIST.md during implementation to transform the template into your project
-- The checklist covers 14 areas: project identity, auth, payments, analytics, database, UI, integrations, env vars, dependencies, SEO, docs, testing, CI/CD, and cleanup
-- Delete TEMPLATE_CHECKLIST.md when customization is complete
+See [README.md](README.md) for full setup instructions.

@@ -73,16 +73,14 @@ export async function executeAutoPush(
 		if (
 			(platform === "vercel" || platform === "both") &&
 			config.deployment.vercelName &&
+			config.deployment.vercelScope &&
 			config.deployment.vercelScope !== "none"
 		) {
-			await setVercelVar(
-				config.deployment.vercelName,
-				value,
-				config.deployment.vercelScope!,
-			);
+			const vercelScope = config.deployment.vercelScope;
+			await setVercelVar(config.deployment.vercelName, value, vercelScope);
 			console.log(
 				chalk.green(
-					`✓ ${config.deployment.vercelName} → Vercel (${config.deployment.vercelScope})`,
+					`✓ ${config.deployment.vercelName} → Vercel (${vercelScope})`,
 				),
 			);
 		}

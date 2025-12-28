@@ -280,14 +280,6 @@ Update documentation to reflect your customized template:
   - [ ] Update architecture overview
   - [ ] Update environment variables section
   - [ ] Add project-specific patterns/rules
-- [ ] **Update** `docs/ENVIRONMENT.md`:
-  - [ ] Remove variables for deleted integrations
-  - [ ] Add variables for new integrations
-  - [ ] Update examples
-- [ ] **Update** `docs/DEPLOYMENT.md`:
-  - [ ] Remove deployment steps for deleted integrations
-  - [ ] Update CI/CD pipeline description
-  - [ ] Update required secrets/environment variables
 
 ---
 
