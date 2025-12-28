@@ -146,13 +146,13 @@ This template uses **spec-driven development** via [GitHub's Spec Kit](https://g
 Your first spec should customize the template:
 
 ```bash
-/speckit.specify Initialize template: keep Better Auth with email/password,
-  remove Polar payments, keep PostHog, update project name to "My App"
+/speckit.specify An app for automated reminders via whatsapp, start with the project barebones, structure and enough to start developing, review TEMPLATE_CHECKLIST.
 ```
 
 Then run the workflow:
 
 ```bash
+/init-brand         # Create project branding
 /speckit.plan       # Generate technical plan
 /speckit.tasks      # Break into tasks
 /speckit.implement  # Execute
@@ -166,6 +166,7 @@ For each new feature:
 
 ```bash
 /speckit.specify User can sign up with email and verify their account
+/design
 /speckit.plan
 /speckit.tasks
 /speckit.implement
