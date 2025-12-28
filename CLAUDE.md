@@ -1,14 +1,8 @@
-<!-- This file is customized during /implement-prd based on PRD choices in .claude/prd/00-overview.md -->
-
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**For new projects**: Run `/implement-prd` to customize this template based on your requirements. See "PRD-Based Development Workflow" below.
-
 **Additional context-specific rules** are in `.claude/rules/` and load automatically based on file paths.
-
-**Product requirements and user flows** are documented in `.claude/prd/` for feature specifications and implementation planning.
 
 ## Development Commands
 
@@ -26,11 +20,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Testing Overview:**
 - **Unit tests**: Configured with Happy DOM (preloaded via `bunfig.toml`). Test files live in `tests/` and use `.test.ts` or `.test.tsx` extensions. Run with `bun test`.
 - **E2E tests**: Powered by Playwright (config in `e2e/playwright.config.ts`). Test files live in `e2e/tests/` and use `.spec.ts` extensions. Run with `bun run test:e2e`. Override port with `PORT=3001 bun test:e2e` if needed. See `.claude/rules/e2e-testing.md` for detailed documentation.
-
-**Planning & Implementation:**
-- **PRD workflow**: Use `/implement-prd` to scaffold from `.claude/prd/` requirements, then `/next-step` for incremental feature development
-- **Test-driven**: Each feature requires unit tests and E2E tests matching PRD flows before moving to next feature
-- **Plan tracking**: `plan.md` (auto-generated) tracks phases → steps → tasks with explicit test requirements
 
 ## Architecture Overview
 
@@ -79,6 +68,10 @@ bun run db:migrate
 - Protection against data loss
 
 **IMPORTANT**: Never use `db:push` in CI/CD or deployment pipelines. Always use migration-based workflow for production/staging environments.
+
+#### Database Seeding
+
+When inserting data into tables (except for debugging or fixing issues), never insert manually. Use TypeScript seed scripts located in `scripts/seed/` instead. This ensures reproducible, version-controlled data seeding.
 
 ### Authentication System
 
@@ -211,6 +204,8 @@ Comprehensive SEO infrastructure for traditional and AI search engines:
 
 ## Code Style Guidelines
 
+**Single Responsibility Principle**: Each function, component, and module should do one thing well. This prevents bugs by making code easier to test, understand, and modify without unintended side effects.
+
 These rules are enforced by Biome (see `biome.jsonc`):
 
 - **Indentation**: Tabs (not spaces)
@@ -227,18 +222,6 @@ These rules are enforced by Biome (see `biome.jsonc`):
 ## Git Workflow
 
 **Claude commits**: Claude Code can create commits following the conventional commit format. Always ensure `bun type`, `bun lint`, `bun run build` are successful before committing.
-
-**PRD references in commits**: When implementing features from `.claude/prd/`, reference the specific flow file and line number in commit messages:
-
-```bash
-git commit -m "feat: implement email/password signup
-
-Implements flow from .claude/prd/01-flows/auth/signup-flows.md:12
-
-- Add signUp() server action with validation
-- Create SignUpForm component
-- Add E2E tests for happy path and error cases"
-```
 
 ## Type Safety Notes
 
@@ -292,40 +275,38 @@ Implements flow from .claude/prd/01-flows/auth/signup-flows.md:12
    }
    ```
 
-## PRD-Based Development Workflow
+5. **Element IDs and test selectors**:
+   - `useId()` for accessibility IDs (dynamic, collision-safe)
+   - `data-testid` for E2E tests (stable selectors)
+   - Use `aria-labelledby` only on landmark elements (`<section>`, `<nav>`, `<aside>`) with a visible heading
+   - Skip `aria-labelledby` on presentational elements or those with implicit labels
+   ```tsx
+   const headingId = useId();
 
-This template supports a structured workflow from requirements to implementation:
+   <section aria-labelledby={headingId} data-testid="programs-section">
+     <h2 id={headingId}>{t("title")}</h2>
+   </section>
+   ```
 
-### 1. Generate PRD in Claude Chat
+## Template Usage
 
-Use Claude Chat to create your Product Requirements Document from your project idea. The PRD should be structured as:
+This is a template repository designed to kickstart new Next.js projects with best practices and modern tooling pre-configured.
 
-- `00-overview.md` – Project vision, success metrics, template customization notes
-- `01-flows/` – User flows organized by feature domain (auth/, payments/, etc.)
-- `02-data-models.md` – Database schema specifications
-- `03-api-design.md` – Server actions and API design
-- `04-ui-components.md` – UI/UX specifications
-- `05-integrations.md` – Third-party services and APIs
+**Getting Started:**
+1. Clone the template
+2. Complete initial setup (see [README - Development Process](README.md#development-process))
+3. Customize using the speckit workflow with TEMPLATE_CHECKLIST.md as your guide
+4. Build features using: `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`
 
-See `.claude/prd/` for templates and examples.
+**Speckit Commands** (`.claude/commands/speckit.*.md`):
+- `/speckit.specify` - Create feature specification
+- `/speckit.plan` - Generate implementation plan
+- `/speckit.tasks` - Break down into tasks
+- `/speckit.implement` - Execute implementation
+- `/speckit.clarify`, `/speckit.analyze`, `/speckit.checklist`, `/speckit.constitution`, `/speckit.taskstoissues`
 
-### 2. Place PRD in `.claude/prd/`
-
-Copy generated PRD files into `.claude/prd/` directory in your cloned template.
-
-### 3. Run `/implement-prd`
-
-Execute the `/implement-prd` slash command in Claude Code. This will:
-- Read your PRD requirements
-- Customize template (remove unused features, update configs)
-- Generate `plan.md` with implementation roadmap
-
-### 4. Incremental Implementation with `/next-step`
-
-Run `/next-step` repeatedly to implement features one at a time:
-- Verifies previous feature has passing tests
-- Implements next feature from plan.md
-- Creates unit tests and E2E tests
-- Validates with `bun test` and `bun run test:e2e`
-
-For detailed guidance, see `.claude/rules/prd-implementation.md` (auto-loads when working in `src/` or `.claude/prd/`).
+**Template Customization:**
+- Use the special `0-template-init` spec to configure auth, payments, analytics, and other integrations
+- Follow TEMPLATE_CHECKLIST.md during implementation to transform the template into your project
+- The checklist covers 14 areas: project identity, auth, payments, analytics, database, UI, integrations, env vars, dependencies, SEO, docs, testing, CI/CD, and cleanup
+- Delete TEMPLATE_CHECKLIST.md when customization is complete

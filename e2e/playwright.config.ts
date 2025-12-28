@@ -31,8 +31,10 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 		},
 	],
+    /* Output directory for test artifacts */
+    outputDir: path.resolve(__dirname, "./test-results"),
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: "html",
+    reporter: [["html", { outputFolder: path.resolve(__dirname, "./playwright-report") }]],
     /* Retry on CI only */
     retries: process.env["CI"] ? 2 : 0,
     testDir: "./tests",

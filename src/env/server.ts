@@ -37,6 +37,10 @@ export const serverEnv = createEnv({
 	// are incorrectly detected as client environments by t3-env.
 	isServer: true,
 	server: {
+		BETTER_AUTH_SECRET: z.string().min(32, {
+			message:
+				"BETTER_AUTH_SECRET must be at least 32 chars. Use: bun run auth:secret",
+		}),
 		BETTER_AUTH_URL: z.string().default(url),
 		GOOGLE_CLIENT_ID: z.string(),
 		GOOGLE_CLIENT_SECRET: z.string(),
@@ -46,5 +50,9 @@ export const serverEnv = createEnv({
 		META_APP_SECRET: z.string().optional(),
 		POLAR_ACCESS_TOKEN: z.string(),
 		POLAR_MODE: z.enum(["sandbox", "production"]).default("sandbox"),
+		// PostHog analytics
+		POSTHOG_PROJECT_ID: z.string(),
+		// UploadThing file uploads
+		UPLOADTHING_TOKEN: z.string(),
 	},
 });

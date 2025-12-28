@@ -97,7 +97,15 @@
 			"WebFetch(domain:www.npmjs.com)",
 			"Bash(NODE_ENV=test bun test:*)",
 			"Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test POLAR_ACCESS_TOKEN=test bun test:*)",
-			"Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test POLAR_ACCESS_TOKEN=test BETTER_AUTH_URL=http://localhost:3000 bun test:*)"
+			"Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test POLAR_ACCESS_TOKEN=test BETTER_AUTH_URL=http://localhost:3000 bun test:*)",
+			"Bash(PORT=9999 bun run test:e2e:*)",
+			"Bash(./bin/codeops:*)",
+			"Bash(/home/hybridz/Projects/codeops/bin/codeops:*)",
+			"Bash(git init:*)",
+			"Bash(bunx playwright test:*)",
+			"WebFetch(domain:blog.logrocket.com)",
+			"WebFetch(domain:github.blog)",
+			"WebFetch(domain:developer.microsoft.com)"
 		],
 		"ask": [],
 		"deny": []
