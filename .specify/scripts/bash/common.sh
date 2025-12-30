@@ -62,6 +62,37 @@ has_git() {
     git rev-parse --show-toplevel >/dev/null 2>&1
 }
 
+# Check if current directory is inside a worktree
+is_in_worktree() {
+    if ! has_git; then
+        return 1
+    fi
+
+    # Check if we're in a worktree (not the main working tree)
+    local git_dir=$(git rev-parse --git-dir 2>/dev/null)
+    if [[ "$git_dir" == *".git/worktrees"* ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# Get the main repository root (not worktree root)
+get_main_repo_root() {
+    if ! has_git; then
+        get_repo_root
+        return
+    fi
+
+    # Get the common git directory (points to main repo)
+    local git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
+    if [[ -n "$git_common_dir" ]]; then
+        # Remove /.git from the end to get repo root
+        echo "$(cd "$git_common_dir/.." && pwd)"
+    else
+        get_repo_root
+    fi
+}
+
 check_feature_branch() {
     local branch="$1"
     local has_git_repo="$2"
@@ -85,10 +116,11 @@ get_feature_dir() { echo "$1/specs/$2"; }
 
 # Find feature directory by numeric prefix instead of exact branch match
 # This allows multiple branches to work on the same spec (e.g., 004-fix-bug, 004-add-feature)
+# Always uses main repo root to ensure specs are centralized
 find_feature_dir_by_prefix() {
-    local repo_root="$1"
+    local main_repo_root="$1"
     local branch_name="$2"
-    local specs_dir="$repo_root/specs"
+    local specs_dir="$main_repo_root/specs"
 
     # Extract numeric prefix from branch (e.g., "004" from "004-whatever")
     if [[ ! "$branch_name" =~ ^([0-9]{3})- ]]; then
@@ -126,20 +158,28 @@ find_feature_dir_by_prefix() {
 
 get_feature_paths() {
     local repo_root=$(get_repo_root)
+    local main_repo_root=$(get_main_repo_root)
     local current_branch=$(get_current_branch)
     local has_git_repo="false"
+    local in_worktree="false"
 
     if has_git; then
         has_git_repo="true"
     fi
 
-    # Use prefix-based lookup to support multiple branches per spec
-    local feature_dir=$(find_feature_dir_by_prefix "$repo_root" "$current_branch")
+    if is_in_worktree; then
+        in_worktree="true"
+    fi
+
+    # Always use main repo root for specs directory (centralized)
+    local feature_dir=$(find_feature_dir_by_prefix "$main_repo_root" "$current_branch")
 
     cat <<EOF
 REPO_ROOT='$repo_root'
+MAIN_REPO_ROOT='$main_repo_root'
 CURRENT_BRANCH='$current_branch'
 HAS_GIT='$has_git_repo'
+IN_WORKTREE='$in_worktree'
 FEATURE_DIR='$feature_dir'
 FEATURE_SPEC='$feature_dir/spec.md'
 IMPL_PLAN='$feature_dir/plan.md'

@@ -272,11 +272,37 @@ if [ ${#BRANCH_NAME} -gt $MAX_BRANCH_LENGTH ]; then
 fi
 
 if [ "$HAS_GIT" = true ]; then
-    git checkout -b "$BRANCH_NAME"
+    # Create worktree instead of checking out branch
+    WORKTREE_DIR="$REPO_ROOT/.worktrees/$BRANCH_NAME"
+
+    # Remove existing worktree if it exists (handles cleanup from previous runs)
+    if [ -d "$WORKTREE_DIR" ]; then
+        >&2 echo "[specify] Warning: Worktree directory already exists at $WORKTREE_DIR"
+        >&2 echo "[specify] Removing existing worktree..."
+        git worktree remove "$WORKTREE_DIR" --force 2>/dev/null || rm -rf "$WORKTREE_DIR"
+    fi
+
+    # Create the worktree with new branch
+    git worktree add "$WORKTREE_DIR" -b "$BRANCH_NAME"
+
+    # Symlink .env files from main repo to worktree for shared configuration
+    if [ -f "$REPO_ROOT/.env" ]; then
+        ln -sf "$REPO_ROOT/.env" "$WORKTREE_DIR/.env"
+        >&2 echo "[specify] Symlinked .env from main repo to worktree"
+    fi
+
+    if [ -f "$REPO_ROOT/.env.local" ]; then
+        ln -sf "$REPO_ROOT/.env.local" "$WORKTREE_DIR/.env.local"
+        >&2 echo "[specify] Symlinked .env.local from main repo to worktree"
+    fi
+
+    >&2 echo "[specify] Created worktree at: $WORKTREE_DIR"
+    >&2 echo "[specify] To work on this feature, cd to: $WORKTREE_DIR"
 else
-    >&2 echo "[specify] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
+    >&2 echo "[specify] Warning: Git repository not detected; skipped worktree creation for $BRANCH_NAME"
 fi
 
+# Specs directory remains in main repo for centralized tracking
 FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
 mkdir -p "$FEATURE_DIR"
 
@@ -288,10 +314,17 @@ if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"
 export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    if [ "$HAS_GIT" = true ]; then
+        printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","WORKTREE_DIR":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM" "$WORKTREE_DIR"
+    else
+        printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","WORKTREE_DIR":null}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    fi
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
     echo "SPEC_FILE: $SPEC_FILE"
     echo "FEATURE_NUM: $FEATURE_NUM"
+    if [ "$HAS_GIT" = true ]; then
+        echo "WORKTREE_DIR: $WORKTREE_DIR"
+    fi
     echo "SPECIFY_FEATURE environment variable set to: $BRANCH_NAME"
 fi

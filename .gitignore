@@ -55,3 +55,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 next-env.d.ts
 
 .env.local
+
+# git worktrees for parallel feature development
+/.worktrees/

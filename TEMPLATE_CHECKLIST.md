@@ -52,8 +52,7 @@ Keep only the authentication methods you need:
 - [ ] **Review** what to keep:
   - Email/password (Better Auth core)
   - Google OAuth (`GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET`)
-  - GitHub OAuth (if added)
-  - Magic links (if added)
+  - Other providers (GitHub OAuth, Magic links, etc.) - only if you added them
 - [ ] **Remove unwanted auth providers**:
   - [ ] Delete OAuth configuration from `src/lib/auth.ts`
   - [ ] Remove corresponding environment variables from `.env.example`
@@ -82,22 +81,24 @@ Choose payment provider or remove payments entirely:
 ### Option B: Switch to Stripe
 
 - [ ] Remove `src/lib/polar.ts`
-- [ ] Remove Polar webhook route
+- [ ] Remove Polar webhook route (`src/app/api/polar/`)
 - [ ] Remove `POLAR_*` environment variables from `.env.example`
-- [ ] Remove `polar-sdk` from `package.json`
+- [ ] Remove `@polar-sh/sdk` and `@polar-sh/better-auth` from `package.json`
 - [ ] Add Stripe SDK to `package.json`
 - [ ] Implement Stripe integration (checkout, webhooks)
 - [ ] Add `STRIPE_*` environment variables to `.env.example`
-- [ ] Update `src/env/server.ts` validation
+- [ ] Update `src/env/server.ts` validation schema (remove Polar, add Stripe)
+- [ ] Update `scripts/deploy/config.ts` (remove Polar vars, add Stripe vars)
 
 ### Option C: Remove payments entirely
 
 - [ ] Delete `src/lib/polar.ts`
 - [ ] Delete `src/app/api/polar/` directory
-- [ ] Remove `polar-sdk` from `package.json`
+- [ ] Remove `@polar-sh/sdk` and `@polar-sh/better-auth` from `package.json`
 - [ ] Remove all `POLAR_*` environment variables from `.env.example`
 - [ ] Remove payment-related sections from `CLAUDE.md`
 - [ ] Update `src/env/server.ts` to remove Polar validation
+- [ ] Update `scripts/deploy/config.ts` to remove Polar variables
 
 ---
 
@@ -162,10 +163,15 @@ Remove example components and keep only essential UI:
 
 - [ ] **Review** `src/components/`:
   - [ ] `ui/` - Keep (shadcn/ui primitives)
-  - [ ] `sign-in.tsx` / `sign-up.tsx` - Keep if using auth
+  - [ ] `theme-provider.tsx` - Keep (required for dark mode)
+  - [ ] `error-boundary.tsx` - Keep (error handling)
+  - [ ] `submit-button.tsx` - Keep (form utility)
+  - [ ] `mode-toogle.tsx` - Keep (dark mode toggle, consider renaming to `mode-toggle.tsx`)
+  - [ ] `sign-in.tsx` - Keep if using auth
+  - [ ] `PostHogProvider.tsx` - Keep if using PostHog (see Section 4)
   - [ ] `ProductCard.tsx` - Example component, likely remove
   - [ ] `form-example.tsx` - Example, remove
-  - [ ] `AddressAutocomplete.tsx` - Keep if using Google Places
+  - [ ] `AddressAutocomplete.tsx` - Keep if using Google Places (see Section 7)
   - [ ] Other example components - Remove if not needed
 - [ ] **Delete** unused component files
 - [ ] **Remove** example pages from `src/app/`:
@@ -186,18 +192,29 @@ If not using Kapso:
 - [ ] Delete `src/lib/kapso.ts`
 - [ ] Delete `src/app/api/whatsapp/` directory
 - [ ] Remove `KAPSO_*` and `META_APP_SECRET` from `.env.example`
-- [ ] Remove `@kapsoai/sdk` from `package.json`
+- [ ] Remove `@kapso/whatsapp-cloud-api` from `package.json`
 - [ ] Remove Kapso section from `CLAUDE.md`
 - [ ] Update `src/env/server.ts` to remove Kapso validation
+- [ ] Update `scripts/deploy/config.ts` to remove Kapso variables
+
+### UploadThing (File Uploads)
+
+If not using UploadThing:
+- [ ] Delete `src/app/api/uploadthing/route.ts`
+- [ ] Remove `UPLOADTHING_TOKEN` from `.env.example`
+- [ ] Remove `@uploadthing/react` and `uploadthing` from `package.json`
+- [ ] Remove any UploadThing components from `src/components/`
+- [ ] Update `src/env/server.ts` to remove UploadThing validation
+- [ ] Update `scripts/deploy/config.ts` to remove `UPLOADTHING_TOKEN`
 
 ### Google Places (Address Autocomplete)
 
 If not using Google Places:
 - [ ] Delete `src/hooks/use-google-places.tsx`
 - [ ] Delete `src/components/AddressAutocomplete.tsx`
-- [ ] Remove `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` from `.env.example`
-- [ ] Update `src/env/client.ts` to remove Google Maps validation
-- [ ] Remove `@googlemaps/js-api-loader` from `package.json` (if not used elsewhere)
+- [ ] Remove `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` from `.env.example` (if present)
+- [ ] Update `src/env/client.ts` to remove Google Maps validation (if present)
+- [ ] Remove `@react-google-maps/api` from `package.json`
 
 ### Other Third-Party Services
 
@@ -213,10 +230,17 @@ Ensure `.env.example` only lists variables for integrations you're keeping:
 - [ ] **Remove** variables for deleted integrations
 - [ ] **Add** variables for new integrations (if any)
 - [ ] **Verify** all kept variables are documented with comments
-- [ ] **Update** `src/env/client.ts` schema
-- [ ] **Update** `src/env/server.ts` schema
+- [ ] **Update** `src/env/client.ts` schema (for `NEXT_PUBLIC_*` variables)
+- [ ] **Update** `src/env/server.ts` schema (for server-side variables)
+- [ ] **Update** `src/env/db.ts` schema (for database-related variables)
+- [ ] **Update** `scripts/deploy/config.ts`:
+  - [ ] Remove deleted variables from `DEPLOYMENT_METADATA` object
+  - [ ] Update categories if needed
+  - [ ] Verify deployment strategies for remaining variables
+  - [ ] Update `expectedVars` in `validateDeploymentConfig()` function
 - [ ] **Run** `bun dev` to verify environment validation works
 - [ ] **Verify** `.env` (local) has all required values
+- [ ] **Validate** deployment config has no missing/extra variables (check console warnings)
 
 ---
 
@@ -226,9 +250,11 @@ Remove unused packages to reduce bundle size:
 
 - [ ] **Review** `package.json` `dependencies`
 - [ ] **Remove** packages for deleted integrations:
-  - [ ] `@kapsoai/sdk` (if removed Kapso)
-  - [ ] `polar-sdk` (if removed Polar)
-  - [ ] `posthog-js` (if removed PostHog)
+  - [ ] `@kapso/whatsapp-cloud-api` (if removed Kapso)
+  - [ ] `@polar-sh/sdk` and `@polar-sh/better-auth` (if removed Polar)
+  - [ ] `posthog-js` and `posthog-node` (if removed PostHog)
+  - [ ] `@uploadthing/react` and `uploadthing` (if removed UploadThing)
+  - [ ] `@react-google-maps/api` (if removed Google Places)
   - [ ] Other unused SDKs
 - [ ] **Run** `bun install` to update `bun.lock`
 - [ ] **Run** `bun run build` to verify build succeeds
@@ -260,9 +286,10 @@ Update SEO metadata to reflect your project:
   - [ ] Theme colors
   - [ ] Icons (when available)
 - [ ] **Update** `public/` assets:
-  - [ ] Replace favicon.ico
-  - [ ] Replace icon images (icon-192.png, icon-512.png, etc.)
-  - [ ] Replace OG images (if using custom ones)
+  - [ ] Replace `favicon.ico` with your project icon
+  - [ ] Replace icon images (check for `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, etc.)
+  - [ ] Update OG/social sharing images (check `public/og-image.png` or similar, if exists)
+  - [ ] Remove any template-specific images
 
 ---
 
@@ -275,11 +302,16 @@ Update documentation to reflect your customized template:
   - [ ] Update feature list
   - [ ] Update environment variables section
   - [ ] Verify all commands still work
+  - [ ] Ensure consistency with `package.json` description
 - [ ] **Update** `CLAUDE.md`:
   - [ ] Remove sections for deleted integrations
   - [ ] Update architecture overview
   - [ ] Update environment variables section
   - [ ] Add project-specific patterns/rules
+  - [ ] Review and update code examples in documentation
+- [ ] **Review** schema files for template-specific comments:
+  - [ ] Check `src/db/schema/*.ts` for example comments
+  - [ ] Update comments to reflect your domain/project
 
 ---
 
@@ -325,6 +357,10 @@ Verify the customized template works in CI/CD:
 - [ ] **Review** diff to ensure only intended changes
 - [ ] **Merge** PR after approval
 - [ ] **Verify** main branch CI passes
+- [ ] **Verify** Vercel deployment environment variables are configured:
+  - [ ] Run `bun run deploy:env` if not already done
+  - [ ] Check Vercel dashboard for all required environment variables
+  - [ ] Test a preview deployment with the new configuration
 
 ---
 

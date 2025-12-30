@@ -107,7 +107,12 @@
       "WebFetch(domain:github.blog)",
       "WebFetch(domain:developer.microsoft.com)",
       "Bash(gh pr list:*)",
-      "Bash(gh pr close:*)"
+      "Bash(gh pr close:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(git worktree:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []
