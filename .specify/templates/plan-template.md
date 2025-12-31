@@ -94,6 +94,74 @@ ios/ or android/
 **Structure Decision**: [Document the selected structure and reference the real
 directories captured above]
 
+## Design Integration *(include if feature has UI)*
+
+<!--
+  Include this section if the feature has user interface components.
+  Links design.md artifacts to technical implementation.
+-->
+
+| Aspect | Decision |
+|--------|----------|
+| **Design Doc** | `.specify/specs/[###-feature]/design.md` |
+| **Figma** | [URL or N/A] |
+| **Component Library** | shadcn/ui |
+| **Brand Config** | `.specify/brand/brand.yaml v[VERSION]` |
+
+### UI Components Required
+
+Install shadcn/ui components before implementation:
+
+\`\`\`bash
+# From design.md - install these components first
+npx shadcn@latest add [component-list-from-design-md]
+\`\`\`
+
+*Example:*
+\`\`\`bash
+npx shadcn@latest add card table avatar badge button dialog dropdown-menu alert-dialog input label select
+\`\`\`
+
+### Component File Structure
+
+Map design.md screens to implementation files:
+
+| File | Purpose | From Design.md Section |
+|------|---------|------------------------|
+| `[path/to/file.tsx]` | [Component description] | [Screen name in design.md] |
+
+*Example:*
+| File | Purpose | From Design.md Section |
+|------|---------|------------------------|
+| `src/app/team/page.tsx` | Team member list screen | User List |
+| `src/components/team/invite-dialog.tsx` | User invitation modal | Invite Modal |
+| `src/components/team/user-row.tsx` | Table row component | User List > Table Structure |
+
+### Design-Driven Implementation Order
+
+Follow this sequence to ensure UI matches design:
+
+1. **Install components** (see command above)
+2. **Create file structure** (see table above)
+3. **Implement screens** using JSX from design.md
+4. **Add loading/empty/error states** from design.md variants
+5. **Test accessibility** against design.md checklist
+6. **Verify responsive behavior** per design.md breakpoints
+
+### Brand Color Usage
+
+Reference CSS variables from `.specify/brand/brand.yaml`:
+
+| CSS Variable | Used For |
+|--------------|----------|
+| `--primary` | Primary buttons, links, focus rings |
+| `--secondary` | Secondary buttons, muted UI elements |
+| `--destructive` | Delete actions, error states |
+| `--muted` | Subtle backgrounds, disabled states |
+| `--border` | Borders, dividers |
+
+**Important**: Never hardcode colors. Always use CSS variables to maintain brand consistency.
+
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**

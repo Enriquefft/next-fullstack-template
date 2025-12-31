@@ -1,3 +1,30 @@
+<!--
+  CONSTITUTION TEMPLATE STRUCTURE
+
+  This file follows the spec-kit constitution pattern with both PRE-FILLED and TEMPLATE sections.
+
+  PRE-FILLED SECTIONS (template defaults - included in every project):
+    • Design System Principles (DS-1 through DS-5)
+      Template-specific governance for shadcn/ui, OKLCH colors, and Tailwind CSS.
+      These define HOW this Next.js fullstack template handles UI/UX design.
+
+  TEMPLATE SECTIONS (fill via /speckit.constitution):
+    • [PROJECT_NAME] - Your project's name
+    • Core Principles (PRINCIPLE_1 through PRINCIPLE_5) - Your project's architectural rules
+    • Additional Sections (SECTION_2, SECTION_3) - Domain-specific governance
+    • Governance - Amendment procedures, versioning, compliance
+
+  USAGE:
+    Run `/speckit.constitution` to fill template placeholders with project-specific values.
+    Pre-filled sections remain unchanged unless modifying template defaults.
+
+  GUIDELINE:
+    Keep constitution concise (~50-80 lines). Principles define WHAT we always do.
+    Move detailed HOW-TO guidance to separate docs (see .claude/docs/).
+
+  Based on: github.com/github/spec-kit/blob/main/memory/constitution.md
+-->
+
 # [PROJECT_NAME] Constitution
 <!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
@@ -39,6 +66,24 @@
 
 [SECTION_3_CONTENT]
 <!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+
+## Design System Principles
+
+### DS-1: Component Library First
+
+shadcn/ui components MUST be used unless component doesn't exist in the library. Custom implementations require explicit justification in design.md. Components may be extended via `className` prop and composition but source code must not be modified.
+
+### DS-2: CSS Variables Only
+
+All colors MUST use CSS variables from `globals.css` in OKLCH format. Hardcoded colors (hex, RGB, HSL) and Tailwind color utilities (blue-500, red-600) are prohibited. Color changes MUST go through `/speckit.brand` command.
+
+### DS-5: WCAG AA Accessibility
+
+All UI MUST meet WCAG AA standards: keyboard navigation support, visible focus states with `--ring` variable, 4.5:1 contrast ratio for normal text, touch targets ≥ 44px on mobile, semantic HTML elements, ARIA labels on icon-only buttons. E2E tests must include keyboard navigation. Lighthouse score must be ≥ 90.
+
+**Detailed implementation guidance**: See `.claude/docs/design-system-guide.md`
+
+---
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->

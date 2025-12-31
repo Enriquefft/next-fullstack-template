@@ -100,6 +100,81 @@
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
+## UI Specifications *(include if feature has user interface)*
+
+<!--
+  Required for features with user interfaces.
+  Guides /speckit.design component selection and layout decisions.
+  Be specific about what users see and what actions they can perform.
+-->
+
+### Screens
+
+#### [Screen Name]
+
+- **Purpose**: [What user accomplishes on this screen - e.g., "View all team members and their roles"]
+- **Entry Point**: [How user reaches this screen - e.g., "Dashboard → Team" or "Main navigation → Users"]
+- **Key Elements**: [What's displayed - e.g., "User name, email, role badge, status indicator, avatar"]
+- **User Actions**: [What user can do - e.g., "Add user, edit user details, delete user, filter by role"]
+
+*Example:*
+
+#### User List
+- **Purpose**: View all team members and manage permissions
+- **Entry Point**: Main navigation → Team
+- **Key Elements**: User avatar, name, email, role badge, status, last active
+- **User Actions**: Add new user, edit user, delete user, search/filter
+
+---
+
+### Data Display
+
+<!--
+  Specify which fields from entities should be visible to users.
+  This helps designers determine card layouts, table columns, etc.
+-->
+
+- **[Entity Name]**: [comma-separated list of fields to display]
+
+*Example:*
+- **User**: name, email, role, avatar, status, created_at
+- **Invitation**: email, role, sent_at, expires_at
+
+---
+
+### Interactions
+
+<!--
+  Describe user actions and their expected results.
+  Include both primary actions (buttons) and secondary actions (click, hover, etc.)
+-->
+
+- **[Action]**: [Expected result]
+
+*Example:*
+- **Click row**: Navigate to user detail page
+- **Click "Add User"**: Show invite modal
+- **Click "Delete" in dropdown**: Show confirmation dialog
+- **Click status badge**: Toggle active/inactive
+
+---
+
+### Visual Requirements
+
+<!--
+  Any specific visual or UX constraints.
+  Check all that apply and add custom requirements.
+-->
+
+- [ ] Mobile-responsive (works on phones/tablets)
+- [ ] Dark mode support
+- [ ] Real-time updates (e.g., live notifications)
+- [ ] Keyboard shortcuts
+- [ ] Accessibility (WCAG AA)
+- [ ] [Custom requirement]
+
+---
+
 ## Success Criteria *(mandatory)*
 
 <!--
