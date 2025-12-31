@@ -43,6 +43,40 @@ export async function checkVercelVarExists(
 }
 
 /**
+ * Check if project has a Git repository connected
+ */
+export async function checkVercelGitConnection(): Promise<boolean> {
+	try {
+		const result = await execa("vercel", ["inspect"]);
+		// Check if output contains git repository info
+		return (
+			result.stdout.includes("GitHub") ||
+			result.stdout.includes("GitLab") ||
+			result.stdout.includes("Bitbucket")
+		);
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Connect Git repository to Vercel project
+ */
+export async function connectVercelGit(): Promise<void> {
+	// Get git remote URL
+	const { stdout: gitUrl } = await execa("git", [
+		"remote",
+		"get-url",
+		"origin",
+	]);
+
+	// Connect to Vercel
+	await execa("vercel", ["git", "connect", gitUrl.trim()], {
+		stdio: "inherit", // Show interactive prompts to user
+	});
+}
+
+/**
  * Set Vercel environment variable for specific scope(s)
  */
 export async function setVercelVar(

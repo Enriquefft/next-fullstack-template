@@ -6,10 +6,10 @@ export type VercelScope =
 	| "none";
 
 export type DeploymentStrategy =
-	| "auto-push" // Auto-push from .env.local
+	| "auto-push" // Auto-push from .env
 	| "prompt" // Always prompt
 	| "auto-generate" // Compute/detect
-	| "optional"; // Skip if not in .env.local
+	| "optional"; // Skip if not in .env
 
 export interface DeploymentMetadata {
 	vercelName?: string;
@@ -20,6 +20,7 @@ export interface DeploymentMetadata {
 	category: "database" | "auth" | "services" | "project";
 	defaultValue?: string | (() => string);
 	required?: boolean;
+	sourceKey?: string; // Key to read from .env (if different from deployment key)
 }
 
 export interface EnvVarConfig {

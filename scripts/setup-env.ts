@@ -1,8 +1,14 @@
 #!/usr/bin/env bun
 
 import chalk from "chalk";
+import prompts from "prompts";
 import { checkGithubCli } from "./deploy/cli/github.ts";
-import { checkVercelCli, checkVercelProject } from "./deploy/cli/vercel.ts";
+import {
+	checkVercelCli,
+	checkVercelGitConnection,
+	checkVercelProject,
+	connectVercelGit,
+} from "./deploy/cli/vercel.ts";
 import { CATEGORIES, getVariablesByCategory } from "./deploy/config.ts";
 import {
 	printCategoryHeader,
@@ -62,6 +68,58 @@ async function main() {
 		}
 
 		console.log(chalk.green("✓ Vercel CLI ready"));
+
+		// Check if Git repository is connected
+		if (!(await checkVercelGitConnection())) {
+			console.log("");
+			console.log(chalk.yellow("⚠ Git repository not connected to Vercel"));
+			console.log(
+				chalk.dim(
+					"  Connecting your Git repository enables automatic deployments on push",
+				),
+			);
+			console.log("");
+
+			const response = await prompts(
+				{
+					initial: true,
+					message: "Connect GitHub repository for auto-deploy?",
+					name: "value",
+					type: "confirm",
+				},
+				{
+					onCancel: () => {
+						throw new Error("Cancelled by user");
+					},
+				},
+			);
+
+			if (response.value) {
+				try {
+					await connectVercelGit();
+					console.log(chalk.green("✓ Git repository connected"));
+				} catch (error) {
+					printError(
+						`Failed to connect Git repository: ${error instanceof Error ? error.message : String(error)}`,
+					);
+					console.log("");
+					console.log(
+						chalk.yellow(
+							"You can connect manually later with: vercel git connect",
+						),
+					);
+				}
+			} else {
+				console.log("");
+				console.log(
+					chalk.yellow(
+						"⚠ Skipped - you can connect later with: vercel git connect",
+					),
+				);
+			}
+		} else {
+			console.log(chalk.green("✓ Git repository connected"));
+		}
 	}
 
 	if (platform === "github" || platform === "both") {

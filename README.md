@@ -122,16 +122,26 @@ gh repo create my-project --private --source=. --remote=origin
 ### 4. Deployment
 
 ```bash
+# Link project to Vercel
+vercel link
+
+# Configure secrets and connect Git repository
+bun run deploy:env  # Interactive setup - connects GitHub, configures Vercel & GitHub secrets
+
 # Generate migrations for production
 bun run db:generate
 git add drizzle/ && git commit -m "chore: add migrations"
 
-# Configure secrets
-bun run deploy:env  # Interactive setup for Vercel + GitHub
-
-# Deploy
+# Deploy (triggers automatic deployment on Vercel)
 git push origin main
 ```
+
+**What `bun run deploy:env` does:**
+- Checks if Vercel CLI is installed and authenticated
+- Verifies project is linked to Vercel (`vercel link`)
+- **Automatically connects your GitHub repository** for auto-deploy (or prompts you to connect)
+- Configures environment variables on both Vercel and GitHub Actions
+- Guides you through required secrets (DATABASE_URL, BETTER_AUTH_SECRET, etc.)
 
 ---
 

@@ -8,10 +8,10 @@ import { promptForSecret } from "../prompts/input.ts";
 import type { CLIFlags, EnvVarConfig } from "../types.ts";
 
 /**
- * Load environment variable from .env.local file
+ * Load environment variable from .env file
  */
 function loadFromEnvLocal(key: string): string | undefined {
-	const envPath = resolve(process.cwd(), ".env.local");
+	const envPath = resolve(process.cwd(), ".env");
 
 	if (!existsSync(envPath)) {
 		return undefined;
@@ -94,8 +94,13 @@ async function pushValue(
 ): Promise<void> {
 	if (dryRun) {
 		const masked = value.length > 8 ? `...${value.slice(-8)}` : "***";
+		const mappingInfo = config.deployment.sourceKey
+			? ` (from ${config.deployment.sourceKey})`
+			: "";
 		console.log(
-			chalk.gray(`[DRY RUN] Would push ${config.key}=${masked} to ${platform}`),
+			chalk.gray(
+				`[DRY RUN] Would push ${config.key}${mappingInfo}=${masked} to ${platform}`,
+			),
 		);
 		return;
 	}
@@ -109,9 +114,12 @@ async function pushValue(
 	) {
 		const vercelScope = config.deployment.vercelScope;
 		await setVercelVar(config.deployment.vercelName, value, vercelScope);
+		const mappingInfo = config.deployment.sourceKey
+			? ` (${config.deployment.sourceKey} → ${config.deployment.vercelName})`
+			: "";
 		console.log(
 			chalk.green(
-				`✓ ${config.deployment.vercelName} → Vercel (${vercelScope})`,
+				`✓ ${config.deployment.vercelName} → Vercel (${vercelScope})${mappingInfo}`,
 			),
 		);
 	}
@@ -122,8 +130,13 @@ async function pushValue(
 		config.deployment.githubName
 	) {
 		await setGithubSecret(config.deployment.githubName, value);
+		const mappingInfo = config.deployment.sourceKey
+			? ` (from ${config.deployment.sourceKey})`
+			: "";
 		console.log(
-			chalk.green(`✓ ${config.deployment.githubName} → GitHub Actions`),
+			chalk.green(
+				`✓ ${config.deployment.githubName} → GitHub Actions${mappingInfo}`,
+			),
 		);
 	}
 }
@@ -155,13 +168,15 @@ export async function executePrompt(
 					),
 				);
 			} else {
-				// Try to load from .env.local
-				value = loadFromEnvLocal(config.key) ?? "";
+				// Try to load from sourceKey or key
+				const lookupKey = config.deployment.sourceKey || config.key;
+				value = loadFromEnvLocal(lookupKey) ?? "";
 
 				if (!value && config.deployment.required) {
-					console.error(
-						chalk.red(`✗ Required ${config.key} not in .env.local`),
-					);
+					const keyInfo = config.deployment.sourceKey
+						? `${config.key} (from ${config.deployment.sourceKey})`
+						: config.key;
+					console.error(chalk.red(`✗ Required ${keyInfo} not in .env`));
 					return { skipped: false, success: false };
 				}
 
@@ -200,8 +215,11 @@ export async function executePrompt(
 			throw error;
 		}
 
+		const keyInfo = config.deployment.sourceKey
+			? `${config.key} (from ${config.deployment.sourceKey})`
+			: config.key;
 		console.error(
-			chalk.red(`✗ Failed to configure ${config.key}:`),
+			chalk.red(`✗ Failed to configure ${keyInfo}:`),
 			error instanceof Error ? error.message : error,
 		);
 		return { skipped: false, success: false };

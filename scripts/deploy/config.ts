@@ -79,6 +79,7 @@ const DEPLOYMENT_METADATA: Record<
 			description:
 				"Production Database URL (Neon main branch) [Get free DB: https://neon.tech]",
 			required: false,
+			sourceKey: "DATABASE_URL_PROD",
 			strategy: "prompt",
 			vercelName: "DATABASE_URL",
 			vercelScope: "production",
@@ -86,8 +87,9 @@ const DEPLOYMENT_METADATA: Record<
 		{
 			category: "database",
 			description:
-				"Preview Database URL (Neon preview branch) [Get free DB: https://neon.tech]",
+				"Preview/Staging Database URL (Neon preview branch) [Get free DB: https://neon.tech]",
 			required: false,
+			sourceKey: "DATABASE_URL_STAGING",
 			strategy: "prompt",
 			vercelName: "DATABASE_URL",
 			vercelScope: "preview",
@@ -316,6 +318,8 @@ export function validateDeploymentConfig(): {
 	// Find deployment-only variables (not auto-deployed)
 	const skipDeployment = new Set([
 		"DATABASE_URL_DEV", // Local only
+		"DATABASE_URL_STAGING", // Mapped via sourceKey to DATABASE_URL preview
+		"DATABASE_URL_PROD", // Mapped via sourceKey to DATABASE_URL production
 		"NODE_ENV", // Runtime only
 		"BETTER_AUTH_URL", // Has default, not deployed
 		"NEXT_PUBLIC_APP_URL", // Optional override

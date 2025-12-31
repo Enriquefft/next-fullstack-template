@@ -113,7 +113,8 @@
 			"Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
 			"Bash(git rev-parse:*)",
 			"Bash(git branch:*)",
-			"Bash(.specify/scripts/bash/setup-brand.sh:*)"
+			"Bash(.specify/scripts/bash/setup-brand.sh:*)",
+			"WebFetch(domain:www.delasign.com)"
 		],
 		"ask": [],
 		"deny": []
