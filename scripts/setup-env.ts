@@ -45,8 +45,9 @@ async function main() {
 		console.log("");
 	}
 
-	// Determine platform
-	const platform = flags.platform || (await promptPlatform());
+	// Determine platform (auto-select 'both' in auto-all mode)
+	const platform =
+		flags.platform || (flags.autoAll ? "both" : await promptPlatform());
 
 	console.log("");
 

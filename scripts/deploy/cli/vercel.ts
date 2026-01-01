@@ -47,12 +47,15 @@ export async function checkVercelVarExists(
  */
 export async function checkVercelGitConnection(): Promise<boolean> {
 	try {
-		const result = await execa("vercel", ["inspect"]);
+		const result = await execa("vercel", ["project", "inspect"], {
+			timeout: 10000, // 10 second timeout
+		});
 		// Check if output contains git repository info
 		return (
 			result.stdout.includes("GitHub") ||
 			result.stdout.includes("GitLab") ||
-			result.stdout.includes("Bitbucket")
+			result.stdout.includes("Bitbucket") ||
+			result.stdout.includes("Git Repository")
 		);
 	} catch {
 		return false;
