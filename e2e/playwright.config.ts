@@ -50,7 +50,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: "bash scripts/start-test-server.sh",
+        command: "bun scripts/start-test-server.ts",
         cwd: path.resolve(__dirname, ".."),
         env: {
             ...process.env,
