@@ -118,7 +118,9 @@
       "Bash(vercel inspect --help:*)",
       "Bash(timeout 5 vercel inspect:*)",
       "Bash(vercel project ls:*)",
-      "Bash(vercel project:*)"
+      "Bash(vercel project:*)",
+      "Bash(timeout 5 bun:*)",
+      "Bash(timeout 15 bun test:e2e:*)"
     ],
     "deny": [],
     "ask": []
