@@ -199,22 +199,13 @@ Apply? Yes
 
 ### 2. Template Customization (First Feature)
 
-Your first feature should customize the template to your needs.
-
-**Run brand setup first** (recommended for UI-based templates):
+Your first feature should customize the template to your needs. Use `TEMPLATE_CHECKLIST.md` as your guide.
 
 ```bash
-# 1. Configure your brand (one-time setup)
-/speckit.brand
-```
-
-This establishes your visual identity before building UI. Skip it only if your template customization is purely backend (you can run it later).
-
-**Then customize the template**:
-
-```bash
-# 2. Specify what you're building
 /speckit.specify An app for automated reminders via WhatsApp, start with the project structure and enough to start developing
+/speckit.plan       # Generate technical plan and architecture decisions
+/speckit.tasks      # Break down into dependency-ordered tasks
+/speckit.implement  # Execute tasks phase-by-phase
 ```
 
 This creates:
@@ -222,98 +213,56 @@ This creates:
 - Specification: `.specify/specs/001-project-setup/spec.md`
 - Quality checklist for requirements validation
 
-**Complete the workflow**:
-
-```bash
-# 3. Execute the specification
-/speckit.plan       # Generate technical plan and architecture decisions
-/speckit.tasks      # Break down into dependency-ordered tasks
-/speckit.implement  # Execute tasks phase-by-phase
-```
-
-Use `TEMPLATE_CHECKLIST.md` as your guide. Delete optional integrations you don't need, then delete the checklist.
+Delete optional integrations you don't need, then delete the checklist.
 
 ---
 
 ### 3. Building Features
 
-For each new feature, follow the complete workflow:
+For each new feature, follow this workflow:
 
-#### Example: User Authentication Feature
-
-**Step 1: Specify the feature**
 ```bash
-/speckit.specify User can sign up with email, verify their account, and reset password
+/speckit.specify [description]  # Create spec with user stories, requirements
+/speckit.design                 # Generate UI designs (optional, for UI features)
+/speckit.plan                   # Generate technical architecture
+/speckit.tasks                  # Break down into dependency-ordered tasks
+/speckit.implement              # Execute implementation
 ```
 
-Creates:
-- Feature branch: `002-user-auth`
-- Spec file with user stories, requirements, and **UI Specifications** section
+**What each command generates:**
+
+**`/speckit.specify`** creates:
+- Feature branch (e.g., `002-user-auth`)
+- Spec file with user stories, requirements, UI Specifications section
 - Clarification questions if requirements are ambiguous
 
-**Step 2: Design the UI** (if feature has interface)
-```bash
-/speckit.design
-```
+**`/speckit.design`** (optional, for UI features) creates:
+- Component recommendations (Table, Dialog, Button, etc.)
+- Copy-paste JSX code structures
+- Accessibility checklist (keyboard navigation, ARIA labels, WCAG AA contrast)
+- Responsive behavior specifications
+- Figma visual designs (requires Figma MCP, graceful fallback to docs-only)
 
-Automatically:
-- Parses `spec.md` UI Specifications section
-- Recommends shadcn/ui components (Table, Dialog, Button, etc.)
-- Generates copy-paste JSX code structures
-- Creates `design.md` with component layouts, accessibility checklist, responsive behavior
-- Generates Figma visual designs (requires Figma MCP - see setup docs, graceful fallback to docs-only if unavailable)
-
-**Example output**:
-```markdown
-design.md includes:
-- Screen 1: Sign Up Form (Dialog with Input, Label, Button)
-- Screen 2: Verification Page (Card with Alert, Button)
-- Screen 3: Password Reset (Sheet with multi-step form)
-- Components to install: npx shadcn@latest add dialog input label button alert card sheet
-- Accessibility: Keyboard navigation, ARIA labels, WCAG AA contrast ✓
-```
-
-**Refine design**:
+Refine designs iteratively:
 ```bash
 /speckit.design refine Use Sheet instead of Dialog for sign up form
 ```
 
-**Step 3: Generate technical plan**
-```bash
-/speckit.plan
-```
+**`/speckit.plan`** creates:
+- Architecture decisions, file structure, database schema
+- API contracts, technology stack choices
+- Design integration section (references design.md components)
 
-Creates:
-- Architecture decisions
-- File structure
-- Database schema (if needed)
-- API contracts (if needed)
-- **Design integration section** (references design.md components)
-- Technology stack choices
-
-**Step 4: Break down into tasks**
-```bash
-/speckit.tasks
-```
-
-Generates:
-- Dependency-ordered tasks
+**`/speckit.tasks`** generates:
 - Phase 1: Setup (infrastructure)
 - Phase 2: Foundational (blocking prerequisites)
 - Phase 3+: User story phases (P1, P2, P3 - independently implementable)
 - Phase N: Polish (cross-cutting concerns)
 
-**Step 5: Implement**
-```bash
-/speckit.implement
-```
-
-Executes:
+**`/speckit.implement`** executes:
 - Tasks phase-by-phase
-- Uses JSX structures from `design.md` for UI components
 - Installs required shadcn/ui components
 - Marks completed tasks with [X]
-- Reports progress and errors
 
 ---
 
@@ -344,118 +293,17 @@ Executes:
 
 ### 5. Workflow Variations
 
-#### Quick Feature (No UI)
+**Backend-only features**: Skip `/speckit.design`
 
-For backend-only features:
-```bash
-/speckit.specify Add rate limiting to API endpoints
-/speckit.plan
-/speckit.tasks
-/speckit.implement
-```
+**UI-heavy features**: Run `/speckit.design` between specify and plan
 
-#### UI-Heavy Feature
+**Iterative design**: Use `/speckit.design refine [changes]` multiple times before planning
 
-For features with complex interfaces:
-```bash
-/speckit.specify Dashboard for analytics with charts and filters
-/speckit.design    # Essential - generates component structures
-/speckit.plan      # References design.md components
-/speckit.tasks     # Includes UI component implementation tasks
-/speckit.implement
-```
-
-#### Iterative Design
-
-Refine designs before implementation:
-```bash
-/speckit.specify Team management interface
-/speckit.design
-# Review design.md, make adjustments
-/speckit.design refine Use card grid instead of table
-/speckit.design refine Add dark mode toggle to header
-# Once satisfied:
-/speckit.plan
-/speckit.tasks
-/speckit.implement
-```
-
-#### Quality-First Feature
-
-Add validation checkpoints:
-```bash
-/speckit.specify Payment processing with Stripe
-/speckit.plan
-/speckit.tasks
-/speckit.analyze    # Validate consistency before coding
-/speckit.checklist  # Generate security checklist
-# Review findings, update spec/plan if issues found
-/speckit.implement
-```
+**Quality-first features**: Add `/speckit.analyze` and `/speckit.checklist` between tasks and implement
 
 ---
 
-### 6. Design System Integration
-
-This template enforces design consistency through **Constitution Principles** (see `.specify/memory/constitution.md`):
-
-**DS-1: Use shadcn/ui Components First**
-- Always use shadcn/ui components over custom implementations
-- Extend via `className` prop, don't fork source code
-
-**DS-2: Brand via CSS Variables**
-- Use OKLCH color variables from `globals.css`
-- Never hardcode colors: `bg-primary` not `bg-blue-500`
-
-**DS-3: Design Before Implementation**
-- UI features require `design.md` before coding
-- Implementation must match `design.md` structures
-
-**DS-4: Consistent UI Patterns**
-- Tables for data lists, Dialog for focused tasks, Sheet for complex forms
-- AlertDialog for destructive confirmations, DropdownMenu for row actions
-
-**DS-5: Accessibility by Default**
-- Keyboard navigation, visible focus states, WCAG AA contrast
-- Semantic HTML, ARIA labels, touch targets ≥ 44px
-
----
-
-### 7. File Organization
-
-Each feature creates a directory in `specs/`:
-
-```
-.specify/
-├── specs/
-│   ├── 001-project-setup/      # First feature (template customization)
-│   │   ├── spec.md
-│   │   ├── plan.md
-│   │   └── tasks.md
-│   └── 002-user-auth/          # Subsequent features
-│       ├── spec.md             # Feature specification (from /speckit.specify)
-│       ├── design.md           # UI component designs (from /speckit.design)
-│       ├── plan.md             # Technical architecture (from /speckit.plan)
-│       ├── tasks.md            # Implementation tasks (from /speckit.tasks)
-│       ├── research.md         # Technical research (from /speckit.plan Phase 0)
-│       ├── data-model.md       # Entity definitions (from /speckit.plan Phase 1)
-│       ├── contracts/          # API contracts (from /speckit.plan Phase 1)
-│       │   └── auth-endpoints.yaml
-│       └── checklists/         # Quality checklists (from /speckit.checklist)
-│           ├── requirements.md
-│           ├── security.md
-│           └── ux.md
-├── brand/
-│   └── brand.yaml              # Brand configuration (from /speckit.brand)
-├── templates/                  # Speckit templates
-├── scripts/                    # Speckit bash scripts
-└── memory/
-    └── constitution.md         # Project principles (from /speckit.constitution)
-```
-
----
-
-### 8. Figma Integration (Optional)
+### 6. Figma Integration (Optional)
 
 `/speckit.design` can generate visual Figma designs with **Figma MCP** integration.
 
@@ -474,25 +322,18 @@ Each feature creates a directory in `specs/`:
 
 ---
 
-### 9. Best Practices
+### 7. Best Practices
 
-**Configure brand first**: Run `/speckit.brand` once at project start before building UI features. This establishes your visual identity and ensures all components use consistent colors.
-
-**Start with spec**: Don't code before `/speckit.specify`. Clarify requirements first to avoid rework.
-
-**Design UI features**: Run `/speckit.design` for any feature with user interface. It saves development time and ensures consistency. The generated JSX structures are copy-paste ready.
-
-**Validate before implementing**: Use `/speckit.analyze` as quality gate before `/speckit.implement`. Catch inconsistencies early.
-
-**Iterate on design**: Run `/speckit.design refine` multiple times until UI is right. Cheaper than refactoring code later.
-
-**Independent user stories**: Each P1/P2/P3 story should be independently testable. Implement P1 for MVP, then add P2/P3 incrementally without breaking existing features.
-
-**Update brand thoughtfully**: Changing brand colors affects all components. Test dark mode, verify WCAG contrast ratios, and review across all screens before committing.
+- **Clarify before coding**: Always specify requirements before implementation to avoid rework
+- **Design for UI features**: Use `/speckit.design` for interfaces - generated JSX structures are copy-paste ready
+- **Validate early**: Run `/speckit.analyze` before implementation to catch inconsistencies
+- **Iterate on design**: Refine designs before coding - cheaper than refactoring later
+- **Independent user stories**: P1/P2/P3 phases should be independently testable and deployable
+- **Update brand thoughtfully**: Test dark mode and WCAG contrast ratios before committing color changes
 
 ---
 
-### 10. Troubleshooting
+### 8. Troubleshooting
 
 **"No UI Specifications section"** when running `/speckit.design`:
 - Update spec: `/speckit.specify update Add UI requirements for user list screen`
@@ -514,7 +355,7 @@ Each feature creates a directory in `specs/`:
 
 ---
 
-### 11. Additional Resources
+### 9. Resources
 
 - **Spec Kit Docs**: [github.com/github/spec-kit](https://github.com/github/spec-kit)
 - **shadcn/ui Components**: [ui.shadcn.com](https://ui.shadcn.com)
@@ -524,28 +365,18 @@ Each feature creates a directory in `specs/`:
 
 ---
 
-### Quick Reference Card
+### Quick Reference
 
 ```bash
 # First time setup
-/speckit.brand                          # Configure theme
+/speckit.brand                          # Configure theme (once)
 
 # Every feature
 /speckit.specify [description]          # Create spec
-/speckit.design                         # Design UI (if needed)
+/speckit.design                         # Design UI (optional, for UI features)
 /speckit.plan                           # Technical plan
 /speckit.tasks                          # Break down tasks
 /speckit.implement                      # Build it
-
-# Support commands
-/speckit.clarify                        # Resolve ambiguities
-/speckit.analyze                        # Validate consistency
-/speckit.checklist                      # Generate quality checklists
-/speckit.constitution                   # Define project principles
-
-# Refinement
-/speckit.design refine [changes]        # Adjust UI design
-/speckit.brand update [description]     # Tweak brand colors
 
 # Quality checks before commit
 bun lint && bun type && bun test && bun test:e2e && bun run build
@@ -590,7 +421,21 @@ tests/            # Unit tests
 e2e/              # Playwright E2E tests
 drizzle/          # Migration files
 scripts/          # Setup & automation
+.specify/         # Spec-driven development artifacts
+├── specs/        # Feature specifications, plans, tasks
+├── brand/        # Brand configuration (brand.yaml)
+└── memory/       # Project principles (constitution.md)
 ```
+
+### Design System Principles
+
+This template enforces consistency through **Constitution Principles** (see `.specify/memory/constitution.md`):
+
+- **DS-1: Use shadcn/ui Components First** - Always use shadcn/ui over custom implementations; extend via `className`, don't fork source
+- **DS-2: Brand via CSS Variables** - Use OKLCH color variables from `globals.css`; never hardcode colors (`bg-primary` not `bg-blue-500`)
+- **DS-3: Design Before Implementation** - UI features require `design.md` before coding; implementation must match design specs
+- **DS-4: Consistent UI Patterns** - Tables for data lists, Dialog for focused tasks, Sheet for complex forms, AlertDialog for destructive confirmations
+- **DS-5: Accessibility by Default** - Keyboard navigation, visible focus states, WCAG AA contrast, semantic HTML, ARIA labels, touch targets ≥ 44px
 
 ---
 
@@ -625,7 +470,7 @@ scripts/          # Setup & automation
 
 ```bash
 bun install
-bun lint && bun type && bun test && bun test:e2e
+bun lint && bun type && bun test && bun test:e2e && bun run build
 ```
 
 ## License
